@@ -1,5 +1,7 @@
 # QA and release gate — nanoDNS 13.60
 
+
+**Language:** English (default) | [Français](TEST_PLAN.fr.md)
 **Current status: developer candidate until an SDK build and real console runs both pass.** These are test specifications, not assertions that console behavior has already been validated.
 
 ## 1. Offline tests (no console)
