@@ -18,6 +18,7 @@
 #include <sys/syscall.h>
 #include <time.h>
 #include <unistd.h>
+#include "dns_mask.h"
 
 #if defined(PLATFORM_PS4)
 #include <ps4/kernel.h>
@@ -1246,116 +1247,7 @@ dns_parse_question(const uint8_t *packet, size_t packet_len, dns_question_t *q) 
   return 0;
 }
 
-static int
-domain_mask_match(const char *mask, const char *domain) {
-  while(*mask != '\0') {
-    if(*mask == '*') {
-      do {
-        ++mask;
-      } while(*mask == '*');
-
-      if(*mask == '\0') {
-        return 1;
-      }
-
-      while(*domain != '\0') {
-        if(domain_mask_match(mask, domain)) {
-          return 1;
-        }
-        ++domain;
-      }
-
-      return 0;
-    }
-
-    if(*domain == '\0') {
-      return 0;
-    }
-
-    if(*mask == '?') {
-      ++mask;
-      ++domain;
-      continue;
-    }
-
-    if(*mask == '[') {
-      bool negate = false;
-      bool matched = false;
-      const char *p = mask + 1;
-
-      if(*p == '!' || *p == '^') {
-        negate = true;
-        ++p;
-      }
-
-      if(*p == ']') {
-        matched = *domain == ']';
-        ++p;
-      }
-
-      while(*p != '\0' && *p != ']') {
-        unsigned char start;
-        unsigned char end;
-
-        if(*p == '\\' && p[1] != '\0') {
-          start = (unsigned char)p[1];
-          p += 2;
-        } else {
-          start = (unsigned char)*p++;
-        }
-
-        end = start;
-        if(*p == '-' && p[1] != '\0' && p[1] != ']') {
-          ++p;
-          if(*p == '\\' && p[1] != '\0') {
-            end = (unsigned char)p[1];
-            p += 2;
-          } else {
-            end = (unsigned char)*p++;
-          }
-        }
-
-        if((unsigned char)*domain >= start && (unsigned char)*domain <= end) {
-          matched = true;
-        }
-      }
-
-      if(*p != ']') {
-        if(*mask != *domain) {
-          return 0;
-        }
-
-        ++mask;
-        ++domain;
-        continue;
-      }
-
-      if(negate ? matched : !matched) {
-        return 0;
-      }
-
-      mask = p + 1;
-      ++domain;
-      continue;
-    }
-
-    if(*mask == '\\' && mask[1] != '\0') {
-      ++mask;
-    }
-
-    if(*mask != *domain) {
-      return 0;
-    }
-
-    ++mask;
-    ++domain;
-  }
-
-  return *domain == '\0';
-}
-
-/* Policy invariant: an exception in a user-supplied INI cannot weaken
- * the published protection baseline or allow a blocked query upstream. */
+/* Native wildcard matching is in dns_mask.h for host-side regression tests. */
 static int
 protected_domain_match(const char *domain) {
   for(size_t i = 0; i < PROTECTED_RULE_COUNT; ++i) {
