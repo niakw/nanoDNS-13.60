@@ -12,7 +12,7 @@ This patch release rebuilds the actual ELF binaries after security and CI update
 - **Build pipeline:** Dependabot updates merged for `actions/checkout@v7`, `actions/upload-artifact@v7`, and `actions/download-artifact@v8`. Valid weekly GitHub Actions dependency monitoring.
 - Updated bilingual community documentation, contribution/accessibility/conduct policies, and regression tests for atomic config creation.
 
-**Release integrity:** the PS5 and secondary ELF binaries, policy file, ZIP and SHA-256 manifests are produced from the same GitHub Actions run after offline policy tests and both console SDK builds succeed. The existing 0.4-13.60.1 user-tested Release remains unchanged.
+**Release integrity:** the current-generation and secondary ELF binaries, policy file, ZIP and SHA-256 manifests are produced from the same GitHub Actions run after offline policy tests and both console SDK builds succeed. The existing 0.4-13.60.1 user-tested Release remains unchanged.
 
 ## Verified hardware status (version-specific)
 
