@@ -1,5 +1,7 @@
 # Changelog
 
+
+**Language:** English (default) | [Français](CHANGELOG.fr.md)
 ## 0.4-13.60.1 — development candidate (2026-11-19)
 
 ### Process safety
