@@ -15,15 +15,18 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <sys/syscall.h>
 #include <time.h>
 #include <unistd.h>
 
 #if defined(PLATFORM_PS4)
 #include <ps4/kernel.h>
 #include <ps4/klog.h>
+#define PAYLOAD_EXEC_NAME "nanodns-ps4.elf"
 #elif defined(PLATFORM_PS5)
 #include <ps5/kernel.h>
 #include <ps5/klog.h>
+#define PAYLOAD_EXEC_NAME "nanodns.elf"
 #else
 #error "Define PLATFORM_PS4 or PLATFORM_PS5"
 #endif
@@ -1935,8 +1938,10 @@ handle_dns_request(const app_config_t *cfg, int server_fd, int *upstream_fds,
 
   /* One class-IN question is all this resolver understands. Never relay
    * additional/unsupported questions without evaluating the denylist. */
-  if(question.qdcount != 1 || question.qclass != 1) {
-    uint16_t rcode = question.qdcount != 1 ? 1 : 5;
+  if(question.qdcount != 1 || question.qclass != 1 ||
+     (question.flags & 0xF800) != 0) {
+    uint16_t rcode = question.qdcount != 1 || (question.flags & 0xF800) != 0
+                         ? 1 : 5;
     if(build_error_response(request, request_len, &question, rcode, response,
                             sizeof(response), &response_len) == 0) {
       send_dns_response_to_client(server_fd, response, response_len,
@@ -2133,6 +2138,10 @@ main(void) {
   init_server_listener(&listeners[SERVER_LISTENER_IPV6], AF_INET6, "IPv6",
                        false);
 
+#if defined(PLATFORM_PS5)
+  /* Preserve the original process label for Payload Manager discovery. */
+  (void)syscall(SYS_thr_set_name, -1, PAYLOAD_EXEC_NAME);
+#endif
   signal(SIGINT, on_signal);
   signal(SIGTERM, on_signal);
 
