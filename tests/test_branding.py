@@ -42,6 +42,8 @@ class DocumentationContracts(unittest.TestCase):
    s=file.read_text(encoding="utf-8")
    s=re.sub(r"\]\([^)]*\)","]()",s)
    s=re.sub(r"https?://[^\s)>]+","",s)
+   # Exempt exact technical artifact filenames, but not marketing prose.
+   s=re.sub(r"`[^`\n]*`","",s)
    m=BANNED.search(s)
    self.assertIsNone(m, f"{file.relative_to(ROOT)}: {m.group(0) if m else ''}")
 

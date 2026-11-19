@@ -40,7 +40,7 @@ This independent release builds on [nanoDNS by Drakmor](https://github.com/drakm
 
 ## Important release limitations
 
-**Not yet validated on a physical console for shutdown, rest/resume or controller power-on.** A green SDK build and offline tests do not prove those behaviors fixed. This is deliberately labeled **Pre-release**, not a stable production release.
+**Not yet validated on a physical console for shutdown, rest/resume or controller power-on.** Verify the exact release checksums before installation; keep the prior ELF and INI available for rollback. A green SDK build and offline tests do not prove those behaviors fixed. This is deliberately labeled **Pre-release**, not a stable production release.
 
 **DNS is not a firewall** and does not guarantee that forbidden IP traffic cannot leave a device. Direct IPs, cached addresses, alternate/encrypted DNS, TCP DNS, DNS before payload initialization and unknown hostnames remain out of scope. If absolutely no unauthorized WAN traffic is acceptable, enforce restrictions at an independent router/firewall.
 
