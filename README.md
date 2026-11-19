@@ -1,5 +1,7 @@
 # nanoDNS 13.60 — security & lifecycle fork
 
+
+**Language:** English (default) | [Français](README.fr.md)
 A carefully scoped PS5 firmware **13.60** fork of [Drakmor's nanoDNS](https://github.com/drakmor/nanoDNS), with a **mandatory 124-rule DNS denylist** sourced from [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist).
 
 **Status:** source changes and automated verification are in progress. A green SDK build does **not** establish that console shutdown, rest-mode resume or controller wake are fixed. Do not replace your known-working payload until you have checked the build and followed the console validation plan.
