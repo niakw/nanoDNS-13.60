@@ -107,7 +107,8 @@ class DocumentationContracts(unittest.TestCase):
   self.assertIn("dist/nanodns-ps4.elf",publisher)
   self.assertIn("nanodns-13.60-v0.4-13.60.2-install.zip",publisher)
   self.assertIn("--latest",publisher)
-  self.assertIn("v0.4-13.60.1-beta.1",notes)
+  self.assertIn("v0.4-13.60.2",notes)
+  self.assertIn("0.4-13.60.1",notes)
 
  def test_project_community_documents_are_complete(self):
   files=("ACCESSIBILITY.md","ACCESSIBILITY.fr.md","CONTRIBUTING.md",

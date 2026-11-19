@@ -55,7 +55,7 @@ Ce correctif reconstruit le véritable ELF après le traitement des deux alertes
 
 **Version 0.4-13.60.1 précédente : test utilisateur positif sur firmware 13.60** pour le démarrage, le filtrage DNS de type A, l'extinction et le rallumage, sans répétition du problème initial. Les deux logs comptent 23 requêtes A bloquées, 124 règles et 0 exception.
 
-**Version 0.4-13.60.2 (cette Release) : PAS ENCORE RETESTÉE SUR CONSOLE.** La version PS4 et les autres firmwares PS5 restent également non validés par des essais utilisateurs. La compilation seule n'est pas une preuve de compatibilité.
+**Version 0.4-13.60.2 (cette Release) : PAS ENCORE RETESTÉE SUR CONSOLE.** Le binaire pour console de génération précédente et les autres firmwares de génération actuelle restent également non validés par des essais utilisateurs. La compilation seule n'est pas une preuve de compatibilité.
 
 Le ZIP `nanodns-13.60-v0.4-13.60.2-install.zip` contient exactement `data/pldmgr/payloads/local/nanodns/nanodns.elf` et `data/nanodns/nanodns.ini`. Après sauvegarde, décompresser sur Mac puis copier `data/` à la racine `/` de la console. Dans Payload Manager, enlever ou désactiver l'ancien nanoDNS et **retirer son ancien autoload** ; fermer l'ancienne instance ou redémarrer complètement, puis activer **seulement `local/nanodns`** en démarrage automatique. Conserver le dernier ELF en sauvegarde pour retour arrière.
 
