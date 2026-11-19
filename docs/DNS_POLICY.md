@@ -20,17 +20,17 @@ The fork contains three synchronized snapshots: `nanodns.ini`, `nanodns.ini.exam
 
 ## Original source profile
 
-- **124 rules** / **0 exceptions**, with broad PlayStation / Sony / Nintendo patterns, Xbox, Epic, EA, Ubisoft, Sega, Rockstar, GOG, Valve and other publishers.
+- **124 rules** / **0 exceptions**, with broad platform services / platform vendor / additional console networks patterns, additional console networks, publisher services, publisher services, publisher services, publisher services, publisher services, publisher services, publisher services and other publishers.
 - **Quad9-only secure upstreams** for otherwise permitted names: `9.9.9.9` (primary) and `149.112.112.112` (backup), with malware/phishing blocking and DNSSEC validation performed by Quad9. Both IPs belong to **the same provider**, and nanoDNS forwards using ordinary (unencrypted) UDP DNS.
 - Local listeners: `127.0.0.1:53` and `[::1]:53`.
 - The list deliberately leaves e.g. GitHub and YouTube resolvable if the console actually uses this resolver.
 
 ## Existing installations and compatibility
 
-nanoDNS **does not overwrite** an existing file at `/data/nanodns/nanodns.ini`. You must back it up and deploy this repo's `nanodns.ini` to get the same 124-rule display and zero user exceptions. The mandatory compiled rules still prevent a legacy Sony `[exceptions]` entry from permitting a covered domain.
+nanoDNS **does not overwrite** an existing file at `/data/nanodns/nanodns.ini`. You must back it up and deploy this repo's `nanodns.ini` to get the same 124-rule display and zero user exceptions. The mandatory compiled rules still prevent a legacy platform vendor `[exceptions]` entry from permitting a covered domain.
 
 A hand-edited INI might add extra rules, which remain honored for otherwise unprotected names. An invalid line or missing file falls back to the built-in rules where applicable. There is **no remote hot update** of the policy and no dependence on live GitHub access.
 
 ## Limits and false positives
 
-Full service coverage is not provable from 124 known masks. This is UDP DNS only; TCP DNS, encrypted DNS, other resolvers, cached addresses, direct IPs, network traffic preceding exploit startup and in-firmware update installation are not intercepted. For zero leaks, add an external network deny policy. Broad patterns and the Akamai alias can break legitimate traffic; investigate with redacted logs.
+Full service coverage is not provable from 124 known masks. This is UDP DNS only; TCP DNS, encrypted DNS, other resolvers, cached addresses, direct IPs, network traffic preceding exploit startup and in-firmware update installation are not intercepted. For zero leaks, add an external network deny policy. Broad patterns and the shared CDN operator alias can break legitimate traffic; investigate with redacted logs.

@@ -22,16 +22,16 @@ The bundled policy uses only Quad9's **secure service** at `9.9.9.9` and `149.11
 - New or hidden service domains not matching the 124 known rules; service traffic on unrelated CDN names.
 - Hardware controller wake, suspend/resume of the OS, full kernel-lifecycle or network stack correctness.
 
-If you need *no unfiltered outbound traffic*, enforce WAN-deny rules on your **router/firewall**, including IPv6, even when the PS5 is off or being jailbroken. Keep the locally hosted jailbreak path available.
+If you need *no unfiltered outbound traffic*, enforce WAN-deny rules on your **router/firewall**, including IPv6, even when the console is off or being jailbroken. Keep the locally hosted jailbreak path available.
 
 ## Risks and trust boundary
 
-- Rules such as `*sony*`, `*playstation*`, `*nintendo*` are intentionally broad and can block innocent names. `a192.d.akamai.net` is a shared-CDN alias and may affect unrelated services.
+- Rules such as `<hostname-or-mask-from-INI>`, `<hostname-or-mask-from-INI>`, `<hostname-or-mask-from-INI>` are intentionally broad and can block innocent names. `<hostname-or-mask-from-INI>` is a shared-CDN alias and may affect unrelated services.
 - `bind=0.0.0.0` / `bind6=::` makes the resolver available on LAN; default loopback listeners are safer.
 - A manually edited `nanodns.ini` may contain extra forwarders, exceptions or overrides. The embedded 124 mandatory masks cannot be overridden by exceptions but extra rules can still cause false positives.
 - UDP upstream DNS is not encrypted or DNSSEC-validated. Response question/ID validation is useful defense-in-depth, not authentication.
 - DNS logs can contain domain names, network addresses and timestamps. Review and redact before sharing.
-- A successful SDK build is not proof of safe shutdown on PS5 13.60. Observe [test plan](docs/TEST_PLAN.md).
+- A successful SDK build is not proof of safe shutdown on console 13.60. Observe [test plan](docs/TEST_PLAN.md).
 
 ## Reports
 

@@ -18,4 +18,4 @@ Les adresses des résolveurs sécurisés proviennent de [Quad9](https://quad9.ne
 
 ## Intégration 13.60
 
-Le fork [niakw/nanoDNS-13.60](https://github.com/niakw/nanoDNS-13.60) vise la fiabilité et la sécurité du payload sur firmware PS5 13.60. Il ne constitue pas une publication officielle de Drakmor, Sony, Nintendo ou Microsoft. Il ne contient pas d'actifs propriétaires supplémentaires et reste soumis à la licence [GPL-3.0](../LICENSE).
+Le fork [niakw/nanoDNS-13.60](https://github.com/niakw/nanoDNS-13.60) vise la fiabilité et la sécurité du payload sur firmware console 13.60. Il ne constitue pas une publication officielle de Drakmor, platform vendor, additional console networks ou platform operator. Il ne contient pas d'actifs propriétaires supplémentaires et reste soumis à la licence [GPL-3.0](../LICENSE).

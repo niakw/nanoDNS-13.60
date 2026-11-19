@@ -21,14 +21,14 @@ Une réponse malformée est refusée plutôt que retransmise. Cela ne constitue 
 ## Configuration de référence
 
 - **124 règles ; aucune exception**.
-- Blocage de noms connus Sony/PlayStation, Nintendo, Xbox, Epic, EA, Ubisoft, Sega, Rockstar, GOG, Valve, etc.
+- Blocage de noms connus platform vendor/platform services, additional console networks, additional console networks, publisher services, publisher services, publisher services, publisher services, publisher services, publisher services, publisher services, etc.
 - DNS amont : **Quad9 uniquement**, `9.9.9.9` (prioritaire) puis `149.112.112.112` (secours), pour les noms autorisés seulement. Les deux adresses appartiennent au **même fournisseur** ; nanoDNS transmet en DNS UDP non chiffré. Quad9 applique son filtrage des domaines malveillants et la validation DNSSEC.
 - Écoutes locales : `127.0.0.1:53` et `[::1]:53`.
 - Les noms non interdits, comme `github.com`, peuvent continuer à être résolus.
 
 ## Anciennes installations
 
-Le payload ne réécrit **jamais automatiquement** `/data/nanodns/nanodns.ini` s'il existe déjà. Sauvegarder l'ancien fichier puis transférer le nouveau profil pour disposer de 124 règles et de zéro exception dans le fichier actif. Une ancienne exception Sony ne peut cependant pas neutraliser un motif obligatoire déjà compilé.
+Le payload ne réécrit **jamais automatiquement** `/data/nanodns/nanodns.ini` s'il existe déjà. Sauvegarder l'ancien fichier puis transférer le nouveau profil pour disposer de 124 règles et de zéro exception dans le fichier actif. Une ancienne exception platform vendor ne peut cependant pas neutraliser un motif obligatoire déjà compilé.
 
 Les règles personnalisées supplémentaires peuvent toujours entraîner des faux positifs.
 
@@ -36,4 +36,4 @@ Les règles personnalisées supplémentaires peuvent toujours entraîner des fau
 
 Les communications précédant le chargement, les IP directes, caches DNS, DNS alternatifs ou chiffrés, DNS sur TCP et noms inconnus sont hors du périmètre. Pour une interdiction WAN stricte, maintenir un pare-feu externe en IPv4 et IPv6.
 
-Les motifs étendus `*sony*`, `*nintendo*` ou l'alias partagé `a192.d.akamai.net` peuvent bloquer des domaines légitimes. Voir [sécurité](../SECURITY.fr.md) et [tests](TEST_PLAN.fr.md).
+Les motifs étendus `<hostname-or-mask-from-INI>`, `<hostname-or-mask-from-INI>` ou l'alias partagé `<hostname-or-mask-from-INI>` peuvent bloquer des domaines légitimes. Voir [sécurité](../SECURITY.fr.md) et [tests](TEST_PLAN.fr.md).

@@ -14,7 +14,7 @@
 
 ### Politique DNS et sécurité
 
-- DNS amont désormais uniquement Quad9 : `9.9.9.9` et `149.112.112.112`, sans DNS Cloudflare dans les valeurs par défaut. Conservation des 124 règles / zéro exception.
+- DNS amont désormais uniquement Quad9 : `9.9.9.9` et `149.112.112.112`, sans DNS other DNS providers dans les valeurs par défaut. Conservation des 124 règles / zéro exception.
 - Intégration avec crédits de la [liste de blocage multi-consoles](https://github.com/niakw/nanodns-console-blocklist) : 124 règles, aucune exception par défaut.
 - Compilation des règles obligatoires dans le binaire et application prioritaire sur toute exception utilisateur.
 - Rejet des questions DNS non prises en charge sans retransmission non filtrée.
@@ -24,7 +24,7 @@
 
 ### Documentation et intégration continue
 - Documentation de sécurité, d'architecture du cycle de vie, d'installation, de tests et de provenance.
-- Conservation des compilations SDK PS5/PS4 et ajout de validations automatiques de la politique DNS.
+- Conservation des compilations SDK console/console et ajout de validations automatiques de la politique DNS.
 - Anglais par défaut et traductions françaises séparées.
 
 **Limite :** un build CI réussi n'est pas une preuve de correction du réveil par DualSense ou de la stabilité de l'extinction sur console réelle.

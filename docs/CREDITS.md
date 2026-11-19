@@ -18,6 +18,6 @@ The default primary and backup secure DNS resolvers are from [Quad9](https://qua
 
 ## Integration
 
-This firmware-13.60-focused integration is maintained in [niakw/nanoDNS-13.60](https://github.com/niakw/nanoDNS-13.60). It is not an official Drakmor release and has no Sony, Nintendo or Microsoft affiliation.
+This firmware-13.60-focused integration is maintained in [niakw/nanoDNS-13.60](https://github.com/niakw/nanoDNS-13.60). It is not an official Drakmor release and has no platform vendor, additional console networks or platform operator affiliation.
 
 The fork does not add third-party proprietary assets. Source and modifications remain subject to [GPL-3.0](../LICENSE).

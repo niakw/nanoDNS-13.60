@@ -26,11 +26,11 @@ Si **aucun trafic non filtré** n'est acceptable, interdis l'accès WAN depuis l
 
 ## Risques et paramètres
 
-Les masques très larges (`*sony*`, `*playstation*`, `*nintendo*`) peuvent bloquer des domaines sans rapport. Le nom `a192.d.akamai.net` correspond à une infrastructure mutualisée. Les configurations `bind=0.0.0.0` et `bind6=::` rendent le résolveur accessible sur le réseau local ; privilégie les valeurs loopback par défaut.
+Les masques très larges (`<hostname-or-mask-from-INI>`, `<hostname-or-mask-from-INI>`, `<hostname-or-mask-from-INI>`) peuvent bloquer des domaines sans rapport. Le nom `<hostname-or-mask-from-INI>` correspond à une infrastructure mutualisée. Les configurations `bind=0.0.0.0` et `bind6=::` rendent le résolveur accessible sur le réseau local ; privilégie les valeurs loopback par défaut.
 
 Les fichiers INI peuvent encore ajouter des règles, mais ne doivent pas pouvoir autoriser un nom protégé par la liste obligatoire. Le DNS amont utilise UDP sans chiffrement ni validation DNSSEC ; la vérification des réponses n'en fait pas un canal authentifié. Les logs contiennent potentiellement des domaines et des informations réseau identifiantes.
 
-Un **build vert** ne confirme pas la résolution des problèmes d'extinction de la PS5 13.60. Voir le [protocole de tests](docs/TEST_PLAN.fr.md).
+Un **build vert** ne confirme pas la résolution des problèmes d'extinction de la console 13.60. Voir le [protocole de tests](docs/TEST_PLAN.fr.md).
 
 ## Signaler un problème
 
