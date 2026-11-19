@@ -86,6 +86,13 @@ class DocumentationContracts(unittest.TestCase):
   self.assertIn("5/5",note)
   self.assertIn("5/5",p_en)
   self.assertIn("5/5",p_fr)
+  for doc in (en,fr,note,p_en,p_fr):
+   self.assertIn("0.4-13.60.2",doc)
+  self.assertIn("successful normal shutdown",note)
+  self.assertIn("extinction normale",note)
+  self.assertIn("shutdown/power-on",p_en)
+  self.assertIn("extinction normale",p_fr)
+
   self.assertIn("NON VALIDÉ",fr)
   self.assertIn("23 blocked A queries",note)
   self.assertIn("NOT USER-VALIDATED",note)
