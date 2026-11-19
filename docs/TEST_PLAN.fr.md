@@ -1,54 +1,50 @@
-# Plan de validation — nanoDNS 13.60
+# Plan de validation — firmware 13.60
 
 **Langues :** [English (default)](TEST_PLAN.md) | Français
 
-**Statut :** version candidate de développement. Un build et des tests logiciels verts ne garantissent pas la stabilité de l'extinction ou du réveil par la DualSense. Les tests console suivants restent à effectuer physiquement.
+**Statut : version de développement.** Un build réussi ne prouve ni une extinction correcte, ni un réveil à la manette, ni une reprise de veille fiable.
 
-## 1. Tests automatisés
+## 1. Vérifications automatiques
 
-Exécuter `python3 -m unittest discover -s tests -v` et le test natif de correspondance des masques DNS. Vérifier les **124 règles** présentes dans le profil livré, l'exemple, la configuration générée et le tableau compilé en C.
+- `python3 -m unittest discover -s tests -v` : cohérence des 124 règles obligatoires, absence d'exceptions par défaut, correspondance entre INI et code, adresses Quad9 et tests natifs.
+- Compiler l'ELF avec le SDK compatible, vérifier sa présence et sa taille, puis vérifier aussi la compilation secondaire.
+- Contrôler le commit `main` actuel, pas uniquement un ancien build vert.
 
-Compiler l'ELF PS5 avec le SDK officiel `ps5-payload-dev/sdk` et exécuter également la compilation PS4 pour détecter les régressions. Vérifier que les artefacts existent et sont non vides. Ne pas publier de version présentée comme validée avant les tests console.
+## 2. Préparation réseau
 
-## 2. Préparation sécurisée
+Sauvegarder l'ELF d'origine, `/data/nanodns/nanodns.ini`, les journaux et les sauvegardes utiles. Bloquer le WAN au niveau du routeur/pare-feu en IPv4 et IPv6 tout en conservant le LAN/FTP et un chargeur local.
 
-Après copie du nouvel INI, vérifier dans les logs de la **session active** : `upstream[0] = 9.9.9.9` et `upstream[1] = 149.112.112.112`. Une valeur différente indique notamment qu'une ancienne configuration a pu être conservée.
-
-Sauvegarder l'ELF d'origine, `/data/nanodns/nanodns.ini`, les journaux et les sauvegardes importantes. Interdire temporairement l'accès WAN au niveau du routeur, IPv4 et IPv6, en préservant le FTP et le chargement local.
-
-Configuration cible : PS5 13.60, WebKit Autoloader 0.7.1, Payload Manager, Kstuff Lite 1.11, ShadowMountPlus 1.7beta12, BFPilot 0.4.4 et ftpsrv 0.22. Vérifier l'absence de chargement double.
+Vérifier qu'un seul mécanisme d'autoload est actif et qu'une seule instance nanoDNS est chargée. Transférer explicitement les 124 règles : le payload n'écrase pas les INI existants.
 
 ## 3. Matrice DNS
 
-| Test | Résultat attendu |
+| Scénario | Résultat attendu |
 | --- | --- |
-| `ps5.np.playstation.net` A | Blocage local en `0.0.0.0`, aucun appel au DNS amont |
-| `fus01.ps5.update.playstation.net` AAAA | Blocage sans adresse IPv6 |
-| `feature.api.playstation.com` A | Bloqué même si une ancienne exception persiste dans l'INI |
-| `gst.prod.dl.playstation.net` A | Bloqué même avec une ancienne exception |
-| `nintendo.net`, `xboxlive.com`, `ea.com` A | Bloqués suivant les règles |
-| Question multiple ou opcode non pris en charge | Rejet, sans retransmission non filtrée |
-| `github.com` | Résolution autorisée |
-| Réponse amont contenant un CNAME vers un domaine protégé | Rejet, retour SERVFAIL |
-| Second lancement nanoDNS | Première instance conservée ; la nouvelle échoue à obtenir le port |
-| Configuration absente ou invalide | Protection obligatoire intégrée conservée |
+| Requête A vers un nom protégé de l'INI | `0.0.0.0` en local, aucune transmission amont |
+| Requête AAAA vers le même nom | Aucune adresse IPv6, aucune transmission amont |
+| Domaine historiquement exempté mais présent parmi les motifs obligatoires | Bloqué malgré une ancienne exception |
+| Autres domaines de services ou d'éditeurs protégés par l'INI | Bloqués conformément aux motifs |
+| Plusieurs questions, classe ou opcode non pris en charge | Rejet, aucune retransmission non contrôlée |
+| Domaine autorisé comme `github.com` | Résolution via Quad9 si WAN volontairement activé |
+| CNAME amont dirigé vers un nom protégé | Rejet et absence de relais vers le client |
+| Double lancement du payload | Le premier écouteur demeure, le second ne récupère pas le port 53 |
+| Fichier INI absent ou invalide | Liste obligatoire compilée toujours appliquée |
+| Signal d'arrêt supporté | Sockets et pool réseau libérés proprement |
 
-Tester avec des paquets DNS contrôlés et les journaux ; ne pas contacter volontairement les serveurs de mise à jour firmware.
+Choisir les domaines bloqués **directement dans le fichier INI**, sans lancer volontairement de requête de mise à jour système. Préserver des journaux anonymisés.
 
-## 4. Cycle de vie
+## 4. Tests sur console
 
-1. Tester l'extinction et le démarrage à la manette **sans nanoDNS**, pour établir une référence.
-2. Charger une seule instance nanoDNS, vérifier les DNS autorisés et interdits, puis tenter une extinction normale.
-3. Depuis une console complètement éteinte, appuyer sur PS de la DualSense et vérifier si la console démarre.
-4. Tester mode repos, reprise, contrôleur et continuité DNS.
-5. Tester changement de jeu/application, fermeture et extinction.
-6. Relancer nanoDNS dans Payload Manager sans `SIGKILL` ni écoute UDP partagée.
-7. Contrôler l'absence de réparation du stockage, gel, crash ou régression réseau.
-
-Conserver les dernières traces et logs système en les anonymisant.
+1. Tester extinction et démarrage à la manette **sans nanoDNS** comme référence.
+2. Charger une seule instance, utiliser normalement le système et l'éteindre.
+3. Depuis un état complètement éteint, tenter le démarrage via la manette.
+4. Tester veille, reprise, manette et continuité DNS.
+5. Répéter après des changements d'applications.
+6. Surveiller gel, messages de réparation du stockage, avertissements système et absence de trace de fermeture.
+7. En cas de défaut, revenir à l'ELF et à l'INI précédents.
 
 ## 5. Critère de publication
 
-**Nécessaire :** CI PS5 verte, contrôles DNS verts, domaines interdits de la matrice non transmis à l'amont, domaines autorisés fonctionnels, arrêt/veille/reprise et réveil normaux sur console réelle.
+**Obligatoire :** builds du dernier commit et CI sécurité verts, blocage démontré des requêtes connues, résolution des noms autorisés et extinction/veille/réveil reproductibles sur matériel.
 
-**Blocage de publication :** extinction figée, réveil DualSense défectueux, réparation du stockage, fuite DNS ou build en échec.
+**Bloquant :** anomalie d'extinction, réparation du stockage, requête connue retransmise, régression réseau, terminaison inattendue ou CI rouge. La garantie d'absence totale de trafic WAN reste du ressort du pare-feu externe.

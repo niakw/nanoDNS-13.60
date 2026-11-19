@@ -1,10 +1,10 @@
-# Audit du cycle de vie — nanoDNS PS5 13.60
+# Audit du cycle de vie — nanoDNS console 13.60
 
 **Langues :** [English (default)](PS5_13_60_LIFECYCLE.md) | Français
 
 ## Éléments connus et hypothèses
 
-L'[issue amont #16](https://github.com/drakmor/nanoDNS/issues/16) signale un blocage de l'extinction sur PS5 13.60 avec WebKit Autoloader, Payload Manager, Kstuff Lite et ShadowMountPlus. Dans ce signalement, désactiver nanoDNS fait disparaître le problème. Ce constat **ne démontre pas** la cause exacte ni un lien direct avec le réveil par DualSense.
+L'[issue amont #16](https://github.com/drakmor/nanoDNS/issues/16) signale un blocage de l'extinction sur console 13.60 avec WebKit Autoloader, Payload Manager, Kstuff Lite et ShadowMountPlus. Dans ce signalement, désactiver nanoDNS fait disparaître le problème. Ce constat **ne démontre pas** la cause exacte ni un lien direct avec le réveil par DualSense.
 
 nanoDNS 0.4 recherchait les processus à partir d'offsets internes au système puis terminait une ancienne instance par `SIGKILL`. Ce fork supprime ces opérations à risque sans modifier les offsets internes du noyau.
 
@@ -28,10 +28,10 @@ nanoDNS 0.4 recherchait les processus à partir d'offsets internes au système p
 
 ## Arrêt, veille et reprise
 
-`SIGINT` et `SIGTERM` demandent la sortie, puis le programme ferme les sockets, libère le pool SceNet et journalise les étapes. **Ce mécanisme n'est pas équivalent à un callback d'extinction PS5 vérifié sur firmware 13.60.** Le nettoyage ne peut pas être garanti si le système tue le processus autrement.
+`SIGINT` et `SIGTERM` demandent la sortie, puis le programme ferme les sockets, libère le pool SceNet et journalise les étapes. **Ce mécanisme n'est pas équivalent à un callback d'extinction console vérifié sur firmware 13.60.** Le nettoyage ne peut pas être garanti si le système tue le processus autrement.
 
 La reprise depuis le mode repos peut réutiliser des sockets et états réseau. Les interactions avec ShadowMountPlus, Kstuff, Payload Manager et le firmware exigent une validation sur matériel réel. Aucun patch noyau ou offset système supplémentaire ne doit être introduit sans preuve.
 
 ## Critères de validation
 
-Build SDK PS5 vert ; cohérence des 124 règles ; absence de fuite DNS pour les noms interdits testés ; résolution des noms autorisés ; instances uniques ; arrêt normal, veille/reprise, démarrage DualSense et absence de réparation du stockage. Voir le [plan de tests](TEST_PLAN.fr.md).
+Build SDK console vert ; cohérence des 124 règles ; absence de fuite DNS pour les noms interdits testés ; résolution des noms autorisés ; instances uniques ; arrêt normal, veille/reprise, démarrage DualSense et absence de réparation du stockage. Voir le [plan de tests](TEST_PLAN.fr.md).

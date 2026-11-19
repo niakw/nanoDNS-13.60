@@ -1,55 +1,50 @@
-# QA and release gate — nanoDNS 13.60
-
+# Release validation plan — firmware 13.60
 
 **Language:** English (default) | [Français](TEST_PLAN.fr.md)
-**Current status: developer candidate until an SDK build and real console runs both pass.** These are test specifications, not assertions that console behavior has already been validated.
 
-## 1. Offline tests (no console)
+**Status: development candidate.** Source tests and SDK builds cannot establish that console shutdown, controller power-on or standby are fixed.
 
-Run `python3 -m unittest discover -s tests -v`.
-The tests compare the **124** source-policy masks, generated default policy, shipped `nanodns.ini.example` and compiled `k_protected_masks`. They validate absence of exceptions in the baseline, authorized name negative controls and representative PlayStation/Nintendo/Xbox/publisher domains.
+## 1. Offline and CI checks
 
-Build the **PS5 ELF** with the official `ps5-payload-dev/sdk` and check the artifact exists and is nonempty. Check the PS4 workflow for compile regressions. Do not tag a release unless both builds and policy tests pass.
+- `python3 -m unittest discover -s tests -v`: verify the 124 mandatory masks, zero-exception default profile, matching INI files, Quad9 addresses and native matching tests.
+- Build the console ELF with the supported SDK; verify the artifact exists and is non-empty. Also compile the secondary compatibility target.
+- Check the current **main commit**, not only an older successful run. Never present a build as validated hardware behavior.
 
-## 2. Safe console preparation
+## 2. Prepare without network leaks
 
-Confirm the **current-session** startup log reports `upstream[0] = 9.9.9.9` and `upstream[1] = 149.112.112.112` after copying the updated INI. If either differs, inspect the preserved on-console configuration rather than assuming the new defaults were activated.
+Back up the old ELF, `/data/nanodns/nanodns.ini`, logs and important saves. Keep the console WAN-denied through an independent router/firewall rule (IPv4 and IPv6), while preserving LAN/FTP and a local loader.
 
-Back up `/data/nanodns/nanodns.ini`, the old ELF and `/data/nanodns/nanodns.log`; also back up important game saves. Keep WAN blocked externally (including IPv6) during initial tests while maintaining local FTP/loader access.
+Confirm one autoload mechanism and exactly one nanoDNS process. Transfer the 124-rule `nanodns.ini` explicitly; the payload deliberately does not overwrite an existing profile.
 
-Use the same firmware 13.60, Payload Manager, WebKit Autoloader 0.7.1, kstuff-lite 1.11, ShadowMountPlus 1.7beta12, BFPilot 0.4.4 and ftpsrv 0.22. Confirm that autoload runs only once per payload.
+## 3. DNS security matrix
 
-## 3. DNS acceptance matrix
-
-| Test | Expected behavior |
+| Scenario | Required result |
 | --- | --- |
-| `ps5.np.playstation.net` A | Blocked locally; 0.0.0.0, no upstream |
-| `fus01.ps5.update.playstation.net` AAAA | Blocked locally; zero answers, no upstream |
-| `feature.api.playstation.com` A | Blocked even if the old INI contains an exception |
-| `gst.prod.dl.playstation.net` A | Blocked even if the old INI contains an exception |
-| `nintendo.net`, `xboxlive.com`, `ea.com` A | Blocked by policy |
-| Multi-question or unsupported DNS opcode | Rejected, never forwarded |
-| Permitted query (e.g. `github.com`) | Resolved upstream normally |
-| Upstream answer with a protected CNAME | Rejected and answered as SERVFAIL |
-| Duplicate nanoDNS launch | Previous instance remains alive; new launch refuses to bind |
-| Invalid/truncated or missing INI | No loss of embedded baseline protection |
+| A query for a hostname from the mandatory INI | Local `0.0.0.0`; **no upstream forwarding** |
+| AAAA query for the same protected hostname | Local no-address answer; **no upstream forwarding** |
+| A previously excepted service hostname that is protected by the INI | **Still denied**, even with a legacy exception |
+| Any additional protected publisher/legacy console hostname from the policy | Denied according to the mandatory masks |
+| Multi-question, unsupported class or unsupported query opcode | Rejected rather than forwarded without checks |
+| Permitted test hostname (such as `github.com`) | Successful upstream resolution when WAN is intentionally enabled |
+| Upstream answer containing a CNAME to a protected hostname | Rejected; no protected target relayed |
+| Duplicate payload launch | Existing IPv4 listener retained; new instance does not steal port 53 |
+| Missing or invalid on-disk profile | Mandatory compiled masks still applied |
+| Restart after receiving a supported termination signal | Network pool and listener released cleanly |
 
-These behaviors must be tested with controlled UDP DNS packets and console logs, not by accessing a firmware-update endpoint.
+Select blocked names **from the actual INI**. Do not contact or deliberately request operating-system updates. Capture sanitized network traces if possible, not just successful app startup.
 
-## 4. Power/lifecycle acceptance
+## 4. Hardware shutdown and wake
 
-1. No nanoDNS: establish a clean shutdown and controller wake baseline.
-2. One nanoDNS instance: verify listener, permitted/blocked DNS, 10+ minutes of ordinary use, clean shutdown.
-3. Cold power-on with DualSense PS button: note whether the console powers on **without requiring the hardware button**.
-4. Rest mode and resume: verify controllers, DNS behavior and sockets; repeat clean shutdown.
-5. After application/game switches, close all games and shut down. Note missing `shutdown: complete` milestones and kernel warnings.
-6. Reload nanoDNS via Payload Manager: confirm no `SIGKILL` of an old instance, and no shared UDP listener.
-7. No filesystem-repair popup, shutdown hang, or crash throughout validation.
+1. Establish clean shutdown and controller power-on behavior **without nanoDNS**, keeping other payloads unchanged.
+2. Run a single nanoDNS instance for ordinary use, confirm DNS and then shut down from the system menu.
+3. From a genuinely powered-off state, try the controller power button and note its light behavior.
+4. Test standby, resume, controller input and restored DNS resolution.
+5. Repeat after switching between apps, then close them before shutdown.
+6. Check for storage repair prompts, freeze, kernel warnings or missing shutdown milestone logs.
+7. If any problem recurs, save redacted logs and restore the known-working ELF and INI.
 
-If a failure occurs, preserve **last pre-shutdown logs** and any klog, redact personal data, and revert to the known-working ELF/config.
+## 5. Release gate
 
-## 5. Release decision
+**Required:** the current commit's SDK builds and policy CI must pass, DNS deny tests must show no upstream lookup for known blocked queries, permitted names must resolve, and physical-console shutdown/rest/resume/controller-wake must be repeatable.
 
-- **Required**: green PS5 SDK CI, policy tests, no forbidden DNS lookup forwarded in matrix, allowed domains still work, successful one-instance startup, and successful physical PS5 shutdown/rest/resume/wake.
-- **Blocked**: any unexplained shutdown hang, controller wake regression, disk repair, DNS policy bypass or red build.
-- Do not infer a solved DualSense firmware bug merely from an ELF build: the PS button wake signal is handled while the payload is not running.
+**Fail conditions:** any unaccounted shutdown hang, filesystem repair, improper DNS relay, regression in permitted resolution, unexpected process kill or red CI. The strict no-WAN guarantee remains the responsibility of an external firewall, never this DNS payload alone.
