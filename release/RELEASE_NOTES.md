@@ -25,6 +25,8 @@ data/pldmgr/payloads/local/nanodns/nanodns.elf
 data/nanodns/nanodns.ini
 ```
 
+The **actual console destinations** are `/data/pldmgr/payloads/local/nanodns/nanodns.elf` and `/data/nanodns/nanodns.ini`.
+
 Extract on your computer and FTP-copy the ZIP's `data/` tree to the console filesystem root `/` (not to `/data/data/`). **First** back up the old configuration and binary; uninstall the original catalog nanoDNS using Payload Manager **or disable its autoload**, stop the running instance normally or cold-restart, and **remove the old nanoDNS from automatic startup**. After copying, refresh Payload Manager and add **only the new local slot `local/nanodns`** to autoload. The ZIP itself cannot edit the manager's autoload. The new profile uses Quad9; the console DNS fields remain `127.0.0.1`. [Detailed English guide](https://github.com/niakw/nanoDNS-13.60/blob/main/docs/INSTALL.md) · [Guide français](https://github.com/niakw/nanoDNS-13.60/blob/main/docs/INSTALL.fr.md).
 
 **`nanoDNS_0.4.elf`** in the original `repo/nanodns@e8cce5d1` slot must **not** be overwritten with our release; treat it as a backup or remove it **through Payload Manager** after backing it up.
