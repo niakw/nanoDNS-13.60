@@ -1,5 +1,7 @@
 # DNS policy and exact security semantics
 
+
+**Language:** English (default) | [Français](DNS_POLICY.fr.md)
 ## Provenance
 
 The installable [`nanodns.ini`](../nanodns.ini) is sourced from [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist), its selective 124-rule v3 profile (updated 10 October 2026). The original resolver is [Drakmor/nanoDNS](https://github.com/drakmor/nanoDNS); its code remains GPL-3.0.
