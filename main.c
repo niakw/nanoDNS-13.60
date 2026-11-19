@@ -1833,7 +1833,7 @@ server_socket_needs_reopen(int err) {
 
 static int
 forward_query_to_upstream(const app_config_t *cfg, const uint8_t *request,
-                          size_t request_len, uint16_t request_id,
+                          size_t request_len, const dns_question_t *question,
                           int *upstream_fds,
                           uint8_t *response, size_t response_cap,
                           size_t *response_len, char *via, size_t via_len) {
@@ -1928,12 +1928,28 @@ forward_query_to_upstream(const app_config_t *cfg, const uint8_t *request,
                      cfg->upstreams[i].text, nread);
           close_upstream_socket(&upstream_fds[i]);
           break;
-        } else if(read_u16(response) != request_id) {
-          log_printf("[nanodns] upstream %s returned mismatched id 0x%04x\n",
-                     cfg->upstreams[i].text, read_u16(response));
-          close_upstream_socket(&upstream_fds[i]);
-          break;
         } else {
+          dns_question_t reply_question;
+          if(read_u16(response) != question->id ||
+             dns_parse_question(response, (size_t)nread, &reply_question) != 0 ||
+             (reply_question.flags & 0x8000) == 0 ||
+             (reply_question.flags & 0x7800) != 0 ||
+             reply_question.qdcount != 1 ||
+             reply_question.qtype != question->qtype ||
+             reply_question.qclass != question->qclass ||
+             strcmp(reply_question.qname, question->qname) != 0) {
+            log_printf("[nanodns] upstream %s returned unrelated DNS response\n",
+                       cfg->upstreams[i].text);
+            close_upstream_socket(&upstream_fds[i]);
+            break;
+          }
+          if(dns_response_has_blocked_target(response, (size_t)nread,
+                                             &reply_question)) {
+            log_printf("[nanodns] upstream %s returned protected alias; refusing\n",
+                       cfg->upstreams[i].text);
+            close_upstream_socket(&upstream_fds[i]);
+            break;
+          }
           *response_len = (size_t)nread;
           snprintf(via, via_len, "%s", cfg->upstreams[i].text);
           return 0;
@@ -2057,7 +2073,7 @@ handle_dns_request(const app_config_t *cfg, int server_fd, int *upstream_fds,
   {
     char via[INET_ADDRSTRLEN];
 
-    if(forward_query_to_upstream(cfg, request, request_len, question.id,
+    if(forward_query_to_upstream(cfg, request, request_len, &question,
                                  upstream_fds, response, sizeof(response),
                                  &response_len, via, sizeof(via)) == 0) {
       send_dns_response_to_client(server_fd, response, response_len,
