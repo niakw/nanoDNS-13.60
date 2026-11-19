@@ -132,32 +132,18 @@ static int g_debug_enabled = 1;
 static FILE *g_log_file = NULL;
 
 static const char *k_default_config =
-    "# " APP_NAME " configuration\n"
-    "#\n"
-    "# [general]\n"
-    "# log=<path>\n"
-    "# debug=0|1\n"
-    "# quiet=0|1\n"
-    "# bind=<IPv4>\n"
-    "# bind6=<IPv6>|off\n"
-    "# Use 0.0.0.0 to listen on all IPv4 interfaces\n"
-    "# Use :: to listen on all IPv6 interfaces\n"
-    "# Use off to disable the IPv6 listener\n"
-    "#\n"
-    "# [upstream]\n"
-    "# server=<IPv4>\n"
-    "# Servers are tried in order until one replies\n"
-    "# timeout_ms=<integer-total-budget>\n"
-    "#\n"
-    "# [overrides]\n"
-    "# <dns-mask>=<IPv4>\n"
-    "# Supports shell-style masks: *.example.com, api??.test.local, [ab]*.lab\n"
-    "#\n"
-    "# [exceptions]\n"
-    "# One hostname or mask per line; these bypass local overrides\n"
+    "# nanoDNS 13.60 baseline: https://github.com/niakw/nanodns-console-blocklist\n"
+    "# Original nanoDNS by Drakmor: https://github.com/drakmor/nanoDNS\n"
+    "# nanoDNS Console Blocklist — selective multi-console profile v3\n"
+    "# Updated: 2026-10-10 | Tested configuration: nanoDNS v0.4 on PS5 firmware 13.60\n"
+    "# Community-maintained best-effort DNS filtering; NOT a firewall.\n"
+    "# Installed path: /data/nanodns/nanodns.ini\n"
+    "# 124 DNS override rules; no exceptions. Does not block unrelated Internet by default.\n"
+    "# WARNING: brand-wide masks and the Akamai exact alias may cause collateral blocking.\n"
+    "# DNS traffic bypass, direct IP traffic and pre-payload traffic are OUT OF SCOPE.\n"
     "\n"
     "[general]\n"
-    "log=" DEFAULT_LOG_PATH "\n"
+    "log=/data/nanodns/nanodns.log\n"
     "debug=0\n"
     "quiet=0\n"
     "bind=127.0.0.1\n"
@@ -165,31 +151,287 @@ static const char *k_default_config =
     "\n"
     "[upstream]\n"
     "server=1.1.1.1\n"
-    "server=8.8.8.8\n"
-    "server=77.88.8.8\n"
+    "server=9.9.9.9\n"
     "timeout_ms=1500\n"
     "\n"
     "[overrides]\n"
-    "*.playstation.com=0.0.0.0\n"
-    "*.playstation.com.*=0.0.0.0\n"
-    "playstation.com=0.0.0.0\n"
-    "*.playstation.net=0.0.0.0\n"
-    "*.playstation.net.*=0.0.0.0\n"
-    "*.psndl.net=0.0.0.0\n"
-    "playstation.net=0.0.0.0\n"
-    "psndl.net=0.0.0.0\n"
-    "# *.example.com=192.168.0.10\n"
-    "# exact.host.local=10.0.0.42\n"
+    "# SONY / PLAYSTATION / SIE\n"
+    "*playstation*=0.0.0.0\n"
+    "*sony*=0.0.0.0\n"
+    "*psndl*=0.0.0.0\n"
+    "*gaikai*=0.0.0.0\n"
+    "*ribob01*=0.0.0.0\n"
+    "*psn-rsc*=0.0.0.0\n"
+    "*siedev*=0.0.0.0\n"
+    "*sie-rd*=0.0.0.0\n"
+    "*scei*=0.0.0.0\n"
+    "*scea*=0.0.0.0\n"
+    "sie.com=0.0.0.0\n"
+    "*.sie.com=0.0.0.0\n"
+    "# Exact historical PlayStation CDN alias on shared Akamai infrastructure.\n"
+    "a192.d.akamai.net=0.0.0.0\n"
+    "psn.akadns99.net=0.0.0.0\n"
+    "*.psn.akadns99.net=0.0.0.0\n"
+    "\n"
+    "# EPIC GAMES / FORTNITE / EASY ANTI-CHEAT\n"
+    "epicgames.com=0.0.0.0\n"
+    "*.epicgames.com=0.0.0.0\n"
+    "epicgames.dev=0.0.0.0\n"
+    "*.epicgames.dev=0.0.0.0\n"
+    "fortnite.com=0.0.0.0\n"
+    "*.fortnite.com=0.0.0.0\n"
+    "unrealengine.com=0.0.0.0\n"
+    "*.unrealengine.com=0.0.0.0\n"
+    "easyanticheat.net=0.0.0.0\n"
+    "*.easyanticheat.net=0.0.0.0\n"
+    "easy.ac=0.0.0.0\n"
+    "*.easy.ac=0.0.0.0\n"
+    "\n"
+    "# ROCKSTAR / TAKE-TWO / 2K\n"
+    "rsgameservices.com=0.0.0.0\n"
+    "*.rsgameservices.com=0.0.0.0\n"
+    "rockstargames.com=0.0.0.0\n"
+    "*.rockstargames.com=0.0.0.0\n"
+    "rockstarservices.com=0.0.0.0\n"
+    "*.rockstarservices.com=0.0.0.0\n"
+    "take2games.com=0.0.0.0\n"
+    "*.take2games.com=0.0.0.0\n"
+    "2k.com=0.0.0.0\n"
+    "*.2k.com=0.0.0.0\n"
+    "2kcoretech.online=0.0.0.0\n"
+    "*.2kcoretech.online=0.0.0.0\n"
+    "\n"
+    "# CD PROJEKT / GOG\n"
+    "gog.com=0.0.0.0\n"
+    "*.gog.com=0.0.0.0\n"
+    "gogcdn.net=0.0.0.0\n"
+    "*.gogcdn.net=0.0.0.0\n"
+    "gog-statics.com=0.0.0.0\n"
+    "*.gog-statics.com=0.0.0.0\n"
+    "gogalaxy.com=0.0.0.0\n"
+    "*.gogalaxy.com=0.0.0.0\n"
+    "cdpred.services=0.0.0.0\n"
+    "*.cdpred.services=0.0.0.0\n"
+    "cdprojekt.com=0.0.0.0\n"
+    "*.cdprojekt.com=0.0.0.0\n"
+    "cdprojektred.com=0.0.0.0\n"
+    "*.cdprojektred.com=0.0.0.0\n"
+    "cyberpunk.net=0.0.0.0\n"
+    "*.cyberpunk.net=0.0.0.0\n"
+    "\n"
+    "# NINTENDO (Wii / DS / 3DS / Wii U / Switch / Switch 2 branded endpoints)\n"
+    "*nintendo*=0.0.0.0\n"
+    "*nintendowifi*=0.0.0.0\n"
+    "wii.com=0.0.0.0\n"
+    "*.wii.com=0.0.0.0\n"
+    "\n"
+    "# EA / EA SPORTS / ORIGIN\n"
+    "ea.com=0.0.0.0\n"
+    "*.ea.com=0.0.0.0\n"
+    "ea.net=0.0.0.0\n"
+    "*.ea.net=0.0.0.0\n"
+    "easports.com=0.0.0.0\n"
+    "*.easports.com=0.0.0.0\n"
+    "easportsfc.com=0.0.0.0\n"
+    "*.easportsfc.com=0.0.0.0\n"
+    "eaplay.com=0.0.0.0\n"
+    "*.eaplay.com=0.0.0.0\n"
+    "origin.com=0.0.0.0\n"
+    "*.origin.com=0.0.0.0\n"
+    "\n"
+    "# UBISOFT\n"
+    "ubisoft.com=0.0.0.0\n"
+    "*.ubisoft.com=0.0.0.0\n"
+    "ubi.com=0.0.0.0\n"
+    "*.ubi.com=0.0.0.0\n"
+    "ubisoftconnect.com=0.0.0.0\n"
+    "*.ubisoftconnect.com=0.0.0.0\n"
+    "ubi-services.com=0.0.0.0\n"
+    "*.ubi-services.com=0.0.0.0\n"
+    "\n"
+    "# SEGA\n"
+    "sega.com=0.0.0.0\n"
+    "*.sega.com=0.0.0.0\n"
+    "sega.co.jp=0.0.0.0\n"
+    "*.sega.co.jp=0.0.0.0\n"
+    "\n"
+    "# XBOX (original / 360 / One / Series, including some legacy CDN aliases)\n"
+    "xbox.com=0.0.0.0\n"
+    "*.xbox.com=0.0.0.0\n"
+    "xboxlive.com=0.0.0.0\n"
+    "*.xboxlive.com=0.0.0.0\n"
+    "gamepass.com=0.0.0.0\n"
+    "*.gamepass.com=0.0.0.0\n"
+    "xboxservices.com=0.0.0.0\n"
+    "*.xboxservices.com=0.0.0.0\n"
+    "xboxlive.com.akadns.net=0.0.0.0\n"
+    "*.xboxlive.com.akadns.net=0.0.0.0\n"
+    "xboxlive.com.edgesuite.net=0.0.0.0\n"
+    "*.xboxlive.com.edgesuite.net=0.0.0.0\n"
+    "xboxlive.com.akamaized.net=0.0.0.0\n"
+    "*.xboxlive.com.akamaized.net=0.0.0.0\n"
+    "xboxlive.com.nsatc.net=0.0.0.0\n"
+    "*.xboxlive.com.nsatc.net=0.0.0.0\n"
+    "xboxlive.com-c.edgekey.net=0.0.0.0\n"
+    "*.xboxlive.com-c.edgekey.net=0.0.0.0\n"
+    "xboxlive.wns.windows.com=0.0.0.0\n"
+    "xboxlive.download.akamai.com=0.0.0.0\n"
+    "xcloud.dedicated.msn.com=0.0.0.0\n"
+    "xsvc.microsoft.com=0.0.0.0\n"
+    "*.xsvc.microsoft.com=0.0.0.0\n"
+    "xboxrc.com=0.0.0.0\n"
+    "*.xboxrc.com=0.0.0.0\n"
+    "xboxlive.ipv6.microsoft.com.akadns.net=0.0.0.0\n"
+    "xboxservices.com.akadns.net=0.0.0.0\n"
+    "*.xboxservices.com.akadns.net=0.0.0.0\n"
+    "xboxlive.com-c.edgekey.net.globalredir.akadns.net=0.0.0.0\n"
+    "\n"
+    "# OTHER GAME PUBLISHERS / PC PLATFORMS\n"
+    "steampowered.com=0.0.0.0\n"
+    "*.steampowered.com=0.0.0.0\n"
+    "steamcommunity.com=0.0.0.0\n"
+    "*.steamcommunity.com=0.0.0.0\n"
+    "valvesoftware.com=0.0.0.0\n"
+    "*.valvesoftware.com=0.0.0.0\n"
+    "capcom.com=0.0.0.0\n"
+    "*.capcom.com=0.0.0.0\n"
+    "square-enix.com=0.0.0.0\n"
+    "*.square-enix.com=0.0.0.0\n"
+    "bandainamcoent.com=0.0.0.0\n"
+    "*.bandainamcoent.com=0.0.0.0\n"
     "\n"
     "[exceptions]\n"
-    "feature.api.playstation.com\n"
-    "*.stun.playstation.net\n"
-    "stun.*.playstation.net\n"
-    "ena.net.playstation.net\n"
-    "post.net.playstation.net\n"
-    "gst.prod.dl.playstation.net\n"
-    "# auth.api.playstation.net\n"
-    "# *.allowed.playstation.net\n";
+    "# None. Add exceptions only after auditing their impact on your threat model.\n";
+
+/* Mandatory rules from nanodns-console-blocklist, checked before all
+ * user exceptions. tests/test_policy.py rejects drift from nanodns.ini. */
+static const char *const k_protected_masks[] = {
+    "*playstation*",
+    "*sony*",
+    "*psndl*",
+    "*gaikai*",
+    "*ribob01*",
+    "*psn-rsc*",
+    "*siedev*",
+    "*sie-rd*",
+    "*scei*",
+    "*scea*",
+    "sie.com",
+    "*.sie.com",
+    "a192.d.akamai.net",
+    "psn.akadns99.net",
+    "*.psn.akadns99.net",
+    "epicgames.com",
+    "*.epicgames.com",
+    "epicgames.dev",
+    "*.epicgames.dev",
+    "fortnite.com",
+    "*.fortnite.com",
+    "unrealengine.com",
+    "*.unrealengine.com",
+    "easyanticheat.net",
+    "*.easyanticheat.net",
+    "easy.ac",
+    "*.easy.ac",
+    "rsgameservices.com",
+    "*.rsgameservices.com",
+    "rockstargames.com",
+    "*.rockstargames.com",
+    "rockstarservices.com",
+    "*.rockstarservices.com",
+    "take2games.com",
+    "*.take2games.com",
+    "2k.com",
+    "*.2k.com",
+    "2kcoretech.online",
+    "*.2kcoretech.online",
+    "gog.com",
+    "*.gog.com",
+    "gogcdn.net",
+    "*.gogcdn.net",
+    "gog-statics.com",
+    "*.gog-statics.com",
+    "gogalaxy.com",
+    "*.gogalaxy.com",
+    "cdpred.services",
+    "*.cdpred.services",
+    "cdprojekt.com",
+    "*.cdprojekt.com",
+    "cdprojektred.com",
+    "*.cdprojektred.com",
+    "cyberpunk.net",
+    "*.cyberpunk.net",
+    "*nintendo*",
+    "*nintendowifi*",
+    "wii.com",
+    "*.wii.com",
+    "ea.com",
+    "*.ea.com",
+    "ea.net",
+    "*.ea.net",
+    "easports.com",
+    "*.easports.com",
+    "easportsfc.com",
+    "*.easportsfc.com",
+    "eaplay.com",
+    "*.eaplay.com",
+    "origin.com",
+    "*.origin.com",
+    "ubisoft.com",
+    "*.ubisoft.com",
+    "ubi.com",
+    "*.ubi.com",
+    "ubisoftconnect.com",
+    "*.ubisoftconnect.com",
+    "ubi-services.com",
+    "*.ubi-services.com",
+    "sega.com",
+    "*.sega.com",
+    "sega.co.jp",
+    "*.sega.co.jp",
+    "xbox.com",
+    "*.xbox.com",
+    "xboxlive.com",
+    "*.xboxlive.com",
+    "gamepass.com",
+    "*.gamepass.com",
+    "xboxservices.com",
+    "*.xboxservices.com",
+    "xboxlive.com.akadns.net",
+    "*.xboxlive.com.akadns.net",
+    "xboxlive.com.edgesuite.net",
+    "*.xboxlive.com.edgesuite.net",
+    "xboxlive.com.akamaized.net",
+    "*.xboxlive.com.akamaized.net",
+    "xboxlive.com.nsatc.net",
+    "*.xboxlive.com.nsatc.net",
+    "xboxlive.com-c.edgekey.net",
+    "*.xboxlive.com-c.edgekey.net",
+    "xboxlive.wns.windows.com",
+    "xboxlive.download.akamai.com",
+    "xcloud.dedicated.msn.com",
+    "xsvc.microsoft.com",
+    "*.xsvc.microsoft.com",
+    "xboxrc.com",
+    "*.xboxrc.com",
+    "xboxlive.ipv6.microsoft.com.akadns.net",
+    "xboxservices.com.akadns.net",
+    "*.xboxservices.com.akadns.net",
+    "xboxlive.com-c.edgekey.net.globalredir.akadns.net",
+    "steampowered.com",
+    "*.steampowered.com",
+    "steamcommunity.com",
+    "*.steamcommunity.com",
+    "valvesoftware.com",
+    "*.valvesoftware.com",
+    "capcom.com",
+    "*.capcom.com",
+    "square-enix.com",
+    "*.square-enix.com",
+    "bandainamcoent.com",
+    "*.bandainamcoent.com",
+};
+#define PROTECTED_RULE_COUNT (sizeof(k_protected_masks) / sizeof(k_protected_masks[0]))
 
 static void
 log_emit_direct(const char *buf, int to_debug) {
@@ -499,6 +741,9 @@ static int
 config_add_rule(app_config_t *cfg, const char *mask, const char *ip) {
   override_rule_t *rule;
 
+  if(strlen(mask) >= sizeof(cfg->rules[0].mask)) {
+    return -3;
+  }
   if(cfg->rule_count >= MAX_RULES) {
     return -1;
   }
@@ -529,54 +774,23 @@ config_add_exception(app_config_t *cfg, const char *mask) {
   ++cfg->exception_count;
 }
 
-static void
-config_apply_builtin_exceptions(app_config_t *cfg) {
-  cfg->exception_count = 0;
-  config_add_exception(cfg, "feature.api.playstation.com");
-  config_add_exception(cfg, "*.stun.playstation.net");
-  config_add_exception(cfg, "stun.*.playstation.net");
-  config_add_exception(cfg, "ena.net.playstation.net");
-  config_add_exception(cfg, "post.net.playstation.net");
-  config_add_exception(cfg, "gst.prod.dl.playstation.net");
-}
+/* No built-in exceptions: protected domains must never be forwarded. */
 
 static void
 config_apply_builtin_upstreams(app_config_t *cfg) {
   cfg->upstream_count = 0;
   (void)config_add_upstream(cfg, "1.1.1.1");
-  (void)config_add_upstream(cfg, "8.8.8.8");
-  (void)config_add_upstream(cfg, "77.88.8.8");
+  (void)config_add_upstream(cfg, "9.9.9.9");
 }
 
 static int
 config_apply_builtin_overrides(app_config_t *cfg) {
   cfg->rule_count = 0;
-
-  if(config_add_rule(cfg, "*.playstation.com", "0.0.0.0") != 0) {
-    return -1;
+  for(size_t i = 0; i < PROTECTED_RULE_COUNT; ++i) {
+    if(config_add_rule(cfg, k_protected_masks[i], "0.0.0.0") != 0) {
+      return -1;
+    }
   }
-  if(config_add_rule(cfg, "*.playstation.com.*", "0.0.0.0") != 0) {
-    return -1;
-  }
-  if(config_add_rule(cfg, "playstation.com", "0.0.0.0") != 0) {
-    return -1;
-  }
-  if(config_add_rule(cfg, "*.playstation.net", "0.0.0.0") != 0) {
-    return -1;
-  }
-  if(config_add_rule(cfg, "*.playstation.net.*", "0.0.0.0") != 0) {
-    return -1;
-  }
-  if(config_add_rule(cfg, "*.psndl.net", "0.0.0.0") != 0) {
-    return -1;
-  }
-  if(config_add_rule(cfg, "playstation.net", "0.0.0.0") != 0) {
-    return -1;
-  }
-  if(config_add_rule(cfg, "psndl.net", "0.0.0.0") != 0) {
-    return -1;
-  }
-
   return 0;
 }
 
@@ -660,6 +874,13 @@ load_config(const char *path, app_config_t *cfg) {
     struct in_addr addr;
 
     ++line_no;
+
+    /* Reject truncated lines instead of accepting a shortened block mask. */
+    size_t line_length = strlen(line);
+    if(line_length == sizeof(line) - 1 && line[line_length - 1] != '\n') {
+      fclose(fp);
+      return -1;
+    }
 
     s = trim(line);
 
@@ -815,7 +1036,13 @@ load_config(const char *path, app_config_t *cfg) {
     }
   }
 
-  fclose(fp);
+  if(ferror(fp)) {
+    fclose(fp);
+    return -1;
+  }
+  if(fclose(fp) != 0) {
+    return -1;
+  }
 
   if(cfg->upstream_count == 0) {
     config_apply_builtin_upstreams(cfg);
@@ -1122,6 +1349,18 @@ domain_mask_match(const char *mask, const char *domain) {
   }
 
   return *domain == '\0';
+}
+
+/* Policy invariant: an exception in a user-supplied INI cannot weaken
+ * the published protection baseline or allow a blocked query upstream. */
+static int
+protected_domain_match(const char *domain) {
+  for(size_t i = 0; i < PROTECTED_RULE_COUNT; ++i) {
+    if(domain_mask_match(k_protected_masks[i], domain)) {
+      return 1;
+    }
+  }
+  return 0;
 }
 
 static const override_rule_t *
@@ -1694,11 +1933,32 @@ handle_dns_request(const app_config_t *cfg, int server_fd, int *upstream_fds,
 
   log_dns_query(&question, client_addr);
 
-  if(question.qdcount == 1 && question.qclass == 1) {
-    const override_rule_t *rule = NULL;
+  /* One class-IN question is all this resolver understands. Never relay
+   * additional/unsupported questions without evaluating the denylist. */
+  if(question.qdcount != 1 || question.qclass != 1) {
+    uint16_t rcode = question.qdcount != 1 ? 1 : 5;
+    if(build_error_response(request, request_len, &question, rcode, response,
+                            sizeof(response), &response_len) == 0) {
+      send_dns_response_to_client(server_fd, response, response_len,
+                                  client_addr, client_len, "unsupported-query",
+                                  "sendto(client, unsupported-query)");
+    }
+    return;
+  }
 
-    if(has_matching_exception(cfg, question.qname)) {
-      log_printf("[nanodns] exception matched, bypassing override for %s\n",
+  {
+    const override_rule_t *rule = NULL;
+    override_rule_t mandatory_deny_rule;
+
+    if(protected_domain_match(question.qname)) {
+      memset(&mandatory_deny_rule, 0, sizeof(mandatory_deny_rule));
+      snprintf(mandatory_deny_rule.mask, sizeof(mandatory_deny_rule.mask),
+               "%s", "mandatory-console-blocklist");
+      snprintf(mandatory_deny_rule.text, sizeof(mandatory_deny_rule.text),
+               "%s", "0.0.0.0");
+      rule = &mandatory_deny_rule;
+    } else if(has_matching_exception(cfg, question.qname)) {
+      log_printf("[nanodns] exception matched for unprotected %s\n",
                  question.qname);
     } else {
       rule = find_matching_rule(cfg, question.qname);
@@ -1890,7 +2150,6 @@ main(void) {
     config_set_defaults(&cfg);
     config_apply_builtin_upstreams(&cfg);
     (void)config_apply_builtin_overrides(&cfg);
-    config_apply_builtin_exceptions(&cfg);
   } else {
     config_loaded = 1;
   }
