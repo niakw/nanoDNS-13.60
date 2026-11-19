@@ -16,17 +16,17 @@
 
 ## Release 0.4-13.60.2 — maintenance de sécurité
 
-**Derniers ELF et ZIP : `0.4-13.60.2`, reconstruits avec la correction de création atomique de l'INI. Ce nouveau binaire n'est pas encore validé par test utilisateur.** Le binaire **0.4-13.60.1** (ancienne [Release](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)) est celui dont le bon fonctionnement a été observé sur console firmware 13.60. Ne pas transférer automatiquement cette validation à la nouvelle version ni aux autres firmwares.
+**Derniers ELF et ZIP : `0.4-13.60.2`, TEST UTILISATEUR RÉUSSI sur firmware 13.60 pour le démarrage, le chargement des paramètres et le filtrage A.** Le journal confirme 5/5 requêtes A bloquées avec `0.0.0.0`, 124 règles, aucune exception et les écoutes IPv4/IPv6. Extinction/rallumage, veille/reprise, DNS autorisé et AAAA restent non testés sur ce binaire. Le test positif d'extinction/rallumage concerne **0.4-13.60.1** ([ancienne Release](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)). Les autres firmwares restent non validés.
 
 ## Validation matérielle — 19 novembre 2026
 
 | Cible | État des tests utilisateurs | Périmètre |
 | --- | --- | --- |
-| Console de génération actuelle, firmware **13.60** | **0.4-13.60.1 TESTÉ ; 0.4-13.60.2 À RETESTER** | Le binaire précédent a démarré, bloqué les requêtes A et permis une extinction/rallumage sans anomalie. Le nouvel ELF nécessite un test console distinct |
+| Console de génération actuelle, firmware **13.60** | **0.4-13.60.1 TESTÉ ; 0.4-13.60.2 TESTÉ — démarrage et filtrage A** | Le binaire précédent a démarré, bloqué les requêtes A et permis une extinction/rallumage sans anomalie. Le nouvel ELF a bloqué 5/5 requêtes A sur console 13.60 ; son extinction/rallumage reste à tester |
 | Même génération, **autres firmwares** | **NON VALIDÉ PAR UN UTILISATEUR** | La compilation SDK et les tests automatiques ne sont pas des tests sur console |
 | Binaire pour console de génération précédente, **tous firmwares** | **NON VALIDÉ PAR UN UTILISATEUR** | Compilation SDK réussie, mais aucun retour matériel |
 
-Les deux journaux transmis pour 13.60 montrent **23 requêtes A bloquées**, **124 règles**, **0 exception**, les deux écoutes locales et la configuration Quad9. Cela **ne démontre pas** les résolutions autorisées via les DNS amont, les requêtes AAAA, l'absence globale de fuite, la veille/reprise, la stabilité prolongée ni un callback système d'extinction. L'arrêt et le rallumage corrects sont attestés par le retour utilisateur, pas par une trace `shutdown: complete` dans ces journaux.
+Les deux journaux transmis pour **0.4-13.60.1** montrent **23 requêtes A bloquées**, **124 règles**, **0 exception**, les deux écoutes locales et la configuration Quad9. Cela **ne démontre pas** les résolutions autorisées via les DNS amont, les requêtes AAAA, l'absence globale de fuite, la veille/reprise, la stabilité prolongée ni un callback système d'extinction. L'arrêt et le rallumage corrects sont attestés par le retour utilisateur, pas par une trace `shutdown: complete` dans ces journaux.
 
 **Aucune validation sur 13.60 ne doit être étendue aux autres firmwares ou matériels sans tests utilisateurs réels.** Publication en **Release GitHub standard**, avec tests utilisateurs positifs sur 13.60 uniquement ; le reste de la matrice matérielle n'est pas encore couvert. Voir le [plan de tests](docs/TEST_PLAN.fr.md).
 

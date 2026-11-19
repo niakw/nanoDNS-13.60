@@ -2,7 +2,7 @@
 
 
 **Language:** English (default) | [Français](CHANGELOG.fr.md)
-## 0.4-13.60.2 — standard GitHub Release, hardware retest pending (2026-11-19)
+## 0.4-13.60.2 — standard GitHub Release, basic firmware 13.60 user test passed (2026-11-19)
 
 - Avoid a time-of-check/time-of-use race when generating the default `nanodns.ini`: create with `O_CREAT | O_EXCL | O_NOFOLLOW` and restrictive initial file permissions, without overwriting an existing configuration.
 - Open an existing INI using a no-symlink file descriptor and require a regular file; retain fallback mandatory rules if the INI cannot safely be loaded.
@@ -10,7 +10,7 @@
 - Replace the invalid Dependabot placeholder with weekly GitHub Actions dependency checks.
 - Add complete English and French contribution, accessibility, code-of-conduct and issue-reporting guides, with real project paths and privacy reminders.
 
-**Validation boundary:** this 0.4-13.60.2 Release contains **newly built binaries** with the security changes and merged CI PRs, but is **not yet retested on physical hardware**. The previously installed 0.4-13.60.1 release passed one 13.60 console test. Other firmware and the secondary console build remain not user-validated.
+**Validation boundary:** this 0.4-13.60.2 Release contains **newly built binaries** with the security changes and merged CI PRs, and **passed a firmware 13.60 user test for startup and 5/5 mandatory blocked A DNS queries**, with 124 rules, 0 exceptions and IPv4/IPv6 listeners. Shutdown/power-on, rest/resume, AAAA and permitted Quad9 resolution remain unverified on 0.4-13.60.2. The previous 0.4-13.60.1 release passed a separate console shutdown/power-on trial. Other firmware and the secondary console build remain not user-validated.
 
 ## 0.4-13.60.1 — standard GitHub Release; 13.60 basic user test passed (2026-11-19)
 

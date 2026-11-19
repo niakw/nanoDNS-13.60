@@ -1,6 +1,6 @@
 # Installation sécurisée — console firmware 13.60
 
-**Dernière Release 0.4-13.60.2 :** ELF et ZIP recompilés avec le correctif de sécurité de création atomique du fichier de configuration. **Ce nouveau binaire attend un test utilisateur sur console.** Le binaire précédent 0.4-13.60.1 a fait l'objet d'un test positif sur firmware 13.60 ; ce résultat n'est pas automatiquement valable pour la mise à jour.
+**Dernière Release 0.4-13.60.2 :** ELF et ZIP recompilés avec le correctif de sécurité de création atomique du fichier de configuration. **Test utilisateur réussi sur 13.60 pour le démarrage et 5/5 requêtes A bloquées ; arrêt/rallumage, AAAA et résolutions autorisées restent à vérifier pour cette version.** Le binaire précédent 0.4-13.60.1 a fait l'objet d'un test positif sur firmware 13.60 ; le résultat d'extinction de cette ancienne version ne vaut pas validation de l'arrêt de la mise à jour.
 
 **Langues :** [English (default)](INSTALL.md) | Français
 

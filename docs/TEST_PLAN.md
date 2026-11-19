@@ -4,9 +4,16 @@
 
 **Status: standard GitHub Release; one positive firmware 13.60 user test, with further validation pending.** Source tests and SDK builds alone cannot establish that console shutdown, controller power-on or standby are fixed.
 
-## New release 0.4-13.60.2 — test still required
+## Release 0.4-13.60.2 — user hardware test (19 November 2026)
 
-The new ELF includes an atomic INI creation/security change and newer CI actions. It needs a new real-user firmware 13.60 test; compilation and previous successful user logs do not qualify the newly built binary. The verified user logs and normal shutdown/power-on report below belong **only to 0.4-13.60.1**. Other firmware and the secondary console build remain not user-validated.
+**USER-TESTED: startup and mandatory A-query DNS blocking PASSED on console firmware 13.60.** The submitted log identifies `NanoDNS v0.4-13.60.2`, built Nov 19 2026 15:34:13.
+
+- The daemon loaded **124 rules**, **0 exceptions**, **2 configured upstreams** (`9.9.9.9` and `149.112.112.112`), timeout **1500 ms**.
+- It opened both listeners: `127.0.0.1:53` and `[::1]:53`.
+- **5/5 observed A queries** were answered locally with `0.0.0.0` under `mandatory-console-blocklist`. The four distinct names were `ps5.np.playstation.net` (twice), `telemetry-console.api.playstation.com`, `smetrics.aem.playstation.com` and `envelope2.np.dl.playstation.net`.
+- No error appears in the provided excerpt. It does **not** contain a shutdown log or a separate user power-cycle result. Configured Quad9 addresses do **not** establish successful allowed upstream resolution; AAAA and missing-INI generation were not exercised by this log.
+
+**Further tests pending for 0.4-13.60.2:** shutdown/power-on, controller wake, rest/resume, AAAA, permitted Quad9 lookups, repeatability and long-term stability. The successful shutdown/power-on report below belongs to **0.4-13.60.1 only**. Other firmware and the secondary console build remain **NOT USER-VALIDATED**.
 
 ## Hardware test record — 19 November 2026 (0.4-13.60.1 only)
 

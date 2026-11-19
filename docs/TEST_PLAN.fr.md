@@ -4,9 +4,16 @@
 
 **Statut : Release GitHub standard ; premier test utilisateur positif sur firmware 13.60, autres vérifications en attente.** Un build seul ne prouve ni une extinction correcte, ni un réveil à la manette, ni une reprise de veille fiable.
 
-## Nouvelle Release 0.4-13.60.2 — test utilisateur nécessaire
+## Release 0.4-13.60.2 — test utilisateur du 19 novembre 2026
 
-Le nouvel ELF contient le correctif de sécurité de création atomique de l'INI et les nouvelles versions des GitHub Actions. Il nécessite **un nouveau test réel sur console firmware 13.60** : la compilation et les journaux de l'ancien binaire ne valident pas celui-ci. Le test d'extinction/rallumage positif ci-dessous concerne **uniquement 0.4-13.60.1**. Les autres firmwares et le binaire pour l'autre génération restent non validés.
+**TEST UTILISATEUR RÉUSSI pour le démarrage et le filtrage DNS A obligatoire sur firmware 13.60.** Journal `NanoDNS v0.4-13.60.2`, compilation du 19 novembre 2026 à 15:34:13.
+
+- Chargement de **124 règles**, **0 exception**, **2 DNS amont configurés** (`9.9.9.9` et `149.112.112.112`), délai de **1 500 ms**.
+- Écoutes locales IPv4 `127.0.0.1:53` et IPv6 `[::1]:53` établies.
+- **5/5 requêtes A observées** bloquées localement avec `0.0.0.0` par `mandatory-console-blocklist` : `ps5.np.playstation.net` (deux fois), `telemetry-console.api.playstation.com`, `smetrics.aem.playstation.com` et `envelope2.np.dl.playstation.net`.
+- Aucune erreur visible dans cet extrait. Ni trace d'extinction ni retour utilisateur spécifique d'arrêt/rallumage sur ce nouveau binaire. Quad9 est **configuré**, mais la résolution autorisée effective n'est pas démontrée. Aucun test AAAA ni création d'INI absent dans ce journal.
+
+**Encore à vérifier pour 0.4-13.60.2 :** extinction/rallumage, réveil manette, veille/reprise, AAAA, DNS autorisé vers Quad9, répétitions et stabilité prolongée. La réussite d'extinction précédente concerne **0.4-13.60.1 uniquement**. Autres firmwares et binaire secondaire : **NON VALIDÉS PAR TEST UTILISATEUR**.
 
 ## Compte rendu de test sur console — 19 novembre 2026 (0.4-13.60.1 uniquement)
 

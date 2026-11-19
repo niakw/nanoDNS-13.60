@@ -4,7 +4,7 @@
 
 ## Versions et validation
 
-**0.4-13.60.2 contient un correctif de sécurité supplémentaire et attend un nouvel essai sur console.** Les logs et le résultat d'extinction/rallumage concernent uniquement **0.4-13.60.1**. Aucun autre firmware n'est validé par l'utilisateur.
+**0.4-13.60.2 : TEST UTILISATEUR RÉUSSI sur firmware 13.60 pour le démarrage et 5/5 requêtes A bloquées localement.** L'arrêt/rallumage et la veille ne sont pas documentés pour ce nouvel ELF ; le test positif d'extinction antérieur concerne uniquement **0.4-13.60.1**. Aucun autre firmware n'est validé par l'utilisateur.
 
 ## Vérification utilisateur sur firmware 13.60 (19 novembre 2026, 0.4-13.60.1)
 
