@@ -14,25 +14,22 @@
 #include <strings.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/sysctl.h>
 #include <sys/time.h>
+#include <time.h>
 #include <unistd.h>
 
 #if defined(PLATFORM_PS4)
 #include <ps4/kernel.h>
 #include <ps4/klog.h>
-#define PAYLOAD_EXEC_NAME "nanodns-ps4.elf"
 #elif defined(PLATFORM_PS5)
 #include <ps5/kernel.h>
 #include <ps5/klog.h>
-#define PAYLOAD_EXEC_NAME "nanodns.elf"
 #else
 #error "Define PLATFORM_PS4 or PLATFORM_PS5"
 #endif
 
 #define APP_NAME "NanoDNS"
-#define APP_VERSION "0.4"
+#define APP_VERSION "0.4-13.60.1"
 #define APP_COPYRIGHT "(c) Drakmor"
 #define DATA_DIR "/data/nanodns"
 #define CONFIG_PATH DATA_DIR "/nanodns.ini"
@@ -50,8 +47,6 @@
 #define LISTENER_RETRY_MS 1000
 #define OVERRIDE_TTL 60
 #define PRIVILEGED_AUTHID 0x4801000000000013L
-#define KI_PID_OFFSET 72
-#define KI_TDNAME_OFFSET 447
 
 enum {
   SERVER_LISTENER_IPV4 = 0,
@@ -585,63 +580,6 @@ config_apply_builtin_overrides(app_config_t *cfg) {
   return 0;
 }
 
-#if defined(PLATFORM_PS5)
-static int
-find_pid(const char *name) {
-  int mib[4] = {1, 14, 8, 0};
-  pid_t mypid = getpid();
-  pid_t pid = -1;
-  size_t buf_size;
-  uint8_t *buf;
-
-  if(sysctl(mib, 4, NULL, &buf_size, NULL, 0) != 0) {
-    return -1;
-  }
-
-  buf = malloc(buf_size);
-  if(buf == NULL) {
-    return -1;
-  }
-
-  if(sysctl(mib, 4, buf, &buf_size, NULL, 0) != 0) {
-    free(buf);
-    return -1;
-  }
-
-  for(uint8_t *ptr = buf; ptr < (buf + buf_size);) {
-    int ki_structsize = *(int *)ptr;
-    pid_t ki_pid = *(pid_t *)&ptr[KI_PID_OFFSET];
-    char *ki_tdname = (char *)&ptr[KI_TDNAME_OFFSET];
-
-    ptr += ki_structsize;
-    if(!strcmp(name, ki_tdname) && ki_pid != mypid) {
-      pid = ki_pid;
-    }
-  }
-
-  free(buf);
-  return pid;
-}
-
-static int
-terminate_existing_instances(const char *name) {
-  pid_t pid;
-
-  while((pid = find_pid(name)) > 0) {
-    log_printf("[nanodns] terminating previous instance pid=%d name=%s\n", pid,
-               name);
-    if(kill(pid, SIGKILL) != 0) {
-      log_errno("kill(previous instance)");
-      return -1;
-    }
-
-    sleep(1);
-  }
-
-  return 0;
-}
-#endif
-
 static int
 ensure_runtime_dir_exists(const char *path) {
   struct stat st;
@@ -954,12 +892,17 @@ elevate_privileges(void) {
 
 static int64_t
 now_ms(void) {
+  /* Wall-clock adjustments during rest/resume must not extend DNS timeouts. */
+#ifdef CLOCK_MONOTONIC
+  struct timespec ts;
+  if(clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
+    return (int64_t)ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+  }
+#endif
   struct timeval tv;
-
   if(gettimeofday(&tv, NULL) != 0) {
     return 0;
   }
-
   return (int64_t)tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
@@ -1477,7 +1420,6 @@ static int
 open_server_socket4(const app_config_t *cfg) {
   struct sockaddr_in listen_addr;
   int fd;
-  int reuse = 1;
 
   fd = socket(AF_INET, SOCK_DGRAM, 0);
   if(fd < 0) {
@@ -1485,10 +1427,8 @@ open_server_socket4(const app_config_t *cfg) {
     return -1;
   }
 
-  if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) != 0) {
-    log_errno("setsockopt(SO_REUSEADDR)");
-  }
-
+  /* Exclusive UDP port ownership: never share DNS port 53 with another
+   * nanoDNS instance. A duplicate load must fail instead of stealing queries. */
   memset(&listen_addr, 0, sizeof(listen_addr));
   listen_addr.sin_family = AF_INET;
   listen_addr.sin_port = htons(DNS_PORT);
@@ -1508,7 +1448,6 @@ static int
 open_server_socket6(const app_config_t *cfg) {
   struct sockaddr_in6 listen_addr;
   int fd;
-  int reuse = 1;
 
   if(!cfg->bind6_enabled) {
     return -1;
@@ -1521,13 +1460,9 @@ open_server_socket6(const app_config_t *cfg) {
     return -1;
   }
 
-  if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) != 0) {
-    log_printf("[nanodns] warning: setsockopt(SO_REUSEADDR, ipv6): %s\n",
-               strerror(errno));
-  }
-
 #ifdef IPV6_V6ONLY
-  if(setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &reuse, sizeof(reuse)) != 0) {
+  int v6only = 1;
+  if(setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &v6only, sizeof(v6only)) != 0) {
     log_printf("[nanodns] warning: setsockopt(IPV6_V6ONLY): %s\n",
                strerror(errno));
   }
@@ -1575,7 +1510,8 @@ drain_upstream_socket(int fd) {
   pfd.fd = fd;
   pfd.events = POLLIN;
 
-  while(true) {
+  /* A continuous stream of stale packets must not stall shutdown. */
+  for(size_t drained = 0; drained < 64 && g_running; ++drained) {
     ssize_t nread;
 
     pfd.revents = 0;
@@ -1592,6 +1528,7 @@ drain_upstream_socket(int fd) {
       return -1;
     }
   }
+  return g_running ? 0 : -1;
 }
 
 static int
@@ -1616,7 +1553,7 @@ forward_query_to_upstream(const app_config_t *cfg, const uint8_t *request,
 
   deadline_ms = now_ms() + cfg->timeout_ms;
 
-  for(size_t i = 0; i < cfg->upstream_count; ++i) {
+  for(size_t i = 0; i < cfg->upstream_count && g_running; ++i) {
     struct pollfd pfd;
     int fd;
     int poll_rc;
@@ -1632,6 +1569,9 @@ forward_query_to_upstream(const app_config_t *cfg, const uint8_t *request,
     }
 
     if(drain_upstream_socket(fd) != 0) {
+      if(!g_running) {
+        return -1;
+      }
       log_printf("[nanodns] upstream %s drain failed, reconnecting\n",
                  cfg->upstreams[i].text);
       close_upstream_socket(&upstream_fds[i]);
@@ -1643,6 +1583,9 @@ forward_query_to_upstream(const app_config_t *cfg, const uint8_t *request,
       upstream_fds[i] = fd;
     }
 
+    if(!g_running) {
+      return -1;
+    }
     if(send(fd, request, request_len, 0) < 0) {
       log_printf("[nanodns] upstream %s send failed: %s\n",
                  cfg->upstreams[i].text, strerror(errno));
@@ -1654,7 +1597,7 @@ forward_query_to_upstream(const app_config_t *cfg, const uint8_t *request,
     pfd.events = POLLIN;
     pfd.revents = 0;
 
-    while(true) {
+    while(g_running) {
       int64_t timeout_ms = deadline_ms - now_ms();
 
       if(timeout_ms <= 0) {
@@ -1673,6 +1616,9 @@ forward_query_to_upstream(const app_config_t *cfg, const uint8_t *request,
 
       if(poll_rc < 0) {
         if(errno == EINTR) {
+          if(!g_running) {
+            return -1;
+          }
           continue;
         }
 
@@ -1810,6 +1756,9 @@ handle_dns_request(const app_config_t *cfg, int server_fd, int *upstream_fds,
     }
   }
 
+  if(!g_running) {
+    return;
+  }
   log_printf("[nanodns] all upstreams failed for %s\n", question.qname);
   if(build_error_response(request, request_len, &question, 2, response,
                           sizeof(response), &response_len) == 0) {
@@ -1924,10 +1873,6 @@ main(void) {
   init_server_listener(&listeners[SERVER_LISTENER_IPV6], AF_INET6, "IPv6",
                        false);
 
-#if defined(PLATFORM_PS5)
-  (void)syscall(SYS_thr_set_name, -1, PAYLOAD_EXEC_NAME);
-#endif
-
   signal(SIGINT, on_signal);
   signal(SIGTERM, on_signal);
 
@@ -2006,14 +1951,9 @@ main(void) {
     log_printf("[nanodns] exception[%zu] = %s\n", i, cfg.exceptions[i].mask);
   }
 
-#if defined(PLATFORM_PS5)
-  if(terminate_existing_instances(PAYLOAD_EXEC_NAME) != 0) {
-    close_upstream_sockets(upstream_fds, MAX_UPSTREAMS);
-    logger_fini();
-    return EXIT_FAILURE;
-  }
-#endif
-
+  /* Never SIGKILL existing instances: bypassing their socket/NetPool
+   * cleanup can leave the platform in an inconsistent shutdown state.
+   * A second instance will fail to bind the already occupied DNS port. */
   if(elevate_privileges() != 0) {
     close_upstream_sockets(upstream_fds, MAX_UPSTREAMS);
     logger_fini();
@@ -2030,12 +1970,18 @@ main(void) {
     (void)open_server_listener(&cfg, &listeners[i]);
   }
 
-  if(listeners[SERVER_LISTENER_IPV4].fd < 0 &&
-     listeners[SERVER_LISTENER_IPV6].fd < 0) {
+  /* IPv6 alone does not protect an IPv4-configured console.  Most
+   * importantly, never run half-active beside an old IPv4 nanoDNS. */
+  if(listeners[SERVER_LISTENER_IPV4].fd < 0) {
+    log_printf("[nanodns] startup aborted: IPv4 DNS port unavailable "
+               "(duplicate payload or invalid bind address)\n");
+    for(size_t i = 0; i < SERVER_LISTENER_COUNT; ++i) {
+      invalidate_server_listener(&listeners[i]);
+    }
     close_upstream_sockets(upstream_fds, MAX_UPSTREAMS);
     net_fini();
     logger_fini();
-    return 1;
+    return EXIT_FAILURE;
   }
 
   for(size_t i = 0; i < SERVER_LISTENER_COUNT; ++i) {
@@ -2109,18 +2055,21 @@ main(void) {
       continue;
     }
 
-    for(nfds_t i = 0; i < poll_count; ++i) {
+    for(nfds_t i = 0; i < poll_count && g_running; ++i) {
       handle_server_listener_event(&cfg, &listeners[poll_listener_index[i]],
                                    upstream_fds, pfds[i].revents);
     }
   }
 
-  log_printf("[nanodns] shutting down\n");
+  log_printf("[nanodns] shutdown: closing local listeners\n");
   for(size_t i = 0; i < SERVER_LISTENER_COUNT; ++i) {
     invalidate_server_listener(&listeners[i]);
   }
+  log_printf("[nanodns] shutdown: closing upstream sockets\n");
   close_upstream_sockets(upstream_fds, MAX_UPSTREAMS);
+  log_printf("[nanodns] shutdown: releasing SceNet pool\n");
   net_fini();
+  log_printf("[nanodns] shutdown: complete\n");
   logger_fini();
   return 0;
 }
