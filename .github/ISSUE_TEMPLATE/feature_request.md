@@ -1,20 +1,27 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
+name: Feature request / Proposition
+about: Suggest a focused nanoDNS improvement (English or French)
+title: "[Feature] "
+labels: []
+assignees: []
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Problem to solve / Problème
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+Describe the practical limitation and who encounters it. / Décris le besoin réel.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## Proposed behavior / Comportement attendu
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+What should change, and how would you verify success?
+
+## Alternatives and compatibility / Alternatives et compatibilité
+
+Explain other solutions considered and whether this affects existing configuration, migration, logs, startup, power-off, network access, or the two-file ZIP.
+
+## Security and validation / Sécurité et validation
+
+What could break? Which firmware and hardware have actually been tested, if any? Do not infer hardware validation from a successful build. Remember that nanoDNS is a DNS filter, **not a firewall**.
+
+## Additional context / Compléments
+
+Links, sanitized examples and screenshots are optional. Do not include personal network or console identifiers. Contributions are welcome in English or French; see [CONTRIBUTING.md](../../CONTRIBUTING.md).

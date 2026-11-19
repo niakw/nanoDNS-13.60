@@ -1,38 +1,48 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+name: Bug report / Signalement de bug
+about: Report a reproducible nanoDNS problem (English or French)
+title: "[Bug] "
+labels: []
+assignees: []
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Summary / Résumé
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+Describe what failed and why it matters. / Décris l'anomalie constatée.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Environment / Environnement
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+- Console generation / Génération :
+- **Firmware version / Version du firmware :**
+- nanoDNS version and release / Version :
+- Payload Manager version or loader / Gestionnaire :
+- Installation: release ZIP or local import / Installation :
+- Other active payloads relevant to reproduction / Autres payloads utiles :
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Hardware status:** firmware 13.60 has one successful user test for basic operation. Other firmware and the secondary console build have **no confirmed user validation**.
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+## Steps to reproduce / Reproduction
 
-**Additional context**
-Add any other context about the problem here.
+1. ...
+2. ...
+3. ...
+
+## Expected result / Attendu
+
+...
+
+## Actual result / Observé
+
+...
+
+## Tests already performed / Tests effectués
+
+- [ ] One nanoDNS instance only / Une seule instance
+- [ ] Both console DNS settings are `127.0.0.1` / DNS console
+- [ ] Saved previous ELF and INI / Sauvegardes conservées
+- [ ] Checked latest log for errors / Journaux consultés
+- [ ] Tested normal restart and power-on / Redémarrage et rallumage
+
+## Evidence / Preuves
+
+Include **sanitized** logs, error messages and safe reproduction details. Screenshots optional. **Never publish** account/console identifiers, personal IPs, full unredacted DNS logs, secrets or exploit details. Security vulnerabilities belong in the [security policy](../../SECURITY.md) process.

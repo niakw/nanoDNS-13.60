@@ -1,95 +1,31 @@
-# Accessibility 
+# Accessibility and inclusive contribution
 
-<!--
-Include a brief statement describing why accessibility matters to your
-project, who should be able to use and contribute to it, and what this
-document covers, such as your accessibility commitments, contributor
-expectations, and issue-reporting process.
+**Language:** English (default) | [Français](ACCESSIBILITY.fr.md)
 
-Write for people who may read this after encountering a barrier. Use plain
-language and describe user experiences rather than relying on legal
-language, technical jargon, or standards codes.
--->
+nanoDNS is a native background DNS payload, not a graphical application. Its public interfaces are the repository documentation, release downloads, installation instructions, diagnostic logs, and GitHub issue forms. We want people to be able to find, understand and use these resources regardless of their preferred language or accessibility needs.
 
-## Priorities
+## Documentation and release usability
 
-<!--
-Describe the outcomes the project prioritizes and how it works toward them.
-If you name a WCAG level as an accessibility target, make clear that it is
-an aspirational goal rather than a verified conformance claim. Only claim
-conformance after an evaluation, and identify the evaluated scope, date,
-method, and evaluator. Also describe the areas you prioritize, such as
-keyboard, screen reader, content, or language support.
--->
+- Documentation is written in plain text and Markdown, with descriptive headings and links instead of image-only instructions.
+- Installation steps include copyable absolute file paths, explain how to replace the original Payload Manager autoload entry, and distinguish the console DNS settings from upstream Quad9 settings.
+- English is the reference language. French equivalents are provided for important user-facing documents, and either language is welcome in reports.
+- Console logs are text, but can expose hostnames and network information: redact them before sharing.
 
-## Contributor expectations
+## What is and is not verified
 
-<!--
-Describe the accessibility guardrails that apply to contributions,
-including relevant testing, documentation, and continuous integration
-checks. Name specific tools only when the project uses them, and explain
-what evidence contributors should include with user-facing changes.
--->
+We have **not conducted a formal accessibility audit** and do **not claim WCAG conformance**. The GitHub web interface and the third-party Payload Manager interface are outside this project's control. Firmware 13.60 has received one successful user hardware test for basic DNS operation and shutdown/power-on; other firmware and the secondary console build remain **not user-validated**. This hardware status is **not** an accessibility evaluation.
 
-## Reporting accessibility issues
+## Reporting barriers
 
-<!--
-Provide a direct, accessible way to report a barrier or request help.
-Invite useful context such as the affected task, URL, observed behavior,
-browser, operating system, and assistive technology. Make screenshots or
-recordings optional and do not require disability disclosure.
--->
+Open a [documentation/accessibility issue](https://github.com/niakw/nanoDNS-13.60/issues/new/choose) and describe:
 
-### Severity
+- The task that was difficult (for example, locating the correct download or following a migration step).
+- The document heading or public URL, and what happened versus what you expected.
+- Your environment or assistive technology **only if you wish to share it**; screenshots and recordings are optional.
+- Any wording or alternative format that would make the task easier.
 
-<!--
-If your project uses severity levels, define them and give practical
-examples based on how strongly a barrier affects a user's ability to
-complete a task. Keep labels consistent with your issue template and
-resolution targets if those processes exist. Maintainers can assign or
-confirm severity during triage; reporters do not need to.
--->
+Do not include personal details, raw DNS logs or unredacted console identifiers in public reports. A maintainer can request a sanitized excerpt or clarify the instructions in the issue; no guaranteed response time is promised.
 
-### How we respond
+## Contributions
 
-<!--
-Explain what reporters can expect after submitting an accessibility issue,
-including acknowledgement, status updates, workarounds, expected timelines,
-and opportunities to verify a fix. Use commitments your project can
-consistently uphold.
--->
-
-## Ownership and maintenance
-
-<!--
-Identify the team, role, or maintainer responsible for accessibility and
-describe their responsibilities to the project. Include the review cadence
-and how ownership transfers when responsibilities change.
--->
-
-## Supported environments
-
-<!--
-List the platforms, devices, browsers, input methods, and assistive
-technologies the project supports or has tested. Include versions where
-useful, note partial support, and avoid implying support for combinations
-that have not been evaluated.
--->
-
-## Known limitations
-
-<!--
-Describe known barriers in terms of the affected user experience, such as
-"videos do not have captions," rather than standards codes. Include
-available workarounds or equivalent access and link to tracked issues. If
-no limitations are currently documented, describe what has been tested
-instead of claiming that no barriers exist.
--->
-
-## Feedback and improvements
-
-<!--
-Explain how users and contributors can suggest improvements to this
-statement or the project's accessibility practices. Direct active
-accessibility barriers to the reporting process above.
--->
+Prefer text equivalents for diagrams, meaningful link labels, simple heading order, descriptive code examples, and tested Markdown links. If changing user-facing instructions, update the corresponding English/French documents and say what you checked. See [contribution guidelines](CONTRIBUTING.md), [security guidance](SECURITY.md), and the [test plan](docs/TEST_PLAN.md).
