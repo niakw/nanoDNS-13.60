@@ -18,13 +18,13 @@
 
 Un fichier de blocklist peut être modifié ou contourné par une exception. Un payload mal géré peut également perturber l'arrêt ou le chargement en double.
 
-**Ce fork de [nanoDNS par Drakmor](https://github.com/drakmor/nanoDNS)** intègre les **124 règles** de [niakw Console Blocklist](https://github.com/niakw/nanodns-console-blocklist) **dans le programme lui-même**. Elles sont vérifiées avant les exceptions utilisateur. Les noms autorisés continuent de passer par **Quad9 sécurisé**.
+**Ce projet indépendant, basé sur [nanoDNS par Drakmor](https://github.com/drakmor/nanoDNS)** intègre les **124 règles** de [niakw Console Blocklist](https://github.com/niakw/nanodns-console-blocklist) **dans le programme lui-même**. Elles sont vérifiées avant les exceptions utilisateur. Les noms autorisés continuent de passer par **Quad9 sécurisé**.
 
 L'objectif est une protection DNS mieux définie et un fonctionnement plus stable, sans supprimer inutilement l'accès au Web.
 
 ## Ce qui change réellement
 
-| Fonction | nanoDNS original | Blocklist seule | **Notre fork renforcé** |
+| Fonction | nanoDNS original | Blocklist seule | **Notre version indépendante renforcée** |
 | --- | --- | --- | --- |
 | Règles livrées par défaut | **8** | **124** | **124 obligatoires compilées** |
 | Exceptions par défaut | **6** | **0** | Ne peuvent pas neutraliser les motifs obligatoires |
@@ -45,21 +45,30 @@ Les 124 motifs obligatoires sont évalués avant toute exception. Pour les noms 
 
 ## Tu utilises déjà le nanoDNS 0.4 officiel ?
 
-**N'utilise pas Update sur l'ancienne entrée du catalogue.** Notre dépôt indépendant exige une **migration manuelle** : sauvegarde l'ELF et l'INI, désactive l'autoload d'origine, redémarre proprement, importe notre `nanodns.elf` comme **payload local**, remplace **séparément** `/data/nanodns/nanodns.ini` par FTP et n'active que la nouvelle entrée. Les deux DNS de la console restent `127.0.0.1`.
+**Télécharge notre ZIP complet : [nanoDNS 13.60 prêt à copier](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip).** Deux fichiers seulement, avec les bons emplacements.
 
-[**Guide complet de migration depuis la version officielle**](docs/INSTALL.fr.md#migration-depuis-le-nanodns-04-officiel-de-drakmor) · [English upgrade guide](docs/INSTALL.md#upgrade-from-drakmors-original-nanodns-04) · [Fichiers de la préversion](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)
+Après sauvegarde, **supprime l'ancien nanoDNS depuis Payload Manager ou désactive-le et enlève son autoload**. Arrête ensuite proprement son processus (ou éteins puis redémarre complètement la console). Décompresse le ZIP sur ton Mac, copie son dossier `data/` vers la **racine de la console**, relance Payload Manager et active **seulement `local/nanodns`** en boot auto. **Ne réutilise pas** le bouton Update du nanoDNS officiel ni son ancien dossier `repo/nanodns@e8cce5d1`.
+
+[**Guide de migration pas à pas (français)**](docs/INSTALL.fr.md#migration-depuis-le-nanodns-04-officiel-de-drakmor) · [English upgrade guide](docs/INSTALL.md#upgrade-from-drakmors-original-nanodns-04) · [Release et fichiers séparés](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)
 
 ## Fiabilité et installation
 
-Le fork supprime les offsets internes fragiles et les `SIGKILL` destinés à remplacer une ancienne instance, impose une écoute UDP exclusive, nettoie les ressources réseau lors d'un arrêt signalé et conserve le journal précédent. Il ajoute également des tests de cohérence de configuration et des tests natifs.
+Notre version renforce l'application des règles et le cycle de vie du processus : pas de `SIGKILL` destiné à remplacer une ancienne instance, écoute UDP exclusive, nettoyage des ressources réseau et conservation des journaux. Le correctif d'extinction reste **à vérifier sur une console physique**.
 
-Avant installation, **isoler le WAN au niveau du routeur, IPv4 et IPv6**, sauvegarder l'ELF et la configuration, copier le [`nanodns.ini`](nanodns.ini) et régler **les deux DNS console sur `127.0.0.1`**. Le payload ne remplace pas automatiquement un INI existant.
+**Installation recommandée :** le ZIP contient les deux fichiers suivants, à placer exactement ici :
 
-Lire le [guide français](docs/INSTALL.fr.md) ou le [guide principal anglais](docs/INSTALL.md). Appliquer ensuite la [matrice de validation](docs/TEST_PLAN.fr.md).
+```text
+/data/pldmgr/payloads/local/nanodns/nanodns.elf
+/data/nanodns/nanodns.ini
+```
 
-## Peut-on supprimer le fork ?
+Copie l'arborescence `data/` du ZIP à la **racine `/`**, pas dans `/data/` une seconde fois. Ensuite, actualise Payload Manager, active uniquement `local/nanodns` en autoload et garde les deux DNS console sur `127.0.0.1`. Le ZIP **ne modifie pas automatiquement** le boot auto. Prévois un blocage WAN externe IPv4/IPv6 si tu veux une interdiction stricte des connexions.
 
-**Pas avant validation sur matériel.** Un build vert ne prouve pas le bon arrêt, le réveil à la manette ou l'absence de réparation du stockage. Même après ces essais, revenir au binaire original fait perdre les **règles compilées obligatoires** et les corrections du runtime. Une archive conservée est préférable à une suppression définitive.
+**[Télécharger le ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip)** · [Guide français](docs/INSTALL.fr.md) · [English instructions](docs/INSTALL.md) · [Tests console](docs/TEST_PLAN.fr.md)
+
+## Notre projet est-il prêt pour un usage stable ?
+
+**Pas avant validation sur matériel.** Un build vert ne prouve pas le bon arrêt, le réveil à la manette ou l'absence de réparation du stockage. Même après ces essais, revenir au binaire original fait perdre les **règles compilées obligatoires** et les corrections du runtime. Conserve notre dépôt indépendant et son historique pour le suivi et les futures corrections.
 
 ## Limites
 

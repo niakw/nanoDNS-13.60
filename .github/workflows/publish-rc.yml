@@ -1,10 +1,7 @@
 name: Publish firmware 13.60 pre-release
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - release/RELEASE_NOTES.md
+  workflow_dispatch:
 
 permissions:
   contents: read

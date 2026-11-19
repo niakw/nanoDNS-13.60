@@ -1,0 +1,70 @@
+name: Package ready-to-place firmware 13.60 ZIP
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - release/RELEASE_NOTES.md
+      - .github/workflows/package-install-zip.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nanodns-13-60-install-zip
+  cancel-in-progress: false
+
+jobs:
+  zip-and-publish:
+    if: github.repository == 'niakw/nanoDNS-13.60'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: v0.4-13.60.1-beta.1
+      BUNDLE: nanodns-13.60-v0.4-13.60.1-beta.1-install.zip
+    steps:
+      - name: Checkout updated installation documentation
+        uses: actions/checkout@v4
+      - name: Verify documents and release contract
+        run: |
+          python3 -m unittest discover -s tests -v
+          test -s release/RELEASE_NOTES.md
+      - name: Download the immutable pre-release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir release-assets --pattern nanodns.elf --pattern nanodns.ini --pattern SHA256SUMS
+          test -s release-assets/nanodns.elf
+          test -s release-assets/nanodns.ini
+          grep -q '  nanodns.elf$' release-assets/SHA256SUMS
+          grep -q '  nanodns.ini$' release-assets/SHA256SUMS
+          (cd release-assets && sha256sum --check --ignore-missing SHA256SUMS)
+      - name: Package exactly two FTP-ready files and verify their bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p package/data/pldmgr/payloads/local/nanodns package/data/nanodns
+          cp release-assets/nanodns.elf package/data/pldmgr/payloads/local/nanodns/nanodns.elf
+          cp release-assets/nanodns.ini package/data/nanodns/nanodns.ini
+          (cd package && zip -q -X -D "../$BUNDLE" data/pldmgr/payloads/local/nanodns/nanodns.elf data/nanodns/nanodns.ini)
+          unzip -t "$BUNDLE"
+          test "$(unzip -Z -1 "$BUNDLE" | LC_ALL=C sort)" = "$(printf '%s\n' 'data/nanodns/nanodns.ini' 'data/pldmgr/payloads/local/nanodns/nanodns.elf' | LC_ALL=C sort)"
+          cmp release-assets/nanodns.elf <(unzip -p "$BUNDLE" data/pldmgr/payloads/local/nanodns/nanodns.elf)
+          cmp release-assets/nanodns.ini <(unzip -p "$BUNDLE" data/nanodns/nanodns.ini)
+          sha256sum "$BUNDLE" > "$BUNDLE.sha256"
+          cat "$BUNDLE.sha256"
+      - name: Add installation ZIP to existing pre-release and refresh release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq "$BUNDLE"; then
+            echo "::error::ZIP asset already exists; refusing an unreviewed overwrite"
+            exit 1
+          fi
+          gh release upload "$TAG" "$BUNDLE" "$BUNDLE.sha256" --repo "$GITHUB_REPOSITORY"
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file release/RELEASE_NOTES.md

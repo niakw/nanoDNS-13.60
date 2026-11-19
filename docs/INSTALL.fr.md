@@ -1,37 +1,50 @@
-# Installation sécurisée — console 13.60
+# Installation sécurisée — console firmware 13.60
 
 **Langues :** [English (default)](INSTALL.md) | Français
 
+## Téléchargement : ZIP prêt à copier (recommandé)
+
+**[Télécharger le ZIP d'installation](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip)** · [Release GitHub et empreintes](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)
+
+L'archive contient **exactement deux fichiers**, sans installation automatique, script ni modification de la configuration d'autoload :
+
+```text
+data/
+├── pldmgr/payloads/local/nanodns/nanodns.elf
+└── nanodns/nanodns.ini
+```
+
+Les **deux chemins définitifs** sur la console sont :
+
+- `/data/pldmgr/payloads/local/nanodns/nanodns.elf` — notre nouveau payload indépendant.
+- `/data/nanodns/nanodns.ini` — notre profil 124 règles, 0 exception et Quad9.
+
+**Décompresse le ZIP sur ton Mac puis transfère par FTP le dossier `data/` en le fusionnant avec le `/data/` de la console.** Il faut que les fichiers se retrouvent aux chemins ci-dessus. **Ne copie pas `data/` à l'intérieur de `/data/` : cela créerait `/data/data/`.** Crée les sous-dossiers manquants si nécessaire. Le ZIP n'est **pas** un installateur autonome.
+
+Le ZIP est assemblé depuis l'ELF et l'INI **déjà publiés pour cette préversion**, contrôlés avec `SHA256SUMS`. Le workflow vérifie aussi les fichiers internes du ZIP avant publication.
+
 ## Migration depuis le nanoDNS 0.4 officiel de Drakmor
 
-**C'est une migration manuelle, pas une mise à jour du dépôt d'origine.** Les deux dépôts GitHub sont indépendants. Le bouton **Update** de l'ancienne entrée nanoDNS du catalogue risque de réinstaller le payload officiel plutôt que notre version.
+**L'ordre compte : les deux versions peuvent être stockées sur la console, mais ne doivent jamais être exécutées ni démarrées automatiquement ensemble.**
 
-1. **Téléchargement et sauvegarde :** récupère `nanodns.elf` et `nanodns.ini` depuis la [préversion 13.60](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1). Copie sur ton Mac l'ancien ELF 0.4, ton `/data/nanodns/nanodns.ini` et `/data/nanodns/nanodns.log`. Maintiens le blocage WAN sur le routeur (IPv4 et IPv6), mais conserve les accès locaux FTP/loader.
-2. **Désactivation de l'ancienne version :** dans **Payload Manager**, désactive l'autoload du nanoDNS officiel. Si un autre chargeur lance directement nanoDNS, désactive aussi cette entrée. Ne touche pas aux autres payloads.
-3. **Extinction puis redémarrage propres :** relance le chargeur local et Payload Manager après avoir rallumé la console. Ne remplace pas un ELF en cours d'exécution, ne force pas la fermeture de l'ancien processus avec `SIGKILL` et ne charge jamais les deux versions simultanément.
-4. **Import du nouveau binaire en local :** utilise l'import de payload local de Payload Manager avec le nouveau `nanodns.elf`. Sélectionne **l'entrée locale importée**, et non celle du catalogue officiel. Ne modifie pas au hasard les fichiers internes du gestionnaire.
-5. **Remplacement séparé du fichier de règles :** en FTP, copie le nouveau `nanodns.ini` à l'emplacement **`/data/nanodns/nanodns.ini`**. Le nouvel ELF **n'écrase pas** la configuration existante : un changement d'ELF seul ne remplace pas les anciens DNS ou exceptions du fichier.
-6. **DNS de la console :** renseigne `127.0.0.1` dans **les deux champs DNS**. Seul `[upstream]` dans l'INI doit contenir `server=9.9.9.9` et `server=149.112.112.112`, avec **zéro exception active**. Ne renseigne pas Quad9 directement comme DNS de la console.
-7. **Un seul autoload :** lance le nouveau payload, vérifie son fonctionnement, puis active uniquement son **entrée locale** au démarrage. L'ancienne entrée du catalogue reste désactivée. Un doublon peut refuser le port DNS UDP 53 : c'est volontaire.
-8. **Validation :** contrôle le nouveau `/data/nanodns/nanodns.log` : `124 rule(s)`, `0 exception(s)`, écoute locale et réponses bloquées. Si tu autorises volontairement certaines connexions, vérifie un domaine autorisé comme `github.com`. Termine par [les tests d'extinction, de réveil à la manette et de veille/reprise](TEST_PLAN.fr.md).
+1. **Sauvegarde l'ancienne version.** Conserve l'ancien ELF provenant du catalogue, par exemple `/data/pldmgr/payloads/repo/nanodns@e8cce5d1/nanoDNS_0.4.elf`, ou copie-le sur ton Mac. Sauvegarde aussi `/data/nanodns/nanodns.ini` et `/data/nanodns/nanodns.log`. Garde le WAN bloqué par ta box/ton pare-feu externe (IPv4 et IPv6), tout en conservant les accès FTP et chargeur en LAN.
+2. **Supprime ou désactive l'ancien nanoDNS dans Payload Manager.** **Option A :** une fois sauvegardé, désinstalle nanoDNS 0.4 **depuis l'interface de Payload Manager**. **Option B (recommandée pour les premiers tests) :** conserve-le sur le disque, mais **désactive son autoload**. Si un autre autoloader charge également nanoDNS, enlève ou désactive cette entrée. Ne supprime surtout pas Payload Manager ni les autres payloads.
+3. **Ferme l'ancien processus.** Utilise la fonction d'arrêt normale de Payload Manager si elle est prise en charge ; sinon **éteins entièrement la console et redémarre-la** après avoir désactivé l'autoload d'origine. Ne tente ni remplacement à chaud d'un ELF actif ni arrêt forcé par `SIGKILL`. Enlever une entrée du boot auto **n'arrête pas** le processus déjà lancé.
+4. **Copie les deux fichiers de notre ZIP.** Télécharge le [ZIP d'installation](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip), décompresse-le puis transfère son arborescence `data/` vers la **racine `/` de la console**. Tu dois obtenir exactement `/data/pldmgr/payloads/local/nanodns/nanodns.elf` et `/data/nanodns/nanodns.ini`. **N'écrase pas** le dossier de l'ancien catalogue `repo/nanodns@e8cce5d1`.
+5. **Actualise Payload Manager.** Recharge ou relance son interface pour qu'il détecte le nouveau payload **local `nanodns`** (slot `local/nanodns`), et non l'ancien payload **repo**. Le code actuel du manager accepte un dossier local avec un ELF même **sans `meta.json`** ; les anciennes versions doivent être vérifiées. Si le payload n'apparaît pas, utilise la fonction **Importer un payload local** avec le nouvel ELF plutôt que de créer une seconde entrée au démarrage.
+6. **Remplace l'ancien boot auto par le nôtre.** Dans Payload Manager, active l'autoload **uniquement pour notre nouvelle entrée locale**. L'entrée officielle d'origine doit être **retirée de l'autoload ou clairement désactivée**, y compris dans tout autre chargeur configuré. Vérifie `local/nanodns` et non `repo/nanodns@e8cce5d1`. Deux processus nanoDNS peuvent se disputer le port UDP 53.
+7. **Vérifie le DNS.** Les DNS **primaire et secondaire configurés sur la console** restent `127.0.0.1`. Dans le nouveau `nanodns.ini`, Quad9 est renseigné dans `[upstream]` avec `9.9.9.9` et `149.112.112.112`. Consulte le nouveau `/data/nanodns/nanodns.log` : écoute active, `124 rule(s)`, `0 exception(s)`, réponses bloquées localement et résolution de domaines autorisés si tu permets volontairement certaines connexions.
+8. **Teste l'extinction et le redémarrage.** Suis le [protocole matériel](TEST_PLAN.fr.md) : extinction complète, allumage, réveil à la manette, veille/reprise et absence de chargement double. **La correction n'est pas encore démontrée sur console réelle.**
 
-**Retour arrière :** désactive l'autoload du nouvel ELF, éteins normalement, restaure l'ancien `nanodns.elf` via Payload Manager et l'ancien `nanodns.ini` par FTP, puis réactive **uniquement l'entrée officielle**. Conserve les journaux utiles au diagnostic.
+**Retour arrière :** retire/désactive l'autoload du nouveau payload, éteins normalement, rétablis l'ancien INI et l'ancien ELF (ou réactive son entrée repo sauvegardée), puis laisse **uniquement l'ancienne version** en démarrage automatique. Conserve les anciens et nouveaux logs.
 
-**Limite de sécurité :** nanoDNS n'est pas un pare-feu. IP directes, caches, autres DNS, DNS chiffrés ou TCP, trafic avant chargement et domaines inconnus exigent un filtrage externe. Un build vert ne prouve pas la résolution des problèmes d'extinction.
+## Première installation (aucun ancien nanoDNS)
 
-## Première installation : contrôle rapide
-
-1. **Isole le WAN** pour la console au niveau de la box/du pare-feu (IPv4 **et** IPv6), tout en conservant le réseau local nécessaire au chargement du jailbreak, au FTP et aux tests. Ne dépends pas d'un DNS public pour protéger le tout premier démarrage.
-2. **Sauvegarde** ton `nanodns.elf` d'origine, `/data/nanodns/nanodns.ini`, `/data/nanodns/nanodns.log` et les sauvegardes de jeux importantes.
-3. Transfère le [profil complet de 124 règles](../nanodns.ini) vers `/data/nanodns/nanodns.ini` : le payload ne remplace jamais automatiquement un fichier existant. Vérifie `124 rule(s), 0 exception(s)`.
-4. Dans les DNS primaire **et secondaire** de la console, utilise `127.0.0.1`. Aucun DNS public secondaire. Garde `bind=127.0.0.1` et `bind6=::1` dans la configuration.
-5. Charge ton WebKit Autoloader puis **Payload Manager**, avec **une seule instance** de chaque payload. Ne mélange pas deux autoloads indépendants.
-6. Déploie un ELF uniquement après le build console vert. Vérifie dans le nouveau log `listening on 127.0.0.1:53`, le blocage des domaines protégés en A et AAAA, et la résolution d'un nom autorisé tel que `github.com`.
-7. Applique [le protocole de tests console](TEST_PLAN.md) : arrêt normal, démarrage à la manette, veille/reprise, relance, doublon. En cas d'échec, restaure les fichiers précédents.
+Récupère le même [ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip), copie les deux fichiers aux chemins exacts ci-dessus, garde les deux DNS console à `127.0.0.1`, relance Payload Manager pour retrouver l'entrée `local/nanodns` et n'active qu'un seul autoload. Maintiens le filtrage WAN en amont jusqu'aux tests autorisés.
 
 ## DNS amont Quad9
 
-La configuration distribuée utilise exclusivement les deux adresses du service sécurisé Quad9 pour les domaines **autorisés** :
+Les domaines **autorisés** sont résolus uniquement par Quad9 sécurisé, configuré dans le **fichier INI**, et non dans les DNS réseau de la console :
 
 ```ini
 [upstream]
@@ -40,8 +53,14 @@ server=149.112.112.112
 timeout_ms=1500
 ```
 
-Ces adresses **ne doivent pas être configurées dans les paramètres réseau de la console** : les deux champs DNS de la console restent `127.0.0.1`. Un ancien fichier `nanodns.ini` doit être remplacé manuellement.
+L'UDP entre nanoDNS et Quad9 reste non chiffré. Le nouvel ELF n'écrase pas automatiquement un ancien fichier INI : le ZIP contient les deux fichiers pour éviter le mélange entre ancien et nouveau profil.
 
-**Important :** nanoDNS est un filtre DNS sélectif, pas un pare-feu. Il ne bloque pas les adresses IP directes, les DNS alternatifs, le DoH, les connexions avant activation du payload ni les domaines inconnus. Pour une absence stricte de fuite réseau, garde le blocage WAN externe.
+## Sécurité, limites et crédits
 
-**Crédits :** payload original [drakmor/nanoDNS](https://github.com/drakmor/nanoDNS), configuration [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist). Fork indépendant GPL-3.0.
+- nanoDNS filtre le DNS, **pas les connexions réseau en général** : IP directes, IP en cache, DNS alternatifs/chiffrés, DNS TCP, domaines inconnus et accès avant lancement nécessitent un pare-feu externe pour interdire strictement le WAN.
+- Ne teste pas les blocages en ouvrant des services interdits ni en lançant une demande de mise à jour système.
+- Extinction, veille et réveil à la manette restent **à valider sur le matériel 13.60**.
+- Le chemin de l'ancien slot donné en exemple provient d'une installation précise : le suffixe du dossier peut varier d'une console à l'autre.
+- **Crédits et licence :** [Drakmor](https://github.com/drakmor/nanoDNS), GPL-3.0 ; [blocklist communautaire](https://github.com/niakw/nanodns-console-blocklist) ; [nanoDNS 13.60 indépendant](https://github.com/niakw/nanoDNS-13.60).
+
+Voir [sécurité](../SECURITY.fr.md), [politique DNS](DNS_POLICY.fr.md), [tests](TEST_PLAN.fr.md).

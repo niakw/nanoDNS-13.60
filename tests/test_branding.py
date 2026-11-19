@@ -50,6 +50,25 @@ class DocumentationContracts(unittest.TestCase):
   self.assertIn("Upgrade from Drakmor",en)
   self.assertIn("Migration depuis le nanoDNS",fr)
 
+ def test_zip_upgrade_instructions_contract(self):
+  en=(ROOT/"docs/INSTALL.md").read_text(encoding="utf-8")
+  fr=(ROOT/"docs/INSTALL.fr.md").read_text(encoding="utf-8")
+  r=(ROOT/"release/RELEASE_NOTES.md").read_text(encoding="utf-8")
+  paths=("/data/pldmgr/payloads/local/nanodns/nanodns.elf","/data/nanodns/nanodns.ini")
+  for s in (en,fr,r):
+   for path in paths:
+    self.assertIn(path,s)
+   self.assertIn("local/nanodns",s)
+   self.assertIn("nanodns-13.60-v0.4-13.60.1-beta.1-install.zip",s)
+  for s in (en,fr):
+   self.assertIn("nanodns@e8cce5d1",s)
+   self.assertIn("Payload Manager",s)
+   self.assertIn("autoload",s)
+   self.assertIn("/data/data/",s)
+  for s in ((ROOT/"README.md").read_text(encoding="utf-8"),(ROOT/"README.fr.md").read_text(encoding="utf-8")):
+   self.assertIn("nanodns-13.60-v0.4-13.60.1-beta.1-install.zip",s)
+   self.assertIn("local/nanodns",s)
+
  def test_no_visible_commercial_platform_names(self):
   for file in ROOT.rglob("*.md"):
    s=file.read_text(encoding="utf-8")
