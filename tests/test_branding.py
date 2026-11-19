@@ -115,15 +115,15 @@ class DocumentationContracts(unittest.TestCase):
     self.assertGreater(len(s.strip()),300)
     self.assertNotIn("<!--",s)
     self.assertNotIn("mailto:",s)
-    self.assertIn("nanoDNS",s) if "ISSUE_TEMPLATE" not in path else self.assertIn("nanoDNS",s)
+    self.assertIn("nanoDNS",s)
   dep=(ROOT/".github/dependabot.yml").read_text(encoding="utf-8")
   self.assertIn('package-ecosystem: "github-actions"',dep)
   self.assertNotIn('package-ecosystem: ""',dep)
   for path in (".github/workflows/ps4.yml",".github/workflows/ps5.yml"):
    s=(ROOT/path).read_text(encoding="utf-8")
-   self.assertIn("permissions:\\n  contents: read",s)
+   self.assertIn("permissions:\n  contents: read",s)
    self.assertNotIn("prerelease: true",s)
-   self.assertNotIn("\\n  release:",s)
+   self.assertNotIn("\n  release:",s)
 
  def test_no_visible_commercial_platform_names(self):
   for file in ROOT.rglob("*.md"):
