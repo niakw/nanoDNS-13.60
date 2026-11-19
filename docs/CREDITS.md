@@ -1,5 +1,7 @@
 # Credits and provenance
 
+
+**Language:** English (default) | [Français](CREDITS.fr.md)
 ## Original nanoDNS source
 
 The C payload was authored by [Drakmor](https://github.com/drakmor/nanoDNS) and distributed under the GNU GPL-3.0 license. This fork preserves the upstream copyright notices and [license](../LICENSE). Original upstream repository and release notes: https://github.com/drakmor/nanoDNS .
