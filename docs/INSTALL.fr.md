@@ -8,7 +8,7 @@
 4. Dans les DNS primaire **et secondaire** de la console, utilise `127.0.0.1`. Aucun DNS public secondaire. Garde `bind=127.0.0.1` et `bind6=::1` dans la configuration.
 5. Charge ton WebKit Autoloader puis **Payload Manager**, avec **une seule instance** de chaque payload. Ne mélange pas deux autoloads indépendants.
 6. Déploie un ELF uniquement après le build console vert. Vérifie dans le nouveau log `listening on 127.0.0.1:53`, le blocage des domaines protégés en A et AAAA, et la résolution d'un nom autorisé tel que `github.com`.
-7. Applique [le protocole de tests console](TEST_PLAN.md) : arrêt normal, démarrage DualSense, veille/reprise, relance, doublon. En cas d'échec, restaure les fichiers précédents.
+7. Applique [le protocole de tests console](TEST_PLAN.md) : arrêt normal, démarrage la manette, veille/reprise, relance, doublon. En cas d'échec, restaure les fichiers précédents.
 
 ## DNS amont Quad9
 

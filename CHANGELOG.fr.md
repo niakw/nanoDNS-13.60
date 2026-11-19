@@ -27,4 +27,4 @@
 - Conservation des compilations SDK console/console et ajout de validations automatiques de la politique DNS.
 - Anglais par défaut et traductions françaises séparées.
 
-**Limite :** un build CI réussi n'est pas une preuve de correction du réveil par DualSense ou de la stabilité de l'extinction sur console réelle.
+**Limite :** un build CI réussi n'est pas une preuve de correction du réveil par la manette ou de la stabilité de l'extinction sur console réelle.

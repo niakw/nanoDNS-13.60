@@ -8,7 +8,7 @@
 4. Set **both primary and secondary console DNS fields** to `127.0.0.1`. Never use a public secondary DNS for this setup. Retain the default local listener settings `bind=127.0.0.1` and `bind6=::1`.
 5. Start your local WebKit Autoloader and **Payload Manager**, ensuring only **one autoload mechanism and one instance of each payload**. Do not add a second direct nanoDNS autoload entry.
 6. Deploy a new ELF **only after green console SDK and policy checks**. Confirm the current-session log contains `listening on 127.0.0.1:53`, blocked platform services A/AAAA lookups, and authorized lookup resolution such as `github.com`.
-7. Follow the [hardware validation matrix](TEST_PLAN.md): shutdown, physical power-on, DualSense wake, rest mode/resume, reload, and duplicate launch. Restore the original ELF and INI if a failure occurs.
+7. Follow the [hardware validation matrix](TEST_PLAN.md): shutdown, physical power-on, controller wake, rest mode/resume, reload, and duplicate launch. Restore the original ELF and INI if a failure occurs.
 
 ## Upstream DNS configuration
 
