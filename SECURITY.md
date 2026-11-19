@@ -1,5 +1,7 @@
 # Security model and disclosure
 
+
+**Language:** English (default) | [Français](SECURITY.fr.md)
 ## What this fork protects
 
 The built-in denylist contains 124 masks from [nanoDNS Console Blocklist](https://github.com/niakw/nanodns-console-blocklist). Matching queries handled by this **running** UDP DNS payload are answered locally, before configured exceptions are considered. AAAA and other types are answered without the matching IPv4 address; unsupported multi-question / non-IN requests are not relayed.
