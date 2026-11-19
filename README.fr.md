@@ -86,6 +86,10 @@ Copie l'arborescence `data/` du ZIP à la **racine `/`**, pas dans `/data/` une 
 
 Aucun DNS local ne peut bloquer toutes les IP directes, les DNS alternatifs ou chiffrés, les caches et les communications avant chargement. Une interdiction stricte du WAN exige un pare-feu externe. Voir [sécurité](SECURITY.fr.md).
 
+## Contribuer et règles du projet
+
+[Contribuer](CONTRIBUTING.fr.md) · [Code de conduite](CODE_OF_CONDUCT.fr.md) · [Accessibilité](ACCESSIBILITY.fr.md) · [Sécurité](SECURITY.fr.md) · [Historique](CHANGELOG.fr.md). Les signalements et contributions sont acceptés en français ou en anglais.
+
 ## Crédits
 
 Code original : [Drakmor](https://github.com/drakmor/nanoDNS). Règles : [niakw Console Blocklist](https://github.com/niakw/nanodns-console-blocklist). Intégration : [niakw](https://github.com/niakw/nanoDNS-13.60). Licence [GPL-3.0](LICENSE), projet communautaire indépendant.

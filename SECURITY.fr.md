@@ -32,6 +32,10 @@ Les fichiers INI peuvent encore ajouter des règles, mais ne doivent pas pouvoir
 
 Un **build vert** ne confirme pas la résolution des problèmes d'extinction de la console 13.60. Voir le [protocole de tests](docs/TEST_PLAN.fr.md).
 
+## Protection du fichier de configuration (code après la Release 13.60)
+
+Le code du dépôt utilise désormais `open()` avec `O_CREAT | O_EXCL | O_NOFOLLOW` et des permissions initiales `0600` : l'INI n'est créé que s'il n'existe pas et un ancien fichier n'est pas écrasé. La lecture refuse les liens symboliques et les fichiers non ordinaires. En cas d'échec, les règles obligatoires compilées restent utilisées. **Ce durcissement du code source n'est pas encore présent dans l'ELF de la Release déjà publiée et testé sur console.** Il ne protège pas contre la modification privilégiée de tout le dossier d'exécution.
+
 ## Signaler un problème
 
 Indiquer le firmware, l'empreinte SHA du payload, la configuration (anonymisée), les dernières lignes utiles du journal, le comportement attendu/observé et le résultat du même essai sans nanoDNS. Ne pas publier de logs non anonymisés.

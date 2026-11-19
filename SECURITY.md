@@ -33,6 +33,10 @@ If you need *no unfiltered outbound traffic*, enforce WAN-deny rules on your **r
 - DNS logs can contain domain names, network addresses and timestamps. Review and redact before sharing.
 - A successful SDK build is not proof of safe shutdown on console 13.60. Observe [test plan](docs/TEST_PLAN.md).
 
+## Default configuration file protection (source after the 13.60 release)
+
+The repository source now uses an exclusive `open()` with `O_CREAT | O_EXCL | O_NOFOLLOW` and mode `0600` to create the default INI only when absent. Existing configurations are not truncated. Reading the INI also uses `O_NOFOLLOW` and verifies a regular file; unreadable or unsafe files lead to compiled mandatory fallback rules. This **source hardening is not included in the currently published user-tested release ELF** until a new binary is published and checked. It does not protect against privileged changes to the whole runtime directory.
+
 ## Reports
 
 Report reproducible vulnerabilities with firmware, payload SHA, config (without identifying network information), last relevant log lines, expected versus actual DNS output, and whether you can reproduce without nanoDNS. Do not publicly upload unredacted console or DNS logs.

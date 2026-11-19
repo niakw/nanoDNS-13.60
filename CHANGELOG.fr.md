@@ -2,7 +2,17 @@
 
 **Langues :** [English (default)](CHANGELOG.md) | Français
 
-## 0.4-13.60.1 — version de développement (19 novembre 2026)
+## À valider sur console — sécurité et documentation (19 novembre 2026)
+
+- Suppression de la course `stat()` / `fopen("w")` lors de la création du `nanodns.ini` : ouverture atomique `O_CREAT | O_EXCL | O_NOFOLLOW`, permissions initiales restreintes, aucun écrasement du fichier existant.
+- Ouverture du fichier INI existant sans suivre les liens symboliques et validation du type fichier ordinaire. Si le chargement échoue, maintien des règles intégrées obligatoires.
+- Droits minimaux `contents: read` dans les workflows classiques de compilation, suppression des publications automatiques concurrentes, publication centralisée conservée.
+- Correction de la configuration Dependabot pour le suivi hebdomadaire des GitHub Actions.
+- Guides anglais/français d'accessibilité, de contribution, de conduite et d'issues adaptés au projet.
+
+**Limite :** la Release GitHub standard et son ZIP contiennent toujours les **binaires publiés précédemment**. Ces nouvelles modifications de code ne sont **pas encore validées par test utilisateur** sur console. Le test matériel positif sur firmware 13.60 concerne le binaire précédemment installé. Les autres firmwares et le binaire secondaire restent non validés.
+
+## 0.4-13.60.1 — Release GitHub standard ; premier test utilisateur positif sur 13.60 (19 novembre 2026)
 
 ### Fiabilité des processus
 - Suppression du scan système dépendant d'offsets internes et des remplacements d'instances par `SIGKILL`.
@@ -14,7 +24,7 @@
 
 ### Politique DNS et sécurité
 
-- DNS amont désormais uniquement Quad9 : `9.9.9.9` et `149.112.112.112`, sans DNS other DNS providers dans les valeurs par défaut. Conservation des 124 règles / zéro exception.
+- DNS amont désormais uniquement Quad9 : `9.9.9.9` et `149.112.112.112`, sans résolveur supplémentaire dans les valeurs par défaut. Conservation des 124 règles / zéro exception.
 - Intégration avec crédits de la [liste de blocage multi-consoles](https://github.com/niakw/nanodns-console-blocklist) : 124 règles, aucune exception par défaut.
 - Compilation des règles obligatoires dans le binaire et application prioritaire sur toute exception utilisateur.
 - Rejet des questions DNS non prises en charge sans retransmission non filtrée.
@@ -27,4 +37,4 @@
 - Conservation des compilations SDK console/console et ajout de validations automatiques de la politique DNS.
 - Anglais par défaut et traductions françaises séparées.
 
-**Limite :** un build CI réussi n'est pas une preuve de correction du réveil par la manette ou de la stabilité de l'extinction sur console réelle.
+**Validation :** un premier essai utilisateur sur firmware 13.60 a confirmé le démarrage, les blocages DNS de type A et l'extinction/rallumage sans reproduction du problème. La veille/reprise, les essais répétés, la résolution autorisée et les autres firmwares restent non validés. Un build CI vert ne remplace jamais les tests matériels.

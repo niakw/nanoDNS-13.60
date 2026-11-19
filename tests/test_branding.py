@@ -7,6 +7,9 @@ ROOT=Path(__file__).resolve().parents[1]
 BANNED=re.compile(r"\b(?:sony|nintendo|playstation|xbox|microsoft|epic|rockstar|ubisoft|sega|cloudflare|google|capcom|bandai|namco|steam|valve|gog|psn|ps4|ps5|ps3|akamai|electronic arts|take.two|square enix|cd projekt|dualsense|sie|wii|switch)\b",re.I)
 PAIRS=(
  ("README.md","README.fr.md"),
+ ("ACCESSIBILITY.md","ACCESSIBILITY.fr.md"),
+ ("CONTRIBUTING.md","CONTRIBUTING.fr.md"),
+ ("CODE_OF_CONDUCT.md","CODE_OF_CONDUCT.fr.md"),
  ("SECURITY.md","SECURITY.fr.md"),
  ("CHANGELOG.md","CHANGELOG.fr.md"),
  ("docs/CREDITS.md","docs/CREDITS.fr.md"),
@@ -99,6 +102,28 @@ class DocumentationContracts(unittest.TestCase):
   self.assertIn("Release GitHub standard",fr)
   self.assertIn("--prerelease=false --latest",wf)
   self.assertIn("v0.4-13.60.1-beta.1",notes)
+
+ def test_project_community_documents_are_complete(self):
+  files=("ACCESSIBILITY.md","ACCESSIBILITY.fr.md","CONTRIBUTING.md",
+         "CONTRIBUTING.fr.md","CODE_OF_CONDUCT.md","CODE_OF_CONDUCT.fr.md",
+         ".github/ISSUE_TEMPLATE/bug_report.md",
+         ".github/ISSUE_TEMPLATE/feature_request.md",
+         ".github/ISSUE_TEMPLATE/custom.md")
+  for path in files:
+   s=(ROOT/path).read_text(encoding="utf-8")
+   with self.subTest(path=path):
+    self.assertGreater(len(s.strip()),300)
+    self.assertNotIn("<!--",s)
+    self.assertNotIn("mailto:",s)
+    self.assertIn("nanoDNS",s) if "ISSUE_TEMPLATE" not in path else self.assertIn("nanoDNS",s)
+  dep=(ROOT/".github/dependabot.yml").read_text(encoding="utf-8")
+  self.assertIn('package-ecosystem: "github-actions"',dep)
+  self.assertNotIn('package-ecosystem: ""',dep)
+  for path in (".github/workflows/ps4.yml",".github/workflows/ps5.yml"):
+   s=(ROOT/path).read_text(encoding="utf-8")
+   self.assertIn("permissions:\\n  contents: read",s)
+   self.assertNotIn("prerelease: true",s)
+   self.assertNotIn("\\n  release:",s)
 
  def test_no_visible_commercial_platform_names(self):
   for file in ROOT.rglob("*.md"):

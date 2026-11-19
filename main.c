@@ -922,10 +922,15 @@ load_config(const char *path, app_config_t *cfg) {
   if(fd < 0) {
     return -1;
   }
-  if(fstat(fd, &config_stat) != 0 || !S_ISREG(config_stat.st_mode)) {
-    int saved_errno = errno != 0 ? errno : EINVAL;
+  if(fstat(fd, &config_stat) != 0) {
+    int saved_errno = errno;
     (void)close(fd);
     errno = saved_errno;
+    return -1;
+  }
+  if(!S_ISREG(config_stat.st_mode)) {
+    (void)close(fd);
+    errno = EINVAL;
     return -1;
   }
   fp = fdopen(fd, "r");

@@ -2,7 +2,17 @@
 
 
 **Language:** English (default) | [Français](CHANGELOG.fr.md)
-## 0.4-13.60.1 — development candidate (2026-11-19)
+## Unreleased on hardware — security and community follow-up (2026-11-19)
+
+- Avoid a time-of-check/time-of-use race when generating the default `nanodns.ini`: create with `O_CREAT | O_EXCL | O_NOFOLLOW` and restrictive initial file permissions, without overwriting an existing configuration.
+- Open an existing INI using a no-symlink file descriptor and require a regular file; retain fallback mandatory rules if the INI cannot safely be loaded.
+- Add least-privilege `contents: read` for the ordinary console build workflows; eliminate duplicate auto-release jobs from those workflows. The release publisher remains separate.
+- Replace the invalid Dependabot placeholder with weekly GitHub Actions dependency checks.
+- Add complete English and French contribution, accessibility, code-of-conduct and issue-reporting guides, with real project paths and privacy reminders.
+
+**Publication boundary:** The current standard GitHub Release and ZIP still contain the previously published binaries; these subsequent source changes are **not** claimed to have passed a new user console test. The 13.60 hardware success refers to the **previously installed release**. Other firmware and the secondary console build are not user-validated.
+
+## 0.4-13.60.1 — standard GitHub Release; 13.60 basic user test passed (2026-11-19)
 
 ### Process safety
 - Remove hardcoded process-info structure offsets and SIGKILL-based replacement.
@@ -24,4 +34,4 @@
 - Add security boundary, shutdown lifecycle audit, French installation, test plan, policy provenance and credits.
 - Retain console and console SDK builds and add offline security/policy validation.
 
-**Validation note:** CI build status and physical console 13.60 shutdown/standby/PS-button behavior must be verified separately. This changelog does not claim a hardware fix.
+**Validation note:** firmware 13.60 passed one user trial for basic startup, protected A-query DNS filtering and normal shutdown/power-on without a recurrence of the previously reported issue. Permitted upstream DNS, AAAA, rest/resume, repeated power cycles and long-term stability are not yet user-verified; other firmware and the secondary build remain untested on real hardware.
