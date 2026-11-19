@@ -1,123 +1,67 @@
-# nanoDNS for PS4/PS5
+# nanoDNS 13.60 — security & lifecycle fork
 
-**Repository:** https://github.com/drakmor/nanoDNS
+A carefully scoped PS5 firmware **13.60** fork of [Drakmor's nanoDNS](https://github.com/drakmor/nanoDNS), with a **mandatory 124-rule DNS denylist** sourced from [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist).
 
-**Discord:** https://discord.gg/x2Ppvzwjhm
+**Status:** source changes and automated verification are in progress. A green SDK build does **not** establish that console shutdown, rest-mode resume or controller wake are fixed. Do not replace your known-working payload until you have checked the build and followed the console validation plan.
 
-Minimal PS4/PS5 payload DNS proxy that:
+## What changed
 
-- listens on configurable local IPv4 and IPv6 addresses on port `53`
-- applies local IPv4 overrides for domains matching shell-style masks
-- forwards all other DNS queries to upstream resolvers from `/data/nanodns/nanodns.ini`
-- stores runtime files under `/data/nanodns`
-- writes DNS queries and responses to a log file
-- can additionally mirror logs to `stdout`/`klog` when `debug=1`
-- supports an exceptions block to bypass local overrides for selected domains
-- can bind the listening sockets to specific local IPv4 and IPv6 addresses
+- No more process scanning with hardcoded FreeBSD kernel-info offsets or forcibly killing old nanoDNS instances with `SIGKILL`.
+- Preserves the original `nanodns.elf` process label expected by external payload managers.
+- Stops work promptly when `SIGINT` or `SIGTERM` is received and releases sockets / SceNet resources with shutdown milestones.
+- Exclusive UDP port-53 ownership; if IPv4 bind fails, the new instance exits instead of silently running IPv6-only beside another resolver.
+- Monotonic deadlines when available and bounded draining of stale upstream packets.
+- Ships `nanodns.ini`, `nanodns.ini.example` and an embedded initial configuration derived from the multi-console policy.
+- Compiles **all 124 protected masks into the payload**: a user-supplied exception or custom override cannot exempt those masks. Blocked A queries receive `0.0.0.0`; blocked AAAA/non-A queries receive NODATA.
+- Refuses unsupported/multiple DNS questions rather than forwarding them uninspected.
+- Checks upstream DNS replies (transaction ID, name, type, class and response flags) and refuses answers with protected domain aliases.
+- Includes offline policy tests and PS4/PS5 SDK build workflows.
 
-Upstream resolvers are tried in the order listed in the config. The payload
-stops on the first valid response within the configured timeout budget.
+The policy is intentionally **selective**. Names not covered by its masks can still resolve through upstream DNS. Broad matches such as `*sony*`, `*nintendo*` and the shared CDN alias `a192.d.akamai.net` can block otherwise legitimate requests.
 
-## 💜 Support Development
+## Install on PS5 firmware 13.60
 
- If you want to support this project, you can donate
- - USDT (TRC-20):  **`TKaUGEwMm9KBXzEoiaaKYBX2yCHAKASW3p`**
- - USDT (ERC-20):  **`0x313dD245dBA957A5560618eA882d08e66aaFb430`**
- - USDC (Solana):  **`5kv7j2RbUGaSP1kU1cZWj9jHH7d6rfvxmK6YXTYbH4um`**
+1. Read [safe installation (French)](docs/INSTALL.fr.md), [DNS rules](docs/DNS_POLICY.md) and [threat model](SECURITY.md).
+2. Keep a router-level WAN block for the console during initial setup; this payload cannot filter pre-jailbreak traffic.
+3. Back up `/data/nanodns/nanodns.ini` and existing logs before modifying anything.
+4. Copy this repo's [`nanodns.ini`](nanodns.ini) to `/data/nanodns/nanodns.ini`. Existing on-console configs are deliberately **never overwritten** by payload startup.
+5. Set **both** PS5 DNS slots to `127.0.0.1`; do not assign an external secondary DNS. Run the offline WebKit loader and Payload Manager, then launch only one `nanodns.elf`.
+6. Verify `124 rule(s), 0 exception(s)` in the fresh log, `listening on 127.0.0.1:53`, blocked A/AAAA behavior, and normal permitted DNS resolutions.
+7. Test clean shutdown, cold boot from the DualSense, rest/resume, relaunch and duplicate-load handling as described in [console test plan](docs/TEST_PLAN.md).
 
-## Build
+**Important:** Installing a new ELF does not replace the on-console `nanodns.ini`. Back up and explicitly deploy the policy file. For an existing conflicting user INI, the compiled mandatory 124 rules still apply; the startup rule count may differ from 124.
 
-```sh
-export PS5_PAYLOAD_SDK=/opt/ps5-payload-sdk
-make
-```
-
-PS4 build:
-
-```sh
-export PS4_PAYLOAD_SDK=/opt/ps4-payload-sdk
-make -f Makefile.ps4
-```
-
-## Deploy
+## Build and checks
 
 ```sh
-make test PS5_HOST=<ps5-ip-or-hostname>
+python3 -m unittest discover -s tests -v
+export PS5_PAYLOAD_SDK=/path/to/ps5-payload-sdk
+make clean all
 ```
 
-PS4 deploy:
+GitHub Actions uploads `nanodns.elf` on the PS5 build workflow. It also retains the upstream PS4 build for regression checks. Never interpret a CI artifact as proven safe on a physical console.
 
-```sh
-make -f Makefile.ps4 test PS4_HOST=<ps4-ip-or-hostname>
-```
+## Documentation
 
-## Config
+- [DNS policy, precedence, configuration](docs/DNS_POLICY.md)
+- [PS5 13.60 lifecycle and shutdown audit](docs/PS5_13_60_LIFECYCLE.md)
+- [Test matrix and release gate](docs/TEST_PLAN.md)
+- [Installation sécurisée](docs/INSTALL.fr.md)
+- [Security boundaries and responsible disclosure](SECURITY.md)
+- [Credits and provenance](docs/CREDITS.md)
+- [Changelog](CHANGELOG.md)
 
-At startup the payload uses the directory `/data/nanodns`.
-The config file path is `/data/nanodns/nanodns.ini`.
-If the file does not exist, it creates one with defaults:
+## Scope and limits
 
-```ini
-[general]
-log=/data/nanodns/nanodns.log
-debug=0
-quiet=0
-bind=127.0.0.1
-bind6=::1
+This payload **is not a firewall**. It cannot block cached IPs, direct-IP connections, alternate DNS or DoH/DoT clients, DNS over TCP, or outbound traffic before the payload starts. Its protection is limited to requests received by its UDP DNS sockets and the domains it recognizes. If *no forbidden network traffic may leave the console*, enforce that policy **at the router/firewall**, including IPv6.
 
-[upstream]
-server=1.1.1.1
-server=8.8.8.8
-server=77.88.8.8
-timeout_ms=1500
+The controller PS-button wake function occurs while the PS5 is powered off and cannot be implemented by a payload running only after boot. Fixing a faulty shutdown may help indirectly but cannot be asserted without console reproduction.
 
-[overrides]
-*.playstation.com=0.0.0.0
-*.playstation.com.*=0.0.0.0
-playstation.com=0.0.0.0
-*.playstation.net=0.0.0.0
-*.playstation.net.*=0.0.0.0
-*.psndl.net=0.0.0.0
-playstation.net=0.0.0.0
-psndl.net=0.0.0.0
-# *.example.com=192.168.0.10
-# exact.host.local=10.0.0.42
+## Credits, licensing, affiliation
 
-[exceptions]
-feature.api.playstation.com
-*.stun.playstation.net
-stun.*.playstation.net
-ena.net.playstation.net
-post.net.playstation.net
-gst.prod.dl.playstation.net
-# auth.api.playstation.net
-# *.allowed.playstation.net
-```
+- **Original nanoDNS payload and code:** [Drakmor](https://github.com/drakmor/nanoDNS).
+- **124-rule policy and independent security research:** [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist).
+- Additional public domain research cited by that policy: [source bibliography](https://github.com/niakw/nanodns-console-blocklist/blob/main/docs/SOURCES.md).
+- Maintainer of this 13.60 integration: [niakw](https://github.com/niakw).
 
-Override masks use shell-style wildcard matching with `*`, `?`, bracket classes
-like `[abc]`, ranges like `[a-z]`, and negated classes like `[!0-9]`, for example:
-
-- `*.example.com`
-- `api??.test.local`
-- `exact.host.local`
-
-`debug=0` disables mirrored output to console and `klog`, but the file specified by
-`log=` still receives all requests and responses. The log file is overwritten on
-each startup.
-
-`quiet=1` disables popup notifications. The default is `quiet=0`, so startup
-notifications are shown.
-
-`bind=` sets the local IPv4 address used by the IPv4 listening socket. The default is `127.0.0.1`.
-Use `bind=0.0.0.0` to listen on all local IPv4 interfaces.
-
-`bind6=` sets the local IPv6 address used by the IPv6 listening socket. The default is `::1`.
-Use `bind6=::` to listen on all local IPv6 interfaces.
-Use `bind6=off` to disable the IPv6 listener entirely.
-
-Entries in `[upstream]` are attempted in order. `timeout_ms` is the total time budget
-for trying the configured upstream servers for a single query.
-
-Entries in `[exceptions]` are also shell-style masks, one per line. If a query
-matches an exception, it is forwarded to upstream DNS and bypasses all local
-override rules.
+Derived from Drakmor's GPL-3.0 code; the original [LICENSE](LICENSE) is retained. Independent community fork, not an official Sony, Microsoft, Nintendo or Drakmor release.
