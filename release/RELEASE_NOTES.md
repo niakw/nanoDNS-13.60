@@ -20,6 +20,8 @@ This patch release rebuilds the actual ELF binaries after security and CI update
 
 **0.4-13.60.2 (this release): USER-TESTED ON FIRMWARE 13.60 — startup, configuration loading and protected A-query DNS blocking PASSED.** The tester's runtime log confirms `NanoDNS v0.4-13.60.2` (built Nov 19 2026 15:34:13), 124 rules, 0 exceptions, 2 Quad9 upstream addresses configured, active loopback IPv4 and IPv6 listeners, and **5/5 observed A queries locally answered `0.0.0.0`**. No errors appear in the excerpt. **A follow-up user test also confirms that normal shutdown and subsequent power-on with 0.4-13.60.2 succeeded without recurrence of the original issue.** This shutdown/power-on outcome is a **user report**, not a terminal `shutdown: complete` marker in the DNS log. **Rest/resume, explicit controller-only wake, AAAA, permitted upstream DNS, repeated cycles and long-term stability remain unverified**. The earlier 0.4-13.60.1 build has its own separate positive shutdown trial.
 
+**User-test outcome scope:** 0.4-13.60.2 has now passed the specific startup, mandatory DNS filtering and normal shutdown/power-on checks carried out by its tester. Further unperformed tests remain documented below; no additional hardware compatibility is implied.
+
 **Other current-generation firmware: NOT USER-VALIDATED. Secondary/older-generation build: NOT USER-VALIDATED on any firmware.** Successful compilation does not establish compatibility.
 
 ## Download and install (recommended)
