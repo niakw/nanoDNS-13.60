@@ -38,6 +38,7 @@
 #define DATA_DIR "/data/nanodns"
 #define CONFIG_PATH DATA_DIR "/nanodns.ini"
 #define DEFAULT_LOG_PATH DATA_DIR "/nanodns.log"
+#define LOG_MAX_BYTES (4u * 1024u * 1024u)
 #define DNS_PORT 53
 #define MAX_DNS_PACKET 4096
 #define MAX_UPSTREAMS 8
@@ -134,6 +135,8 @@ static volatile sig_atomic_t g_running = 1;
 static int g_libnet_mem_id = -1;
 static int g_debug_enabled = 1;
 static FILE *g_log_file = NULL;
+static char g_log_active_path[MAX_LOG_PATH];
+static size_t g_log_bytes = 0;
 
 static const char *k_default_config =
     "# nanoDNS 13.60 baseline: https://github.com/niakw/nanodns-console-blocklist\n"
@@ -438,10 +441,39 @@ static const char *const k_protected_masks[] = {
 #define PROTECTED_RULE_COUNT (sizeof(k_protected_masks) / sizeof(k_protected_masks[0]))
 
 static void
+logger_rotate_if_full(void) {
+  char previous[MAX_LOG_PATH + 16];
+  int written;
+
+  if(g_log_file == NULL || g_log_bytes < LOG_MAX_BYTES) {
+    return;
+  }
+  fclose(g_log_file);
+  g_log_file = NULL;
+  written = snprintf(previous, sizeof(previous), "%s.previous",
+                     g_log_active_path);
+  if(written < 0 || (size_t)written >= sizeof(previous)) {
+    return;
+  }
+  (void)rename(g_log_active_path, previous);
+  g_log_file = fopen(g_log_active_path, "w");
+  g_log_bytes = 0;
+  if(g_log_file != NULL) {
+    setvbuf(g_log_file, NULL, _IOLBF, 0);
+  }
+}
+
+static void
 log_emit_direct(const char *buf, int to_debug) {
   if(g_log_file != NULL) {
-    fputs(buf, g_log_file);
-    fflush(g_log_file);
+    if(fputs(buf, g_log_file) == EOF || fflush(g_log_file) == EOF) {
+      /* Do not let logging failures break local DNS deny rules. */
+      fclose(g_log_file);
+      g_log_file = NULL;
+    } else {
+      g_log_bytes += strlen(buf);
+      logger_rotate_if_full();
+    }
   }
 
   if(to_debug) {
@@ -454,6 +486,8 @@ log_emit_direct(const char *buf, int to_debug) {
 static int
 logger_init(const app_config_t *cfg) {
   char buf[512];
+  char previous[MAX_LOG_PATH + 16];
+  int written;
 
   if(g_log_file != NULL) {
     fclose(g_log_file);
@@ -461,12 +495,20 @@ logger_init(const app_config_t *cfg) {
   }
 
   g_debug_enabled = cfg->debug_enabled ? 1 : 0;
+  snprintf(g_log_active_path, sizeof(g_log_active_path), "%s",
+           cfg->log_path);
+  written = snprintf(previous, sizeof(previous), "%s.previous",
+                     g_log_active_path);
+  if(written >= 0 && (size_t)written < sizeof(previous)) {
+    /* Keep the last session's log instead of silently truncating it. */
+    (void)rename(g_log_active_path, previous);
+  }
   g_log_file = fopen(cfg->log_path, "w");
+  g_log_bytes = 0;
   if(g_log_file == NULL) {
     if(!g_debug_enabled) {
       g_debug_enabled = 1;
     }
-
     snprintf(buf, sizeof(buf), "[nanodns] failed to open log file %s: %s\n",
              cfg->log_path, strerror(errno));
     log_emit_direct(buf, g_debug_enabled);
