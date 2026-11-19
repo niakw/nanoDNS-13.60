@@ -1366,6 +1366,52 @@ protected_domain_match(const char *domain) {
   return 0;
 }
 
+/* Reject protected hostnames hidden in a resolver's answer section.
+ * Malformed answer records are refused, not passed to the client. */
+static int
+dns_response_has_blocked_target(const uint8_t *packet, size_t packet_len,
+                                const dns_question_t *question) {
+  size_t cursor = question->question_end;
+  for(size_t i = 0; i < question->ancount; ++i) {
+    char owner[MAX_DOMAIN_LEN], target[MAX_DOMAIN_LEN];
+    uint16_t type, rdlength;
+    size_t rdata_start, name_cursor;
+
+    if(dns_expand_name(packet, packet_len, &cursor, owner,
+                       sizeof(owner)) != 0 || cursor + 10 > packet_len) {
+      return 1;
+    }
+    normalize_domain(owner, owner, sizeof(owner));
+    if(protected_domain_match(owner)) return 1;
+    type = read_u16(packet + cursor);
+    rdlength = read_u16(packet + cursor + 8);
+    cursor += 10;
+    rdata_start = cursor;
+    if((size_t)rdlength > packet_len - cursor) return 1;
+
+    name_cursor = rdata_start;
+    if(type == 15 || type == 64 || type == 65) {
+      if(rdlength < 3) return 1;
+      name_cursor += 2;
+    } else if(type == 33) {
+      if(rdlength < 7) return 1;
+      name_cursor += 6;
+    }
+
+    if(type == 2 || type == 5 || type == 12 || type == 15 ||
+       type == 33 || type == 39 || type == 64 || type == 65) {
+      if(dns_expand_name(packet, packet_len, &name_cursor, target,
+                         sizeof(target)) != 0 ||
+         name_cursor > rdata_start + rdlength) return 1;
+      normalize_domain(target, target, sizeof(target));
+      if(protected_domain_match(target)) return 1;
+    }
+
+    cursor = rdata_start + rdlength;
+  }
+  return 0;
+}
+
 static const override_rule_t *
 find_matching_rule(const app_config_t *cfg, const char *domain) {
   for(size_t i = 0; i < cfg->rule_count; ++i) {
