@@ -12,6 +12,10 @@ Les 124 règles et les travaux de recherche sur les domaines de consoles et d'é
 
 La liste figure dans le fichier `nanodns.ini` et dans le code source du binaire. Les tests automatisés vérifient leur cohérence. Aucun téléchargement distant de règles n'est exécuté automatiquement au démarrage.
 
+## DNS amont
+
+Les adresses des résolveurs sécurisés proviennent de [Quad9](https://quad9.net/fr/service/service-addresses-and-features/). Le DNS principal et celui de secours appartiennent au **même fournisseur** ; Quad9 n'est pas mainteneur de ce fork.
+
 ## Intégration 13.60
 
 Le fork [niakw/nanoDNS-13.60](https://github.com/niakw/nanoDNS-13.60) vise la fiabilité et la sécurité du payload sur firmware PS5 13.60. Il ne constitue pas une publication officielle de Drakmor, Sony, Nintendo ou Microsoft. Il ne contient pas d'actifs propriétaires supplémentaires et reste soumis à la licence [GPL-3.0](../LICENSE).

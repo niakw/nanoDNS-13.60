@@ -21,6 +21,12 @@ A carefully scoped PS5 firmware **13.60** fork of [Drakmor's nanoDNS](https://gi
 
 The policy is intentionally **selective**. Names not covered by its masks can still resolve through upstream DNS. Broad matches such as `*sony*`, `*nintendo*` and the shared CDN alias `a192.d.akamai.net` can block otherwise legitimate requests.
 
+## Quad9-only upstream resolution
+
+The bundled INI, generated defaults and internal fallback use **`9.9.9.9` followed by `149.112.112.112`**, both from [Quad9's security-filtering service](https://quad9.net/service/service-addresses-and-features/). Cloudflare and other providers are **not** configured as default fallbacks. Quad9 filters malicious domains, but does not replace nanoDNS's console blocklist.
+
+**Important:** an existing on-console `nanodns.ini` is never automatically overwritten, so manually install the updated INI if you want the Quad9-only upstream configuration. nanoDNS's forwarding to the upstream resolvers uses unencrypted UDP DNS.
+
 ## Install on PS5 firmware 13.60
 
 1. Read [safe installation (French)](docs/INSTALL.fr.md), [DNS rules](docs/DNS_POLICY.md) and [threat model](SECURITY.md).

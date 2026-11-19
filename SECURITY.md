@@ -8,6 +8,10 @@ The built-in denylist contains 124 masks from [nanoDNS Console Blocklist](https:
 
 The payload additionally validates upstream reply identity, blocks protected alias names in answer sections, avoids forcible termination of old payload processes and refuses to start when the required IPv4 listener cannot bind.
 
+## DNS upstream trust
+
+The bundled policy uses only Quad9's **secure service** at `9.9.9.9` and `149.112.112.112`, two addresses belonging to the same operator. These are **unencrypted UDP DNS** upstreams, and any existing user INI needs explicit replacement to adopt them. Quad9 malware filtering and DNSSEC validation do not turn nanoDNS into a network firewall.
+
 ## What it does not protect
 
 **DNS filtering is not a firewall or an absolute firmware-update prevention mechanism.** The following remain outside its scope:

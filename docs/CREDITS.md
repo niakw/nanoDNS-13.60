@@ -12,6 +12,10 @@ The mandatory 124-rule configuration and categorized console/publisher hostname 
 
 The rule snapshot is used in both `nanodns.ini` and the native protected-mask array; their exact parity is enforced by automated tests. Changes should be reviewed alongside the source policy, never silently updated over the network.
 
+## DNS upstream
+
+The default primary and backup secure DNS resolvers are from [Quad9](https://quad9.net/service/service-addresses-and-features/). Both addresses belong to Quad9; they are not independent service providers. Quad9 is not the maintainer of this fork.
+
 ## Integration
 
 This firmware-13.60-focused integration is maintained in [niakw/nanoDNS-13.60](https://github.com/niakw/nanoDNS-13.60). It is not an official Drakmor release and has no Sony, Nintendo or Microsoft affiliation.

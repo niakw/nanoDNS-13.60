@@ -13,6 +13,8 @@
 - Conservation du journal précédent et taille maximale pour les logs actifs.
 
 ### Politique DNS et sécurité
+
+- DNS amont désormais uniquement Quad9 : `9.9.9.9` et `149.112.112.112`, sans DNS Cloudflare dans les valeurs par défaut. Conservation des 124 règles / zéro exception.
 - Intégration avec crédits de la [liste de blocage multi-consoles](https://github.com/niakw/nanodns-console-blocklist) : 124 règles, aucune exception par défaut.
 - Compilation des règles obligatoires dans le binaire et application prioritaire sur toute exception utilisateur.
 - Rejet des questions DNS non prises en charge sans retransmission non filtrée.

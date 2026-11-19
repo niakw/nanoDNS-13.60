@@ -8,6 +8,10 @@ La liste obligatoire de 124 motifs provient de [nanoDNS Console Blocklist](https
 
 Le programme vérifie également les réponses des résolveurs amont, refuse certains alias associés à des noms interdits, n'élimine plus les instances précédentes par `SIGKILL` et refuse un démarrage partiel sans écoute IPv4.
 
+## Confiance dans les DNS amont
+
+La configuration distribuée utilise uniquement le service sécurisé Quad9 : `9.9.9.9` et `149.112.112.112`. Ce sont deux adresses du **même fournisseur**, sollicitées via DNS UDP non chiffré. Une ancienne configuration personnalisée doit être remplacée explicitement. Le filtrage des domaines malveillants et la validation DNSSEC côté Quad9 ne constituent pas un pare-feu.
+
 ## Ce que cette protection ne couvre pas
 
 **Un filtrage DNS n'est pas un pare-feu et ne peut pas garantir l'absence de mise à jour du firmware.**

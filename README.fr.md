@@ -19,6 +19,12 @@ Ce dépôt adapte [nanoDNS de Drakmor](https://github.com/drakmor/nanoDNS) à un
 - Tests Python de cohérence et tests natifs des masques DNS, avec compilation PS4/PS5 par GitHub Actions.
 - Sauvegarde du journal précédent et plafonnement de la taille des logs.
 
+## DNS amont Quad9 uniquement
+
+Le profil livré, les valeurs générées et les valeurs de secours intégrées utilisent **`9.9.9.9` puis `149.112.112.112`**, deux adresses du [service sécurisé Quad9](https://quad9.net/fr/service/service-addresses-and-features/). Aucun relais Cloudflare dans les valeurs par défaut ; le filtrage Quad9 complète la blocklist locale sans la remplacer.
+
+**Attention :** le payload ne remplace pas un `nanodns.ini` déjà présent sur la console. Il faut donc copier le nouveau profil pour activer ces DNS amont. Le trafic DNS amont de nanoDNS utilise de l'UDP non chiffré.
+
 ## Installation
 
 Lire le [guide d'installation sécurisé en français](docs/INSTALL.fr.md). Isoler d'abord l'accès Internet **au niveau du routeur**, conserver la possibilité de charger le jailbreak hors ligne, sauvegarder l'ELF et la configuration, puis copier [`nanodns.ini`](nanodns.ini) dans `/data/nanodns/nanodns.ini`.

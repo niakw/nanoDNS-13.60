@@ -22,7 +22,7 @@ Une réponse malformée est refusée plutôt que retransmise. Cela ne constitue 
 
 - **124 règles ; aucune exception**.
 - Blocage de noms connus Sony/PlayStation, Nintendo, Xbox, Epic, EA, Ubisoft, Sega, Rockstar, GOG, Valve, etc.
-- DNS amont : `1.1.1.1` (Cloudflare), puis `9.9.9.9` (Quad9), pour les noms autorisés seulement.
+- DNS amont : **Quad9 uniquement**, `9.9.9.9` (prioritaire) puis `149.112.112.112` (secours), pour les noms autorisés seulement. Les deux adresses appartiennent au **même fournisseur** ; nanoDNS transmet en DNS UDP non chiffré. Quad9 applique son filtrage des domaines malveillants et la validation DNSSEC.
 - Écoutes locales : `127.0.0.1:53` et `[::1]:53`.
 - Les noms non interdits, comme `github.com`, peuvent continuer à être résolus.
 

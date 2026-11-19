@@ -12,6 +12,8 @@
 - Use monotonic deadline where supported; bound stale upstream packet draining.
 
 ### DNS policy and security
+
+- Upstreams changed to Quad9 secure-only primary `9.9.9.9` and backup `149.112.112.112`; no Cloudflare fallback in distributed defaults. The original 124 deny rules / 0 exceptions stay intact.
 - Integrate and credit the 124-rule, zero-exception selective configuration from [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist).
 - Compile mandatory masks into the ELF and apply **before** any local exception.
 - Reject unsupported DNS question sets rather than forwarding unchecked.

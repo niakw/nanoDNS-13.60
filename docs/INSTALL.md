@@ -10,6 +10,19 @@
 6. Deploy a new ELF **only after green PS5 SDK and policy checks**. Confirm the current-session log contains `listening on 127.0.0.1:53`, blocked Sony A/AAAA lookups, and authorized lookup resolution such as `github.com`.
 7. Follow the [hardware validation matrix](TEST_PLAN.md): shutdown, physical power-on, DualSense wake, rest mode/resume, reload, and duplicate launch. Restore the original ELF and INI if a failure occurs.
 
+## Upstream DNS configuration
+
+The bundled `nanodns.ini` and embedded defaults use Quad9's **secure resolver pair** for *permitted* names only:
+
+```ini
+[upstream]
+server=9.9.9.9
+server=149.112.112.112
+timeout_ms=1500
+```
+
+These are **not** the PS5's DNS settings. Keep both console DNS fields at `127.0.0.1`. Existing on-console configs must be manually replaced to use the new pair.
+
 ## Precautions
 
 - An ELF alone cannot guarantee blocking while the console is fully off or before the exploit and payload load.

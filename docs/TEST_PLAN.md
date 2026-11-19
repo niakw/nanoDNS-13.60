@@ -13,6 +13,8 @@ Build the **PS5 ELF** with the official `ps5-payload-dev/sdk` and check the arti
 
 ## 2. Safe console preparation
 
+Confirm the **current-session** startup log reports `upstream[0] = 9.9.9.9` and `upstream[1] = 149.112.112.112` after copying the updated INI. If either differs, inspect the preserved on-console configuration rather than assuming the new defaults were activated.
+
 Back up `/data/nanodns/nanodns.ini`, the old ELF and `/data/nanodns/nanodns.log`; also back up important game saves. Keep WAN blocked externally (including IPv6) during initial tests while maintaining local FTP/loader access.
 
 Use the same firmware 13.60, Payload Manager, WebKit Autoloader 0.7.1, kstuff-lite 1.11, ShadowMountPlus 1.7beta12, BFPilot 0.4.4 and ftpsrv 0.22. Confirm that autoload runs only once per payload.

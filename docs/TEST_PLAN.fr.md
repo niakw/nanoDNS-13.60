@@ -12,6 +12,8 @@ Compiler l'ELF PS5 avec le SDK officiel `ps5-payload-dev/sdk` et exécuter égal
 
 ## 2. Préparation sécurisée
 
+Après copie du nouvel INI, vérifier dans les logs de la **session active** : `upstream[0] = 9.9.9.9` et `upstream[1] = 149.112.112.112`. Une valeur différente indique notamment qu'une ancienne configuration a pu être conservée.
+
 Sauvegarder l'ELF d'origine, `/data/nanodns/nanodns.ini`, les journaux et les sauvegardes importantes. Interdire temporairement l'accès WAN au niveau du routeur, IPv4 et IPv6, en préservant le FTP et le chargement local.
 
 Configuration cible : PS5 13.60, WebKit Autoloader 0.7.1, Payload Manager, Kstuff Lite 1.11, ShadowMountPlus 1.7beta12, BFPilot 0.4.4 et ftpsrv 0.22. Vérifier l'absence de chargement double.

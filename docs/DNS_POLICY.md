@@ -21,7 +21,7 @@ The fork contains three synchronized snapshots: `nanodns.ini`, `nanodns.ini.exam
 ## Original source profile
 
 - **124 rules** / **0 exceptions**, with broad PlayStation / Sony / Nintendo patterns, Xbox, Epic, EA, Ubisoft, Sega, Rockstar, GOG, Valve and other publishers.
-- Two upstream DNS servers for otherwise permitted domains: `1.1.1.1` and `9.9.9.9`.
+- **Quad9-only secure upstreams** for otherwise permitted names: `9.9.9.9` (primary) and `149.112.112.112` (backup), with malware/phishing blocking and DNSSEC validation performed by Quad9. Both IPs belong to **the same provider**, and nanoDNS forwards using ordinary (unencrypted) UDP DNS.
 - Local listeners: `127.0.0.1:53` and `[::1]:53`.
 - The list deliberately leaves e.g. GitHub and YouTube resolvable if the console actually uses this resolver.
 
