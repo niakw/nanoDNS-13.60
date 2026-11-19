@@ -1,13 +1,17 @@
-name: Publish firmware 13.60 pre-release
+name: Publish firmware 13.60 standard release
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - release/RELEASE_NOTES.md
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: nanodns-13-60-prerelease
+  group: nanodns-13-60-standard-release
   cancel-in-progress: false
 
 jobs:
@@ -96,7 +100,8 @@ jobs:
       contents: write
     env:
       GH_TOKEN: ${{ github.token }}
-      TAG: v0.4-13.60.1-beta.1
+      TAG: v0.4-13.60.2
+      BUNDLE: nanodns-13.60-v0.4-13.60.2-install.zip
     steps:
       - name: Checkout exact release commit
         uses: actions/checkout@v7
@@ -110,14 +115,29 @@ jobs:
         with:
           name: release-ps4
           path: dist
-      - name: Package policy and SHA-256 checksums
+      - name: Package the two-file FTP ZIP and both checksum manifests
+        env:
+          BUNDLE: nanodns-13.60-v0.4-13.60.2-install.zip
+        shell: bash
         run: |
+          set -euo pipefail
           cp nanodns.ini dist/nanodns.ini
-          cd dist
-          sha256sum nanodns.elf nanodns-ps4.elf nanodns.ini > SHA256SUMS
-          test -s SHA256SUMS
-          cat SHA256SUMS
-      - name: Publish GitHub pre-release with verified binaries
+          (
+            cd dist
+            sha256sum nanodns.elf nanodns-ps4.elf nanodns.ini > SHA256SUMS
+            sha256sum --check SHA256SUMS
+          )
+          mkdir -p package/data/pldmgr/payloads/local/nanodns package/data/nanodns
+          cp dist/nanodns.elf package/data/pldmgr/payloads/local/nanodns/nanodns.elf
+          cp dist/nanodns.ini package/data/nanodns/nanodns.ini
+          (cd package && zip -q -X -D "../$BUNDLE" data/pldmgr/payloads/local/nanodns/nanodns.elf data/nanodns/nanodns.ini)
+          unzip -t "$BUNDLE"
+          test "$(unzip -Z -1 "$BUNDLE" | LC_ALL=C sort)" = "$(printf '%s\n' 'data/nanodns/nanodns.ini' 'data/pldmgr/payloads/local/nanodns/nanodns.elf' | LC_ALL=C sort)"
+          cmp dist/nanodns.elf <(unzip -p "$BUNDLE" data/pldmgr/payloads/local/nanodns/nanodns.elf)
+          cmp dist/nanodns.ini <(unzip -p "$BUNDLE" data/nanodns/nanodns.ini)
+          sha256sum "$BUNDLE" > "$BUNDLE.sha256"
+          cat dist/SHA256SUMS "$BUNDLE.sha256"
+      - name: Publish GitHub standard release and checked ZIP
         shell: bash
         run: |
           set -euo pipefail
@@ -125,4 +145,11 @@ jobs:
             echo "::error::Release tag already exists; refusing to overwrite assets"
             exit 1
           fi
-          gh release create "$TAG"             dist/nanodns.elf dist/nanodns-ps4.elf dist/nanodns.ini dist/SHA256SUMS             --repo "$GITHUB_REPOSITORY"             --title "nanoDNS 13.60 · 0.4-13.60.1 Beta 1"             --notes-file release/RELEASE_NOTES.md             --target "$GITHUB_SHA"             --prerelease             --latest=false
+          gh release create "$TAG" \
+            dist/nanodns.elf dist/nanodns-ps4.elf dist/nanodns.ini dist/SHA256SUMS \
+            "nanodns-13.60-v0.4-13.60.2-install.zip" "nanodns-13.60-v0.4-13.60.2-install.zip.sha256" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "nanoDNS 13.60 · 0.4-13.60.2" \
+            --notes-file release/RELEASE_NOTES.md \
+            --target "$GITHUB_SHA" \
+            --latest

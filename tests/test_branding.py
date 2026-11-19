@@ -62,14 +62,14 @@ class DocumentationContracts(unittest.TestCase):
    for path in paths:
     self.assertIn(path,s)
    self.assertIn("local/nanodns",s)
-   self.assertIn("nanodns-13.60-v0.4-13.60.1-beta.1-install.zip",s)
+   self.assertIn("nanodns-13.60-v0.4-13.60.2-install.zip",s)
   for s in (en,fr):
    self.assertIn("nanodns@e8cce5d1",s)
    self.assertIn("Payload Manager",s)
    self.assertIn("autoload",s)
    self.assertIn("/data/data/",s)
   for s in ((ROOT/"README.md").read_text(encoding="utf-8"),(ROOT/"README.fr.md").read_text(encoding="utf-8")):
-   self.assertIn("nanodns-13.60-v0.4-13.60.1-beta.1-install.zip",s)
+   self.assertIn("nanodns-13.60-v0.4-13.60.2-install.zip",s)
    self.assertIn("local/nanodns",s)
 
  def test_hardware_user_test_status_is_scoped(self):
@@ -100,7 +100,13 @@ class DocumentationContracts(unittest.TestCase):
    self.assertIn(key,notes)
   self.assertIn("standard GitHub Release",en)
   self.assertIn("Release GitHub standard",fr)
-  self.assertIn("--prerelease=false --latest",wf)
+  self.assertNotIn("gh release edit",wf)
+  self.assertIn("workflow_dispatch",wf)
+  publisher=(ROOT/".github/workflows/publish-rc.yml").read_text(encoding="utf-8")
+  self.assertIn("dist/nanodns.elf",publisher)
+  self.assertIn("dist/nanodns-ps4.elf",publisher)
+  self.assertIn("nanodns-13.60-v0.4-13.60.2-install.zip",publisher)
+  self.assertIn("--latest",publisher)
   self.assertIn("v0.4-13.60.1-beta.1",notes)
 
  def test_project_community_documents_are_complete(self):

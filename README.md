@@ -18,11 +18,15 @@
 
 ---
 
+## Release 0.4-13.60.2 — security maintenance
+
+**Latest ELF/ZIP: `0.4-13.60.2`, CI-built from the current source, with the atomic INI-creation security fix. This new executable has not yet received a user hardware test.** The **0.4-13.60.1** executable (historical [release](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)) is the one verified on a real firmware 13.60 console. Do not transfer that user validation automatically to 0.4-13.60.2 or to other firmware.
+
 ## Hardware validation status — 19 November 2026
 
 | Target | Real-user hardware status | Scope |
 | --- | --- | --- |
-| Current-generation console, firmware **13.60** | **USER-TESTED — basic operation passed** | One user's installation: successful payload startup, local A-query blocking, and normal shutdown/power-on without the previously reported problem |
+| Current-generation console, firmware **13.60** | **0.4-13.60.1 USER-TESTED; 0.4-13.60.2 NOT YET USER-TESTED** | Prior binary started, filtered A queries, and shut down/restarted without the reported issue. The updated ELF requires a new real-console test |
 | Current-generation console, **other firmware** | **NOT USER-VALIDATED** | SDK compilation and automated tests are not hardware validation |
 | Secondary/older-generation console build, **all firmware** | **NOT USER-VALIDATED** | Successful SDK compilation only; no real-user hardware report |
 
@@ -90,11 +94,11 @@ No external resolver operator is configured as fallback. Both Quad9 IPs use the 
 
 ## Already using Drakmor's original nanoDNS 0.4?
 
-**Use our single ready-to-copy ZIP:** [**nanoDNS 13.60 installation bundle**](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip).
+**Use our single ready-to-copy ZIP:** [**nanoDNS 13.60 installation bundle**](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.2/nanodns-13.60-v0.4-13.60.2-install.zip).
 
 After backing up the existing ELF/INI, **uninstall the original nanoDNS in Payload Manager or disable it and remove its autoload entry**, stop it through the manager when supported or shut down/restart the console cleanly. Then extract the ZIP on your computer, copy its `data/` tree to the **console filesystem root**, refresh Payload Manager, and enable **only `local/nanodns`** in autoload. **Do not** update the original repository/catalog entry or overwrite its existing `repo/nanodns@e8cce5d1` slot.
 
-[**Step-by-step migration guide (English)**](docs/INSTALL.md#upgrade-from-drakmors-original-nanodns-04) · [Guide français](docs/INSTALL.fr.md#migration-depuis-le-nanodns-04-officiel-de-drakmor) · [Release and standalone files](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)
+[**Step-by-step migration guide (English)**](docs/INSTALL.md#upgrade-from-drakmors-original-nanodns-04) · [Guide français](docs/INSTALL.fr.md#migration-depuis-le-nanodns-04-officiel-de-drakmor) · [Release and standalone files](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.2)
 
 ## Installation: ZIP first, English first
 
@@ -107,7 +111,7 @@ The recommended download is a **two-file installation ZIP**. Copy the extracted 
 
 Then refresh Payload Manager, enable only the `local/nanodns` autoload entry, keep **both console DNS fields at `127.0.0.1`**, and verify the new-session logs. The archive **does not** update Payload Manager's autoload on its own. An independent external firewall is still required for strict WAN isolation.
 
-**[Download installation ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip)** · [Complete English instructions](docs/INSTALL.md) · [Guide français](docs/INSTALL.fr.md) · [Validation plan](docs/TEST_PLAN.md)
+**[Download installation ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.2/nanodns-13.60-v0.4-13.60.2-install.zip)** · [Complete English instructions](docs/INSTALL.md) · [Guide français](docs/INSTALL.fr.md) · [Validation plan](docs/TEST_PLAN.md)
 
 ## When can this independent project be considered stable?
 

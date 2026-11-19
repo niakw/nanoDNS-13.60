@@ -4,7 +4,11 @@
 
 **Statut : Release GitHub standard ; premier test utilisateur positif sur firmware 13.60, autres vérifications en attente.** Un build seul ne prouve ni une extinction correcte, ni un réveil à la manette, ni une reprise de veille fiable.
 
-## Compte rendu de test sur console — 19 novembre 2026
+## Nouvelle Release 0.4-13.60.2 — test utilisateur nécessaire
+
+Le nouvel ELF contient le correctif de sécurité de création atomique de l'INI et les nouvelles versions des GitHub Actions. Il nécessite **un nouveau test réel sur console firmware 13.60** : la compilation et les journaux de l'ancien binaire ne valident pas celui-ci. Le test d'extinction/rallumage positif ci-dessous concerne **uniquement 0.4-13.60.1**. Les autres firmwares et le binaire pour l'autre génération restent non validés.
+
+## Compte rendu de test sur console — 19 novembre 2026 (0.4-13.60.1 uniquement)
 
 **Firmware 13.60 : test utilisateur réussi pour le fonctionnement de base.** Le testeur a installé notre bêta et indique que le précédent problème d'extinction et de rallumage **ne s'est pas reproduit** lors de l'essai réalisé.
 

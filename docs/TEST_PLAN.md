@@ -4,7 +4,11 @@
 
 **Status: standard GitHub Release; one positive firmware 13.60 user test, with further validation pending.** Source tests and SDK builds alone cannot establish that console shutdown, controller power-on or standby are fixed.
 
-## Hardware test record — 19 November 2026
+## New release 0.4-13.60.2 — test still required
+
+The new ELF includes an atomic INI creation/security change and newer CI actions. It needs a new real-user firmware 13.60 test; compilation and previous successful user logs do not qualify the newly built binary. The verified user logs and normal shutdown/power-on report below belong **only to 0.4-13.60.1**. Other firmware and the secondary console build remain not user-validated.
+
+## Hardware test record — 19 November 2026 (0.4-13.60.1 only)
 
 **User-tested on firmware 13.60: basic operation successful.** A tester installed the independent release payload and reported that the previous shutdown/power-on issue did **not** recur during the performed trial.
 

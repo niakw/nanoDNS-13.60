@@ -2,7 +2,7 @@
 
 **Langues :** [English (default)](CHANGELOG.md) | Français
 
-## À valider sur console — sécurité et documentation (19 novembre 2026)
+## 0.4-13.60.2 — Release standard, tests matériels à refaire (19 novembre 2026)
 
 - Suppression de la course `stat()` / `fopen("w")` lors de la création du `nanodns.ini` : ouverture atomique `O_CREAT | O_EXCL | O_NOFOLLOW`, permissions initiales restreintes, aucun écrasement du fichier existant.
 - Ouverture du fichier INI existant sans suivre les liens symboliques et validation du type fichier ordinaire. Si le chargement échoue, maintien des règles intégrées obligatoires.
@@ -10,7 +10,7 @@
 - Correction de la configuration Dependabot pour le suivi hebdomadaire des GitHub Actions.
 - Guides anglais/français d'accessibilité, de contribution, de conduite et d'issues adaptés au projet.
 
-**Limite :** la Release GitHub standard et son ZIP contiennent toujours les **binaires publiés précédemment**. Ces nouvelles modifications de code ne sont **pas encore validées par test utilisateur** sur console. Le test matériel positif sur firmware 13.60 concerne le binaire précédemment installé. Les autres firmwares et le binaire secondaire restent non validés.
+**Limite de validation :** la Release 0.4-13.60.2 contient de **nouveaux binaires** avec le correctif de sécurité et les PR CI fusionnées, mais n'a **pas encore été retestée par utilisateur**. Le test 13.60 positif concernait le binaire 0.4-13.60.1. Les autres firmwares et le binaire secondaire restent non validés.
 
 ## 0.4-13.60.1 — Release GitHub standard ; premier test utilisateur positif sur 13.60 (19 novembre 2026)
 

@@ -1,10 +1,12 @@
 # Safe installation — console firmware 13.60
 
+**Latest Release 0.4-13.60.2:** the ELF and ZIP include the atomic configuration-file security fix. **User hardware testing of this new binary is pending**. The previous 0.4-13.60.1 binary received a successful firmware 13.60 user test; the earlier result does not automatically validate this update.
+
 **Language:** English (default) | [Français](INSTALL.fr.md)
 
 ## Download: two-file ZIP installation bundle (recommended)
 
-**[Download the ready-to-place installation ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip)** · [GitHub release and checksums](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)
+**[Download the ready-to-place installation ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.2/nanodns-13.60-v0.4-13.60.2-install.zip)** · [GitHub release and checksums](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.2)
 
 The ZIP contains **exactly two files**, without an installer, autorun or any alteration to the payload manager's autoload configuration:
 
@@ -30,7 +32,7 @@ The source of the archive is the **already-published ELF and INI from this preci
 1. **Back up first.** Keep your original catalog installation, typically `/data/pldmgr/payloads/repo/nanodns@e8cce5d1/nanoDNS_0.4.elf`, or copy it to your computer. Also back up `/data/nanodns/nanodns.ini` and `/data/nanodns/nanodns.log`. Keep an external IPv4 **and** IPv6 router/firewall rule denying unrestricted console WAN access while preserving local FTP and loader access.
 2. **Remove or disable the old payload in Payload Manager.** **Option A:** after backing it up, uninstall the original nanoDNS 0.4 through Payload Manager. **Option B (recommended while retaining a rollback option):** keep it installed but **disable its autoload**. If another autoloader launches the original nanoDNS, remove/disable that startup entry as well. Do **not** uninstall Payload Manager or unrelated payloads.
 3. **Stop the currently running old process.** If the manager supports a safe stop operation, use its normal UI. Otherwise, **power the console off fully and start it again** with original nanoDNS autoload disabled. Avoid forced `SIGKILL` and never hot-swap a running executable. A disabled autoload entry does not itself stop an already-running process.
-4. **Install the new two-file ZIP.** Download the [ready-to-place installation archive](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip), extract it on your computer and FTP-copy its **`data/` tree to the console root** so the ELF is at `/data/pldmgr/payloads/local/nanodns/nanodns.elf` and the INI at `/data/nanodns/nanodns.ini`. **Do not** copy the ZIP into `/data/` without extracting it and **do not** overwrite the old `repo/nanodns@e8cce5d1` folder.
+4. **Install the new two-file ZIP.** Download the [ready-to-place installation archive](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.2/nanodns-13.60-v0.4-13.60.2-install.zip), extract it on your computer and FTP-copy its **`data/` tree to the console root** so the ELF is at `/data/pldmgr/payloads/local/nanodns/nanodns.elf` and the INI at `/data/nanodns/nanodns.ini`. **Do not** copy the ZIP into `/data/` without extracting it and **do not** overwrite the old `repo/nanodns@e8cce5d1` folder.
 5. **Refresh Payload Manager.** Restart or refresh its interface so it scans the local payload library. Select the new **local `nanodns`** entry (`local/nanodns`), **not** the original repository/catalog entry. Direct local-file installation is supported without a `meta.json` file in current Payload Manager source; behavior on older manager versions needs verification. If this local entry is not visible, use the manager's **import local payload** feature with the extracted `nanodns.elf` instead, and ensure you do not enable two new entries.
 6. **Replace autoload, do not append.** Enable automatic startup **only** for the new local nanoDNS. The old nanoDNS 0.4 entry must be **deleted from autoload or explicitly disabled** in Payload Manager (and other loaders, if configured). Confirm the active startup entry resolves to `local/nanodns`, not `repo/nanodns@e8cce5d1`. A duplicate process may fail to bind DNS UDP port 53.
 7. **Verify DNS configuration and operation.** Both **console-side DNS fields** remain `127.0.0.1`. Only the installed `[upstream]` INI block uses `9.9.9.9` and `149.112.112.112` (Quad9). Verify the new `/data/nanodns/nanodns.log` for the listener, **`124 rule(s)`**, **`0 exception(s)`**, expected local denials and permitted DNS lookups when external network access is intentionally allowed.
@@ -40,7 +42,7 @@ The source of the archive is the **already-published ELF and INI from this preci
 
 ## First-time installation (no existing nanoDNS)
 
-Use the same [ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip) and copy both files to the exact locations above. Configure both console DNS slots to `127.0.0.1`, refresh Payload Manager, select `local/nanodns` and set **one** autoload entry. Keep WAN isolation at the external router/firewall until your chosen connectivity tests. See the [hardware validation checklist](TEST_PLAN.md).
+Use the same [ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.2/nanodns-13.60-v0.4-13.60.2-install.zip) and copy both files to the exact locations above. Configure both console DNS slots to `127.0.0.1`, refresh Payload Manager, select `local/nanodns` and set **one** autoload entry. Keep WAN isolation at the external router/firewall until your chosen connectivity tests. See the [hardware validation checklist](TEST_PLAN.md).
 
 ## Upstream DNS configuration
 

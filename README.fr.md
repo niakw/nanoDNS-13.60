@@ -14,11 +14,15 @@
 
 ---
 
+## Release 0.4-13.60.2 — maintenance de sécurité
+
+**Derniers ELF et ZIP : `0.4-13.60.2`, reconstruits avec la correction de création atomique de l'INI. Ce nouveau binaire n'est pas encore validé par test utilisateur.** Le binaire **0.4-13.60.1** (ancienne [Release](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)) est celui dont le bon fonctionnement a été observé sur console firmware 13.60. Ne pas transférer automatiquement cette validation à la nouvelle version ni aux autres firmwares.
+
 ## Validation matérielle — 19 novembre 2026
 
 | Cible | État des tests utilisateurs | Périmètre |
 | --- | --- | --- |
-| Console de génération actuelle, firmware **13.60** | **TEST UTILISATEUR RÉUSSI — fonctionnement de base** | Installation sur une console : démarrage du payload, blocage local des requêtes A, extinction et rallumage sans reproduction du problème initial |
+| Console de génération actuelle, firmware **13.60** | **0.4-13.60.1 TESTÉ ; 0.4-13.60.2 À RETESTER** | Le binaire précédent a démarré, bloqué les requêtes A et permis une extinction/rallumage sans anomalie. Le nouvel ELF nécessite un test console distinct |
 | Même génération, **autres firmwares** | **NON VALIDÉ PAR UN UTILISATEUR** | La compilation SDK et les tests automatiques ne sont pas des tests sur console |
 | Binaire pour console de génération précédente, **tous firmwares** | **NON VALIDÉ PAR UN UTILISATEUR** | Compilation SDK réussie, mais aucun retour matériel |
 
@@ -57,11 +61,11 @@ Les 124 motifs obligatoires sont évalués avant toute exception. Pour les noms 
 
 ## Tu utilises déjà le nanoDNS 0.4 officiel ?
 
-**Télécharge notre ZIP complet : [nanoDNS 13.60 prêt à copier](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip).** Deux fichiers seulement, avec les bons emplacements.
+**Télécharge notre ZIP complet : [nanoDNS 13.60 prêt à copier](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.2/nanodns-13.60-v0.4-13.60.2-install.zip).** Deux fichiers seulement, avec les bons emplacements.
 
 Après sauvegarde, **supprime l'ancien nanoDNS depuis Payload Manager ou désactive-le et enlève son autoload**. Arrête ensuite proprement son processus (ou éteins puis redémarre complètement la console). Décompresse le ZIP sur ton Mac, copie son dossier `data/` vers la **racine de la console**, relance Payload Manager et active **seulement `local/nanodns`** en boot auto. **Ne réutilise pas** le bouton Update du nanoDNS officiel ni son ancien dossier `repo/nanodns@e8cce5d1`.
 
-[**Guide de migration pas à pas (français)**](docs/INSTALL.fr.md#migration-depuis-le-nanodns-04-officiel-de-drakmor) · [English upgrade guide](docs/INSTALL.md#upgrade-from-drakmors-original-nanodns-04) · [Release et fichiers séparés](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)
+[**Guide de migration pas à pas (français)**](docs/INSTALL.fr.md#migration-depuis-le-nanodns-04-officiel-de-drakmor) · [English upgrade guide](docs/INSTALL.md#upgrade-from-drakmors-original-nanodns-04) · [Release et fichiers séparés](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.2)
 
 ## Fiabilité et installation
 
@@ -76,7 +80,7 @@ Notre version renforce l'application des règles et le cycle de vie du processus
 
 Copie l'arborescence `data/` du ZIP à la **racine `/`**, pas dans `/data/` une seconde fois. Ensuite, actualise Payload Manager, active uniquement `local/nanodns` en autoload et garde les deux DNS console sur `127.0.0.1`. Le ZIP **ne modifie pas automatiquement** le boot auto. Prévois un blocage WAN externe IPv4/IPv6 si tu veux une interdiction stricte des connexions.
 
-**[Télécharger le ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.1-beta.1/nanodns-13.60-v0.4-13.60.1-beta.1-install.zip)** · [Guide français](docs/INSTALL.fr.md) · [English instructions](docs/INSTALL.md) · [Tests console](docs/TEST_PLAN.fr.md)
+**[Télécharger le ZIP](https://github.com/niakw/nanoDNS-13.60/releases/download/v0.4-13.60.2/nanodns-13.60-v0.4-13.60.2-install.zip)** · [Guide français](docs/INSTALL.fr.md) · [English instructions](docs/INSTALL.md) · [Tests console](docs/TEST_PLAN.fr.md)
 
 ## Notre projet est-il prêt pour un usage stable ?
 

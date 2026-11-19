@@ -34,7 +34,7 @@
 #endif
 
 #define APP_NAME "NanoDNS"
-#define APP_VERSION "0.4-13.60.1"
+#define APP_VERSION "0.4-13.60.2"
 #define APP_COPYRIGHT "(c) Drakmor"
 #define DATA_DIR "/data/nanodns"
 #define CONFIG_PATH DATA_DIR "/nanodns.ini"
