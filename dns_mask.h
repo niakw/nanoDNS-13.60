@@ -6,6 +6,7 @@
 #define NANODNS_DNS_MASK_H
 
 #include <stdbool.h>
+#include <stddef.h>
 
 /* Match one non-* token. On an unterminated bracket treat '[' literally. */
 static bool
