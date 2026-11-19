@@ -1,0 +1,40 @@
+name: Sync release 13.60.2 notes without rebuilding binaries
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - release/RELEASE_NOTES.md
+      - .github/workflows/sync-release-notes.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nanodns-13-60-2-notes
+  cancel-in-progress: false
+
+jobs:
+  sync-existing-description:
+    if: github.repository == 'niakw/nanoDNS-13.60'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: v0.4-13.60.2
+    steps:
+      - name: Checkout project documentation
+        uses: actions/checkout@v7
+      - name: Validate documents and test contracts
+        run: python3 -m unittest discover -s tests -v
+      - name: Update release description only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s release/RELEASE_NOTES.md
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file release/RELEASE_NOTES.md
+          echo "Release notes updated; existing binaries, ZIP, SHA256SUMS and tag unchanged."

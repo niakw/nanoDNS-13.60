@@ -18,7 +18,7 @@ This patch release rebuilds the actual ELF binaries after security and CI update
 
 **0.4-13.60.1 (prior release):** **USER-TESTED** on console firmware 13.60. The tester reported normal startup and shutdown/power-on without recurrence of the previous issue. Two runtime logs documented **23 blocked A queries**, 124 loaded rules, 0 exceptions, and IPv4/IPv6 DNS listeners. A `shutdown: complete` line was not observed; the power-off result is based on the tester's report.
 
-**0.4-13.60.2 (this release): NOT YET USER-TESTED.** SDK builds and host tests are required but do not transfer that earlier user validation to this newly built ELF. Firmware 13.60 needs a separate installation/startup/DNS and shutdown/power-on trial. Rest/resume, permitted Quad9 resolution, AAAA handling and repeated power cycles remain unverified by hardware logs.
+**0.4-13.60.2 (this release): USER-TESTED ON FIRMWARE 13.60 — startup, configuration loading and protected A-query DNS blocking PASSED.** The tester's runtime log confirms `NanoDNS v0.4-13.60.2` (built Nov 19 2026 15:34:13), 124 rules, 0 exceptions, 2 Quad9 upstream addresses configured, active loopback IPv4 and IPv6 listeners, and **5/5 observed A queries locally answered `0.0.0.0`**. No errors appear in the excerpt. **No 0.4-13.60.2 shutdown/power-on, rest/resume, AAAA, permitted upstream DNS or repeated-cycle test** is demonstrated. The earlier 0.4-13.60.1 shutdown/power-on user report does not establish those behaviors for this ELF.
 
 **Other current-generation firmware: NOT USER-VALIDATED. Secondary/older-generation build: NOT USER-VALIDATED on any firmware.** Successful compilation does not establish compatibility.
 
@@ -51,13 +51,13 @@ Original work and GPL-3.0: [Drakmor/nanoDNS](https://github.com/drakmor/nanoDNS)
 
 ## Français — notes de version
 
-**Release standard 0.4-13.60.2, pour firmware 13.60. Nouveau binaire à tester sur console.**
+**Release standard 0.4-13.60.2, firmware 13.60 : TEST UTILISATEUR RÉUSSI pour le démarrage et le filtrage DNS A.**
 
 Ce correctif reconstruit le véritable ELF après le traitement des deux alertes CodeQL (création atomique de l'INI sans écrasement et droits minimaux des workflows) et la fusion des trois PR Dependabot (checkout v7, upload-artifact v7, download-artifact v8). Les documents d'accessibilité, contribution, conduite et issues ont été adaptés en français et en anglais.
 
 **Version 0.4-13.60.1 précédente : test utilisateur positif sur firmware 13.60** pour le démarrage, le filtrage DNS de type A, l'extinction et le rallumage, sans répétition du problème initial. Les deux logs comptent 23 requêtes A bloquées, 124 règles et 0 exception.
 
-**Version 0.4-13.60.2 (cette Release) : PAS ENCORE RETESTÉE SUR CONSOLE.** Le binaire pour console de génération précédente et les autres firmwares de génération actuelle restent également non validés par des essais utilisateurs. La compilation seule n'est pas une preuve de compatibilité.
+**Version 0.4-13.60.2 (cette Release) : TEST UTILISATEUR RÉUSSI SUR FIRMWARE 13.60 pour le démarrage, le chargement des règles et 5/5 requêtes DNS A bloquées.** Journal `NanoDNS v0.4-13.60.2` du 19 novembre 2026 : 2 adresses Quad9 configurées, 124 règles, 0 exception, deux écoutes IPv4/IPv6 et réponses `0.0.0.0` pour les cinq requêtes observées, sans erreur visible. **Extinction/rallumage, veille/reprise, réponses AAAA et résolution autorisée vers Quad9 ne sont pas encore démontrés sur ce nouvel ELF.** Le binaire de génération précédente et les autres firmwares de génération actuelle restent non validés par des essais utilisateurs.
 
 Le ZIP `nanodns-13.60-v0.4-13.60.2-install.zip` contient exactement `data/pldmgr/payloads/local/nanodns/nanodns.elf` et `data/nanodns/nanodns.ini`. Après sauvegarde, décompresser sur Mac puis copier `data/` à la racine `/` de la console. Dans Payload Manager, enlever ou désactiver l'ancien nanoDNS et **retirer son ancien autoload** ; fermer l'ancienne instance ou redémarrer complètement, puis activer **seulement `local/nanodns`** en démarrage automatique. Conserver le dernier ELF en sauvegarde pour retour arrière.
 
