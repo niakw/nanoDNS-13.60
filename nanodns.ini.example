@@ -1,4 +1,5 @@
-# Source: https://github.com/niakw/nanodns-console-blocklist
+# Rules derived from: https://github.com/niakw/nanodns-console-blocklist
+# Resolver customization in this fork: Quad9 secure endpoints only
 # nanoDNS original by Drakmor: https://github.com/drakmor/nanoDNS
 # nanoDNS Console Blocklist — selective multi-console profile v3
 # Updated: 2026-10-10 | Tested configuration: nanoDNS v0.4 on PS5 firmware 13.60
@@ -16,8 +17,9 @@ bind=127.0.0.1
 bind6=::1
 
 [upstream]
-server=1.1.1.1
+# Quad9 secure + threat blocking (both IPs, no Cloudflare fallback)
 server=9.9.9.9
+server=149.112.112.112
 timeout_ms=1500
 
 [overrides]
