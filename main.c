@@ -157,8 +157,8 @@ static const char *k_default_config =
     "bind6=::1\n"
     "\n"
     "[upstream]\n"
-    "server=1.1.1.1\n"
     "server=9.9.9.9\n"
+    "server=149.112.112.112\n"
     "timeout_ms=1500\n"
     "\n"
     "[overrides]\n"
@@ -825,8 +825,8 @@ config_add_exception(app_config_t *cfg, const char *mask) {
 static void
 config_apply_builtin_upstreams(app_config_t *cfg) {
   cfg->upstream_count = 0;
-  (void)config_add_upstream(cfg, "1.1.1.1");
   (void)config_add_upstream(cfg, "9.9.9.9");
+  (void)config_add_upstream(cfg, "149.112.112.112");
 }
 
 static int
