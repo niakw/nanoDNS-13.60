@@ -1,5 +1,7 @@
 # nanoDNS lifecycle audit — PS5 firmware 13.60
 
+
+**Language:** English (default) | [Français](PS5_13_60_LIFECYCLE.fr.md)
 ## Evidence, not yet a confirmed fix
 
 [Upstream issue #16](https://github.com/drakmor/nanoDNS/issues/16) reports PS5 13.60 shutdown hangs in a setup containing WebKit Autoloader, Payload Manager, kstuff-lite and ShadowMountPlus, with the symptom disappearing when nanoDNS was disabled. This is **correlation**, not proof of the root cause, and it does not establish why a DualSense might fail to power on the console.
