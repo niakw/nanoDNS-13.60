@@ -4,7 +4,7 @@
 
 ## Éléments connus et hypothèses
 
-L'[issue amont #16](https://github.com/drakmor/nanoDNS/issues/16) signale un blocage de l'extinction sur console 13.60 avec WebKit Autoloader, Payload Manager, Kstuff Lite et ShadowMountPlus. Dans ce signalement, désactiver nanoDNS fait disparaître le problème. Ce constat **ne démontre pas** la cause exacte ni un lien direct avec le réveil par DualSense.
+L'[issue amont #16](https://github.com/drakmor/nanoDNS/issues/16) signale un blocage de l'extinction sur console 13.60 avec WebKit Autoloader, Payload Manager, Kstuff Lite et ShadowMountPlus. Dans ce signalement, désactiver nanoDNS fait disparaître le problème. Ce constat **ne démontre pas** la cause exacte ni un lien direct avec le réveil par la manette.
 
 nanoDNS 0.4 recherchait les processus à partir d'offsets internes au système puis terminait une ancienne instance par `SIGKILL`. Ce fork supprime ces opérations à risque sans modifier les offsets internes du noyau.
 
@@ -34,4 +34,4 @@ La reprise depuis le mode repos peut réutiliser des sockets et états réseau. 
 
 ## Critères de validation
 
-Build SDK console vert ; cohérence des 124 règles ; absence de fuite DNS pour les noms interdits testés ; résolution des noms autorisés ; instances uniques ; arrêt normal, veille/reprise, démarrage DualSense et absence de réparation du stockage. Voir le [plan de tests](TEST_PLAN.fr.md).
+Build SDK console vert ; cohérence des 124 règles ; absence de fuite DNS pour les noms interdits testés ; résolution des noms autorisés ; instances uniques ; arrêt normal, veille/reprise, démarrage la manette et absence de réparation du stockage. Voir le [plan de tests](TEST_PLAN.fr.md).

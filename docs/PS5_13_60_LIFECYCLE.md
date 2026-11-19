@@ -4,7 +4,7 @@
 **Language:** English (default) | [Français](PS5_13_60_LIFECYCLE.fr.md)
 ## Evidence, not yet a confirmed fix
 
-[Upstream issue #16](https://github.com/drakmor/nanoDNS/issues/16) reports console 13.60 shutdown hangs in a setup containing WebKit Autoloader, Payload Manager, kstuff-lite and ShadowMountPlus, with the symptom disappearing when nanoDNS was disabled. This is **correlation**, not proof of the root cause, and it does not establish why a DualSense might fail to power on the console.
+[Upstream issue #16](https://github.com/drakmor/nanoDNS/issues/16) reports console 13.60 shutdown hangs in a setup containing WebKit Autoloader, Payload Manager, kstuff-lite and ShadowMountPlus, with the symptom disappearing when nanoDNS was disabled. This is **correlation**, not proof of the root cause, and it does not establish why a the controller might fail to power on the console.
 
 The original v0.4 source scanned OS process structures using hard-coded offsets and killed existing nanoDNS instances with `SIGKILL`. This bypassed exit handlers and cleanup. The fork removes the dangerous scan/kill path rather than guessing new firmware-specific offsets.
 
@@ -37,4 +37,4 @@ Rest mode may suspend and later resume existing sockets. console 13.60 behavior 
 
 ## Required evidence before release
 
-A green console SDK build; 124-rule parity tests; no leakage in known blocked A, AAAA, ANY and unsupported multi-question requests; at least one authorized name resolving; stable single-instance/duplicate behavior; clean 13.60 power off, physical-button power on, DualSense power on and rest/resume; no filesystem repair warning; consistent logs through shutdown. See [test plan](TEST_PLAN.md).
+A green console SDK build; 124-rule parity tests; no leakage in known blocked A, AAAA, ANY and unsupported multi-question requests; at least one authorized name resolving; stable single-instance/duplicate behavior; clean 13.60 power off, physical-button power on, the controller power on and rest/resume; no filesystem repair warning; consistent logs through shutdown. See [test plan](TEST_PLAN.md).
