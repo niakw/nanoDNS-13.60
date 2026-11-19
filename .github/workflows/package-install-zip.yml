@@ -27,7 +27,7 @@ jobs:
       BUNDLE: nanodns-13.60-v0.4-13.60.1-beta.1-install.zip
     steps:
       - name: Checkout updated installation documentation
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Verify documents and release contract
         run: |
           python3 -m unittest discover -s tests -v
