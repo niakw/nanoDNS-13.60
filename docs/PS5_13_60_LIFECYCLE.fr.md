@@ -2,6 +2,10 @@
 
 **Langues :** [English (default)](PS5_13_60_LIFECYCLE.md) | Français
 
+## Vérification utilisateur sur firmware 13.60 (19 novembre 2026)
+
+**Premier test réussi :** le nouveau payload démarre, bloque les requêtes A protégées et le problème d'extinction/rallumage antérieur ne s'est pas reproduit selon le testeur. Les deux journaux confirment 23 requêtes A bloquées localement, 124 règles, 0 exception et les écoutes IPv4/IPv6. Pas de ligne `shutdown: complete` : le résultat d'arrêt/rallumage est **rapporté par l'utilisateur** ; cela ne prouve ni la réception d'un callback système ni la veille/reprise ni plusieurs cycles. Les autres firmwares et la compilation pour la console de génération précédente sont **NON VALIDÉS PAR TEST UTILISATEUR**. Voir le [bilan des tests](TEST_PLAN.fr.md#compte-rendu-de-test-sur-console--19-novembre-2026).
+
 ## Éléments connus et hypothèses
 
 L'[issue amont #16](https://github.com/drakmor/nanoDNS/issues/16) signale un blocage de l'extinction sur console 13.60 avec WebKit Autoloader, Payload Manager, Kstuff Lite et ShadowMountPlus. Dans ce signalement, désactiver nanoDNS fait disparaître le problème. Ce constat **ne démontre pas** la cause exacte ni un lien direct avec le réveil par la manette.

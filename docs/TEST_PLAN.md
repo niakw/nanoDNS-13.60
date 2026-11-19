@@ -2,7 +2,28 @@
 
 **Language:** English (default) | [Français](TEST_PLAN.fr.md)
 
-**Status: development candidate.** Source tests and SDK builds cannot establish that console shutdown, controller power-on or standby are fixed.
+**Status: pre-release; one positive firmware 13.60 user test, with further validation pending.** Source tests and SDK builds alone cannot establish that console shutdown, controller power-on or standby are fixed.
+
+## Hardware test record — 19 November 2026
+
+**User-tested on firmware 13.60: basic operation successful.** A tester installed the independent beta payload and reported that the previous shutdown/power-on issue did **not** recur during the performed trial.
+
+Two user-supplied log generations (`nanodns.log` and `nanodns.log.previous`) show:
+
+- Runtime banner `NanoDNS v0.4-13.60.1`, 124 configured rules, 0 exceptions and only the two Quad9 upstreams.
+- IPv4 and IPv6 listeners successfully bound to `127.0.0.1:53` and `[::1]:53`.
+- **23 observed A queries** across both log files, each answered locally with `0.0.0.0` under `mandatory-console-blocklist`. No upstream query appears in either supplied log.
+- No explicit terminal `shutdown: complete` sequence. The shutdown/power-on outcome comes from the **user's report**, not a shutdown log marker.
+
+| Platform / firmware | Verification |
+| --- | --- |
+| Current-generation console firmware 13.60 | **USER-TESTED: basic startup, protected A DNS filtering, shutdown/power-on trial passed** |
+| Current-generation console, every other firmware | **NOT USER-VALIDATED** |
+| Secondary/older-generation build, every firmware | **NOT USER-VALIDATED** |
+
+**Open hardware checks on 13.60:** permitted query resolving through Quad9, AAAA, alternative DNS behavior, rest/resume, repeated shutdown/power-on cycles, and long-duration stability. A successful SDK build alone is never a substitute for a real-user test. Do not treat one successful shutdown as a proven root-cause fix for every environment.
+
+
 
 ## 1. Offline and CI checks
 

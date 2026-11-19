@@ -69,6 +69,25 @@ class DocumentationContracts(unittest.TestCase):
    self.assertIn("nanodns-13.60-v0.4-13.60.1-beta.1-install.zip",s)
    self.assertIn("local/nanodns",s)
 
+ def test_hardware_user_test_status_is_scoped(self):
+  en=(ROOT/"README.md").read_text(encoding="utf-8")
+  fr=(ROOT/"README.fr.md").read_text(encoding="utf-8")
+  note=(ROOT/"release/RELEASE_NOTES.md").read_text(encoding="utf-8")
+  p_en=(ROOT/"docs/TEST_PLAN.md").read_text(encoding="utf-8")
+  p_fr=(ROOT/"docs/TEST_PLAN.fr.md").read_text(encoding="utf-8")
+  self.assertIn("USER-TESTED",en)
+  self.assertIn("NOT USER-VALIDATED",en)
+  self.assertIn("TEST UTILISATEUR RÉUSSI",fr)
+  self.assertIn("NON VALIDÉ",fr)
+  self.assertIn("23 blocked A queries",note)
+  self.assertIn("NOT USER-VALIDATED",note)
+  self.assertIn("23 observed A queries",p_en)
+  self.assertIn("23 requêtes A",p_fr)
+  for text in (en,fr,note,p_en,p_fr):
+   self.assertIn("13.60",text)
+   self.assertIn("Quad9",text)
+   self.assertIn("shutdown: complete",text)
+
  def test_no_visible_commercial_platform_names(self):
   for file in ROOT.rglob("*.md"):
    s=file.read_text(encoding="utf-8")

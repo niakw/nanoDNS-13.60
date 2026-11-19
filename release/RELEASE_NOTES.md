@@ -4,6 +4,14 @@
 
 This independent release builds on [nanoDNS by Drakmor](https://github.com/drakmor/nanoDNS) and the [niakw Console Blocklist](https://github.com/niakw/nanodns-console-blocklist). The original GPL-3.0 license and attribution are preserved.
 
+## Real-hardware test status (19 November 2026)
+
+**Firmware 13.60 — USER-TESTED, basic operation successful.** The tester installed this beta and confirmed that the previous shutdown/power-on issue did **not recur during the trial**. Two console log generations show **23 blocked A queries**, 124 rules, 0 exceptions, Quad9 configured and active IPv4/IPv6 loopback listeners.
+
+**Other current-generation firmware: NOT USER-VALIDATED.** **Secondary/older-generation console build: NOT USER-VALIDATED on any firmware.** Green SDK compilation is not a real-user hardware test.
+
+The 13.60 logs contain no `shutdown: complete` marker, so successful shutdown/power-on is **user-reported**, not a logged cleanup guarantee. Permitted Quad9 lookup, AAAA, rest/resume, repeatability and long-running stability remain unverified. This is still a **pre-release**. [Full English test record](https://github.com/niakw/nanoDNS-13.60/blob/main/docs/TEST_PLAN.md) · [Bilan des tests en français](https://github.com/niakw/nanoDNS-13.60/blob/main/docs/TEST_PLAN.fr.md).
+
 ## What's improved
 
 - **124 mandatory DNS deny masks** compiled into the ELF; those protected names cannot be re-enabled by legacy INI exceptions.
@@ -56,7 +64,7 @@ Extract on your computer and FTP-copy the ZIP's `data/` tree to the console file
 
 ## Important release limitations
 
-**Not yet validated on a physical console for shutdown, rest/resume or controller power-on.** Verify the exact release checksums before installation; keep the prior ELF and INI available for rollback. A green SDK build and offline tests do not prove those behaviors fixed. This is deliberately labeled **Pre-release**, not a stable production release.
+**A first firmware 13.60 user shutdown/power-on test has passed, without recurrence of the reported issue.** Longer/repeated testing, rest/resume, AAAA and permitted upstream resolution remain unverified; all other firmware and the secondary hardware target remain **not user-validated**. Verify release checksums and retain backups. This remains a **Pre-release**, not a blanket stability certification.
 
 **DNS is not a firewall** and does not guarantee that forbidden IP traffic cannot leave a device. Direct IPs, cached addresses, alternate/encrypted DNS, TCP DNS, DNS before payload initialization and unknown hostnames remain out of scope. If absolutely no unauthorized WAN traffic is acceptable, enforce restrictions at an independent router/firewall.
 
@@ -66,7 +74,15 @@ Some broad deny patterns and shared CDN names can create false positives. Do not
 
 ## Français — notes de version
 
-**Préversion de test pour firmware 13.60, non validée sur console réelle pour l'extinction, la veille ou le réveil à la manette.**
+## Validation sur console (19 novembre 2026)
+
+**Firmware 13.60 : TEST UTILISATEUR RÉUSSI pour les fonctions de base.** Le testeur confirme que le problème précédent d'extinction/rallumage ne s'est **pas reproduit pendant l'essai**. Deux générations de journaux montrent **23 requêtes A bloquées**, 124 règles, 0 exception, la configuration Quad9 et les deux écoutes IPv4/IPv6.
+
+**Autres firmwares de la génération actuelle : NON VALIDÉS PAR TEST UTILISATEUR.** **Binaire pour la génération précédente : NON VALIDÉ SUR CONSOLE.** Une compilation SDK verte n'est pas un test utilisateur.
+
+Aucune ligne `shutdown: complete` ne figure dans les deux logs : la réussite de l'arrêt/rallumage est **rapportée par le testeur**. Les requêtes AAAA, résolutions autorisées vers Quad9, veille/reprise, répétabilité et endurance restent à valider. La version conserve le statut de **préversion**.
+
+**Préversion toujours en test : extinction/rallumage sans anomalie signalée lors d'un premier essai matériel 13.60, mais pas de validation complète de la veille ou de la stabilité prolongée.**
 
 Cette version intègre **124 règles DNS obligatoires** dans le binaire, sans exception pouvant les neutraliser. Les domaines autorisés passent uniquement par **Quad9 sécurisé** (`9.9.9.9`, `149.112.112.112`). Le fonctionnement est renforcé contre les chargements en double, les interruptions et certaines réponses DNS inattendues.
 

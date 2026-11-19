@@ -18,6 +18,18 @@
 
 ---
 
+## Hardware validation status — 19 November 2026
+
+| Target | Real-user hardware status | Scope |
+| --- | --- | --- |
+| Current-generation console, firmware **13.60** | **USER-TESTED — basic operation passed** | One user's installation: successful payload startup, local A-query blocking, and normal shutdown/power-on without the previously reported problem |
+| Current-generation console, **other firmware** | **NOT USER-VALIDATED** | SDK compilation and automated tests are not hardware validation |
+| Secondary/older-generation console build, **all firmware** | **NOT USER-VALIDATED** | Successful SDK compilation only; no real-user hardware report |
+
+The two sanitized runtime logs from the 13.60 test showed **23 blocked A queries**, **124 configured rules**, **0 exceptions**, both loopback listeners, and the configured Quad9 pair. This is **not** proof of permitted upstream lookups, AAAA filtering, system-wide absence of DNS leaks, rest/resume, long-term stability, or an OS-delivered shutdown callback. The shutdown/power-on success is based on the user report; no `shutdown: complete` marker was present in the supplied logs.
+
+**Do not extend the 13.60 validation to any other firmware or hardware without independent user tests.** The release remains a pre-release while the remaining matrix is incomplete. See [validation matrix](docs/TEST_PLAN.md).
+
 ## Go beyond a blocklist file
 
 A DNS denylist can be edited, replaced or bypassed through local exceptions. A runtime can also fail during duplicate launch or system shutdown.
@@ -39,7 +51,7 @@ The goal is stronger **DNS-layer policy enforcement and process reliability** wi
 | Duplicate payload start | Can force-kill old instance | Original behavior | **No SIGKILL; exclusive UDP bind** |
 | Logs and shutdown | Current log overwritten | Original behavior | Previous log retained, size bounded, shutdown milestones |
 | Entire Internet / direct-IP blocking | **No** | **No** | **No — external firewall needed** |
-| Firmware 13.60 shutdown/wake proven | Not established | Not applicable | **Hardware verification still required** |
+| Firmware 13.60 user test | Not established | Not applicable | **Basic shutdown/power-on user trial passed; broader tests remain open** |
 
 The original software supports custom rules; the 8/6 values refer to its **unchanged defaults**. An INI alone cannot enforce mandatory precedence or modify the payload's process lifecycle.
 
@@ -74,7 +86,7 @@ No external resolver operator is configured as fallback. Both Quad9 IPs use the 
 - Retains the previous DNS log and limits log size.
 - Adds static policy parity checks, native wildcard differential tests and SDK build workflows.
 
-**No verified system shutdown callback has been established.** These defensive changes are not proof of a hardware shutdown or controller-wake fix.
+**No verified system shutdown callback has been established.** A firmware 13.60 user's shutdown/power-on trial passed, but this does not by itself prove a complete hardware shutdown/controller-wake fix.
 
 ## Already using Drakmor's original nanoDNS 0.4?
 
@@ -99,7 +111,7 @@ Then refresh Payload Manager, enable only the `local/nanodns` autoload entry, ke
 
 ## When can this independent project be considered stable?
 
-A green build and static tests are **necessary but insufficient**. Real firmware 13.60 hardware must pass repeatable DNS, shutdown, rest/resume and controller-wake checks without crashes or storage repair. Even then, deleting this repository and returning to stock nanoDNS would **remove the compiled mandatory rule enforcement and lifecycle fixes**. Keep the independent repository and its audit history rather than returning to the original payload.
+A green build and static tests are **necessary but insufficient**. One real-user firmware 13.60 startup/DNS/shutdown/power-on trial has succeeded. Repeatable DNS, rest/resume and controller-wake checks without crashes or storage repair remain required before broader stability claims. Other firmware and the secondary build have **no user hardware validation**. Even then, deleting this repository and returning to stock nanoDNS would **remove the compiled mandatory rule enforcement and lifecycle fixes**. Keep the independent repository and its audit history rather than returning to the original payload.
 
 ## Security limits
 

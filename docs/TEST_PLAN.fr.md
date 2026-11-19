@@ -2,7 +2,28 @@
 
 **Langues :** [English (default)](TEST_PLAN.md) | Français
 
-**Statut : version de développement.** Un build réussi ne prouve ni une extinction correcte, ni un réveil à la manette, ni une reprise de veille fiable.
+**Statut : préversion ; premier test utilisateur positif sur firmware 13.60, autres vérifications en attente.** Un build seul ne prouve ni une extinction correcte, ni un réveil à la manette, ni une reprise de veille fiable.
+
+## Compte rendu de test sur console — 19 novembre 2026
+
+**Firmware 13.60 : test utilisateur réussi pour le fonctionnement de base.** Le testeur a installé notre bêta et indique que le précédent problème d'extinction et de rallumage **ne s'est pas reproduit** lors de l'essai réalisé.
+
+Deux générations de journaux transmises (`nanodns.log` et `nanodns.log.previous`) confirment :
+
+- Version `NanoDNS v0.4-13.60.1`, 124 règles chargées, aucune exception et les deux adresses Quad9.
+- Écoute IPv4 sur `127.0.0.1:53` et IPv6 sur `[::1]:53`.
+- **23 requêtes A** au total, toutes bloquées localement avec `0.0.0.0` par `mandatory-console-blocklist`. Aucune requête amont n'est visible dans ces fichiers.
+- Aucune trace finale `shutdown: complete`. L'extinction et le rallumage corrects sont **rapportés par le testeur**, non prouvés par ce marqueur de journal.
+
+| Console / firmware | Vérification |
+| --- | --- |
+| Génération actuelle, firmware 13.60 | **TEST UTILISATEUR RÉUSSI : démarrage, filtrage DNS A, essai d'extinction/rallumage** |
+| Génération actuelle, tous les autres firmwares | **NON VALIDÉ PAR TEST UTILISATEUR** |
+| Binaire de génération précédente, tous firmwares | **NON VALIDÉ PAR TEST UTILISATEUR** |
+
+**Vérifications encore nécessaires sur 13.60 :** résolution d'un nom autorisé via Quad9, AAAA, DNS alternatifs, veille/reprise, cycles répétés d'arrêt/rallumage et stabilité prolongée. Une CI verte n'est jamais une validation matérielle. Un essai d'arrêt réussi n'établit pas définitivement la cause racine du problème initial.
+
+
 
 ## 1. Vérifications automatiques
 

@@ -14,6 +14,18 @@
 
 ---
 
+## Validation matérielle — 19 novembre 2026
+
+| Cible | État des tests utilisateurs | Périmètre |
+| --- | --- | --- |
+| Console de génération actuelle, firmware **13.60** | **TEST UTILISATEUR RÉUSSI — fonctionnement de base** | Installation sur une console : démarrage du payload, blocage local des requêtes A, extinction et rallumage sans reproduction du problème initial |
+| Même génération, **autres firmwares** | **NON VALIDÉ PAR UN UTILISATEUR** | La compilation SDK et les tests automatiques ne sont pas des tests sur console |
+| Binaire pour console de génération précédente, **tous firmwares** | **NON VALIDÉ PAR UN UTILISATEUR** | Compilation SDK réussie, mais aucun retour matériel |
+
+Les deux journaux transmis pour 13.60 montrent **23 requêtes A bloquées**, **124 règles**, **0 exception**, les deux écoutes locales et la configuration Quad9. Cela **ne démontre pas** les résolutions autorisées via les DNS amont, les requêtes AAAA, l'absence globale de fuite, la veille/reprise, la stabilité prolongée ni un callback système d'extinction. L'arrêt et le rallumage corrects sont attestés par le retour utilisateur, pas par une trace `shutdown: complete` dans ces journaux.
+
+**Aucune validation sur 13.60 ne doit être étendue aux autres firmwares ou matériels sans tests utilisateurs réels.** La Release reste une préversion tant que le protocole complet n'est pas couvert. Voir le [plan de tests](docs/TEST_PLAN.fr.md).
+
 ## Plus qu'un fichier de règles
 
 Un fichier de blocklist peut être modifié ou contourné par une exception. Un payload mal géré peut également perturber l'arrêt ou le chargement en double.
@@ -35,7 +47,7 @@ L'objectif est une protection DNS mieux définie et un fonctionnement plus stabl
 | Lancement en double | Arrêt brutal de l'ancienne instance | Hérité | Écoute exclusive, sans arrêt brutal |
 | Logs / extinction | Journal précédent écrasé | Hérité | Conservation, limite de taille et traces d'arrêt |
 | Garantie d'absence totale de fuite IP | **Non** | **Non** | **Non** |
-| Extinction et réveil validés sur console | Non établi | Sans objet | **À confirmer sur matériel** |
+| Essai d'extinction et de rallumage sur 13.60 | Non établi | Sans objet | **Test utilisateur réussi ; validations complémentaires à effectuer** |
 
 Ces chiffres concernent **les réglages initiaux** de la version d'origine, qui sait également charger une blocklist personnalisée.
 
@@ -53,7 +65,7 @@ Après sauvegarde, **supprime l'ancien nanoDNS depuis Payload Manager ou désact
 
 ## Fiabilité et installation
 
-Notre version renforce l'application des règles et le cycle de vie du processus : pas de `SIGKILL` destiné à remplacer une ancienne instance, écoute UDP exclusive, nettoyage des ressources réseau et conservation des journaux. Le correctif d'extinction reste **à vérifier sur une console physique**.
+Notre version renforce l'application des règles et le cycle de vie du processus : pas de `SIGKILL` destiné à remplacer une ancienne instance, écoute UDP exclusive, nettoyage des ressources réseau et conservation des journaux. Un **premier test utilisateur d'extinction/rallumage sur firmware 13.60 a réussi**, sans reproduction du problème antérieur. Les essais répétés et autres firmwares restent non validés.
 
 **Installation recommandée :** le ZIP contient les deux fichiers suivants, à placer exactement ici :
 
@@ -68,7 +80,7 @@ Copie l'arborescence `data/` du ZIP à la **racine `/`**, pas dans `/data/` une 
 
 ## Notre projet est-il prêt pour un usage stable ?
 
-**Pas avant validation sur matériel.** Un build vert ne prouve pas le bon arrêt, le réveil à la manette ou l'absence de réparation du stockage. Même après ces essais, revenir au binaire original fait perdre les **règles compilées obligatoires** et les corrections du runtime. Conserve notre dépôt indépendant et son historique pour le suivi et les futures corrections.
+**Un premier test utilisateur sur firmware 13.60 est positif, mais ce n'est pas encore une qualification complète.** Un build vert ne prouve ni le fonctionnement des autres firmwares, ni la veille/reprise, ni l'absence durable de problème de stockage. Même après ces essais, revenir au binaire original fait perdre les **règles compilées obligatoires** et les corrections du runtime. Conserve notre dépôt indépendant et son historique pour le suivi et les futures corrections.
 
 ## Limites
 
