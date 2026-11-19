@@ -1,6 +1,7 @@
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <netinet/in.h>
 #include <poll.h>
@@ -862,20 +863,30 @@ ensure_runtime_dir_exists(const char *path) {
 
 static int
 ensure_default_config_exists(const char *path) {
-  struct stat st;
   FILE *fp;
+  int fd;
 
-  if(stat(path, &st) == 0) {
-    return 0;
+  /* O_EXCL makes the existence check and creation a single operation.
+   * Never truncate an existing INI (including one swapped in by another
+   * process). O_NOFOLLOW also rejects a symlink at the final component. */
+  fd = open(path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, 0600);
+  if(fd < 0) {
+    if(errno == EEXIST) {
+      return 0;
+    }
+    return -1;
   }
 
-  fp = fopen(path, "w");
+  fp = fdopen(fd, "w");
   if(fp == NULL) {
+    int saved_errno = errno;
+    (void)close(fd);
+    errno = saved_errno;
     return -1;
   }
 
   if(fputs(k_default_config, fp) == EOF) {
-    fclose(fp);
+    (void)fclose(fp);
     errno = EIO;
     return -1;
   }
@@ -904,8 +915,24 @@ load_config(const char *path, app_config_t *cfg) {
   config_set_defaults(cfg);
   config_apply_builtin_upstreams(cfg);
 
-  fp = fopen(path, "r");
+  /* Open the configuration itself (not a separately checked pathname).
+   * Do not follow a replacement symlink or read a directory/device. */
+  int fd = open(path, O_RDONLY | O_NOFOLLOW);
+  struct stat config_stat;
+  if(fd < 0) {
+    return -1;
+  }
+  if(fstat(fd, &config_stat) != 0 || !S_ISREG(config_stat.st_mode)) {
+    int saved_errno = errno != 0 ? errno : EINVAL;
+    (void)close(fd);
+    errno = saved_errno;
+    return -1;
+  }
+  fp = fdopen(fd, "r");
   if(fp == NULL) {
+    int saved_errno = errno;
+    (void)close(fd);
+    errno = saved_errno;
     return -1;
   }
 
