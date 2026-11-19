@@ -1,0 +1,131 @@
+name: Publish firmware 13.60 pre-release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - release/RELEASE_NOTES.md
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nanodns-13-60-prerelease
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact release commit
+        uses: actions/checkout@v4
+      - name: Check DNS protections and documentation
+        run: python3 -m unittest discover -s tests -v
+      - name: Compile and regression-test native DNS masks
+        run: |
+          cc -std=c11 -O2 -Wall -Wextra -Werror -pedantic tests/test_dns_mask.c -o /tmp/nanodns-mask-test
+          /tmp/nanodns-mask-test
+      - name: Assert release input
+        shell: bash
+        run: |
+          test -s release/RELEASE_NOTES.md
+          test -s nanodns.ini
+          test -f LICENSE
+  build-ps5:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout SDK
+        uses: actions/checkout@v4
+        with:
+          repository: ps5-payload-dev/sdk
+          path: sdk
+      - name: Setup SDK
+        working-directory: sdk
+        run: |
+          sudo apt update
+          sudo apt install -y clang-18 lld-18
+          make DESTDIR=${{ runner.tool_cache }}/ps5-payload-sdk clean install
+          echo PS5_PAYLOAD_SDK=${{ runner.tool_cache }}/ps5-payload-sdk >> "$GITHUB_ENV"
+      - name: Checkout exact release commit
+        uses: actions/checkout@v4
+      - name: Build console ELF
+        run: |
+          make clean all
+          test -s nanodns.elf
+      - name: Upload PS5 build
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-ps5
+          path: nanodns.elf
+          if-no-files-found: error
+          retention-days: 30
+  build-ps4:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout SDK
+        uses: actions/checkout@v4
+        with:
+          repository: ps4-payload-dev/sdk
+          path: sdk
+      - name: Setup SDK
+        working-directory: sdk
+        run: |
+          sudo apt update
+          sudo apt install -y clang-18 lld-18
+          make DESTDIR=${{ runner.tool_cache }}/ps4-payload-sdk clean install
+          echo PS4_PAYLOAD_SDK=${{ runner.tool_cache }}/ps4-payload-sdk >> "$GITHUB_ENV"
+      - name: Checkout exact release commit
+        uses: actions/checkout@v4
+      - name: Build secondary ELF
+        run: |
+          make -f Makefile.ps4 clean all
+          test -s nanodns-ps4.elf
+      - name: Upload secondary build
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-ps4
+          path: nanodns-ps4.elf
+          if-no-files-found: error
+          retention-days: 30
+  publish:
+    needs: [verify, build-ps5, build-ps4]
+    if: github.repository == 'niakw/nanoDNS-13.60' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: v0.4-13.60.1-beta.1
+    steps:
+      - name: Checkout exact release commit
+        uses: actions/checkout@v4
+      - name: Download console build
+        uses: actions/download-artifact@v4
+        with:
+          name: release-ps5
+          path: dist
+      - name: Download secondary build
+        uses: actions/download-artifact@v4
+        with:
+          name: release-ps4
+          path: dist
+      - name: Package policy and SHA-256 checksums
+        run: |
+          cp nanodns.ini dist/nanodns.ini
+          cd dist
+          sha256sum nanodns.elf nanodns-ps4.elf nanodns.ini > SHA256SUMS
+          test -s SHA256SUMS
+          cat SHA256SUMS
+      - name: Publish GitHub pre-release with verified binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Release tag already exists; refusing to overwrite assets"
+            exit 1
+          fi
+          gh release create "$TAG"             dist/nanodns.elf dist/nanodns-ps4.elf dist/nanodns.ini dist/SHA256SUMS             --repo "$GITHUB_REPOSITORY"             --title "nanoDNS 13.60 · 0.4-13.60.1 Beta 1"             --notes-file release/RELEASE_NOTES.md             --target "$GITHUB_SHA"             --prerelease             --latest=false
