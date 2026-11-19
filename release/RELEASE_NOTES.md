@@ -1,16 +1,18 @@
-# nanoDNS 13.60 — v0.4-13.60.1-beta.1
+# nanoDNS 13.60 — 0.4-13.60.1
 
-**Pre-release / developer candidate — console firmware 13.60**
+**Standard GitHub Release — user-tested on console firmware 13.60.**
+
+The original tag `v0.4-13.60.1-beta.1` and existing asset names are intentionally retained to preserve published download links. This Release is **not flagged as a prerelease**; the original tag name does not broaden the tested firmware scope.
 
 This independent release builds on [nanoDNS by Drakmor](https://github.com/drakmor/nanoDNS) and the [niakw Console Blocklist](https://github.com/niakw/nanodns-console-blocklist). The original GPL-3.0 license and attribution are preserved.
 
 ## Real-hardware test status (19 November 2026)
 
-**Firmware 13.60 — USER-TESTED, basic operation successful.** The tester installed this beta and confirmed that the previous shutdown/power-on issue did **not recur during the trial**. Two console log generations show **23 blocked A queries**, 124 rules, 0 exceptions, Quad9 configured and active IPv4/IPv6 loopback listeners.
+**Firmware 13.60 — USER-TESTED, basic operation successful.** The tester installed this release and confirmed that the previous shutdown/power-on issue did **not recur during the trial**. Two console log generations show **23 blocked A queries**, 124 rules, 0 exceptions, Quad9 configured and active IPv4/IPv6 loopback listeners.
 
 **Other current-generation firmware: NOT USER-VALIDATED.** **Secondary/older-generation console build: NOT USER-VALIDATED on any firmware.** Green SDK compilation is not a real-user hardware test.
 
-The 13.60 logs contain no `shutdown: complete` marker, so successful shutdown/power-on is **user-reported**, not a logged cleanup guarantee. Permitted Quad9 lookup, AAAA, rest/resume, repeatability and long-running stability remain unverified. This is still a **pre-release**. [Full English test record](https://github.com/niakw/nanoDNS-13.60/blob/main/docs/TEST_PLAN.md) · [Bilan des tests en français](https://github.com/niakw/nanoDNS-13.60/blob/main/docs/TEST_PLAN.fr.md).
+The 13.60 logs contain no `shutdown: complete` marker, so successful shutdown/power-on is **user-reported**, not a logged cleanup guarantee. Permitted Quad9 lookup, AAAA, rest/resume, repeatability and long-running stability remain unverified. This is a **standard GitHub Release**, with the remaining hardware test matrix clearly documented as incomplete. [Full English test record](https://github.com/niakw/nanoDNS-13.60/blob/main/docs/TEST_PLAN.md) · [Bilan des tests en français](https://github.com/niakw/nanoDNS-13.60/blob/main/docs/TEST_PLAN.fr.md).
 
 ## What's improved
 
@@ -64,7 +66,7 @@ Extract on your computer and FTP-copy the ZIP's `data/` tree to the console file
 
 ## Important release limitations
 
-**A first firmware 13.60 user shutdown/power-on test has passed, without recurrence of the reported issue.** Longer/repeated testing, rest/resume, AAAA and permitted upstream resolution remain unverified; all other firmware and the secondary hardware target remain **not user-validated**. Verify release checksums and retain backups. This remains a **Pre-release**, not a blanket stability certification.
+**A first firmware 13.60 user shutdown/power-on test has passed, without recurrence of the reported issue.** Longer/repeated testing, rest/resume, AAAA and permitted upstream resolution remain unverified; all other firmware and the secondary hardware target remain **not user-validated**. Verify release checksums and retain backups. This is a **standard Release** for the tested 13.60 firmware, not a blanket stability certification across all firmwares.
 
 **DNS is not a firewall** and does not guarantee that forbidden IP traffic cannot leave a device. Direct IPs, cached addresses, alternate/encrypted DNS, TCP DNS, DNS before payload initialization and unknown hostnames remain out of scope. If absolutely no unauthorized WAN traffic is acceptable, enforce restrictions at an independent router/firewall.
 
@@ -80,9 +82,9 @@ Some broad deny patterns and shared CDN names can create false positives. Do not
 
 **Autres firmwares de la génération actuelle : NON VALIDÉS PAR TEST UTILISATEUR.** **Binaire pour la génération précédente : NON VALIDÉ SUR CONSOLE.** Une compilation SDK verte n'est pas un test utilisateur.
 
-Aucune ligne `shutdown: complete` ne figure dans les deux logs : la réussite de l'arrêt/rallumage est **rapportée par le testeur**. Les requêtes AAAA, résolutions autorisées vers Quad9, veille/reprise, répétabilité et endurance restent à valider. La version conserve le statut de **préversion**.
+Aucune ligne `shutdown: complete` ne figure dans les deux logs : la réussite de l'arrêt/rallumage est **rapportée par le testeur**. Les requêtes AAAA, résolutions autorisées vers Quad9, veille/reprise, répétabilité et endurance restent à valider. La version est publiée comme **Release GitHub standard**, sans validation automatique des autres firmwares.
 
-**Préversion toujours en test : extinction/rallumage sans anomalie signalée lors d'un premier essai matériel 13.60, mais pas de validation complète de la veille ou de la stabilité prolongée.**
+**Release standard :** extinction/rallumage sans anomalie signalée lors d'un premier essai matériel 13.60 ; veille, cycles répétés et stabilité prolongée restent à valider. Le tag historique conserve le suffixe `beta.1` pour préserver les liens des fichiers existants.
 
 Cette version intègre **124 règles DNS obligatoires** dans le binaire, sans exception pouvant les neutraliser. Les domaines autorisés passent uniquement par **Quad9 sécurisé** (`9.9.9.9`, `149.112.112.112`). Le fonctionnement est renforcé contre les chargements en double, les interruptions et certaines réponses DNS inattendues.
 

@@ -2,11 +2,11 @@
 
 **Language:** English (default) | [Français](TEST_PLAN.fr.md)
 
-**Status: pre-release; one positive firmware 13.60 user test, with further validation pending.** Source tests and SDK builds alone cannot establish that console shutdown, controller power-on or standby are fixed.
+**Status: standard GitHub Release; one positive firmware 13.60 user test, with further validation pending.** Source tests and SDK builds alone cannot establish that console shutdown, controller power-on or standby are fixed.
 
 ## Hardware test record — 19 November 2026
 
-**User-tested on firmware 13.60: basic operation successful.** A tester installed the independent beta payload and reported that the previous shutdown/power-on issue did **not** recur during the performed trial.
+**User-tested on firmware 13.60: basic operation successful.** A tester installed the independent release payload and reported that the previous shutdown/power-on issue did **not** recur during the performed trial.
 
 Two user-supplied log generations (`nanodns.log` and `nanodns.log.previous`) show:
 
@@ -64,7 +64,7 @@ Select blocked names **from the actual INI**. Do not contact or deliberately req
 6. Check for storage repair prompts, freeze, kernel warnings or missing shutdown milestone logs.
 7. If any problem recurs, save redacted logs and restore the known-working ELF and INI.
 
-## 5. Release gate
+## 5. Extended hardware qualification gate
 
 **Required:** the current commit's SDK builds and policy CI must pass, DNS deny tests must show no upstream lookup for known blocked queries, permitted names must resolve, and physical-console shutdown/rest/resume/controller-wake must be repeatable.
 

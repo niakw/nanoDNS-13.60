@@ -28,7 +28,7 @@
 
 The two sanitized runtime logs from the 13.60 test showed **23 blocked A queries**, **124 configured rules**, **0 exceptions**, both loopback listeners, and the configured Quad9 pair. This is **not** proof of permitted upstream lookups, AAAA filtering, system-wide absence of DNS leaks, rest/resume, long-term stability, or an OS-delivered shutdown callback. The shutdown/power-on success is based on the user report; no `shutdown: complete` marker was present in the supplied logs.
 
-**Do not extend the 13.60 validation to any other firmware or hardware without independent user tests.** The release remains a pre-release while the remaining matrix is incomplete. See [validation matrix](docs/TEST_PLAN.md).
+**Do not extend the 13.60 validation to any other firmware or hardware without independent user tests.** Published as a **standard GitHub Release** for the user-tested 13.60 firmware; this does not imply the remaining hardware validation matrix is complete. See [validation matrix](docs/TEST_PLAN.md).
 
 ## Go beyond a blocklist file
 

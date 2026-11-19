@@ -4,7 +4,7 @@
 **Language:** English (default) | [Français](PS5_13_60_LIFECYCLE.fr.md)
 ## Firmware 13.60 user verification (19 November 2026)
 
-**One user test passed:** the independent beta payload started, enforced protected A-query filtering and the tester reported that the earlier shutdown/power-on problem did not recur. Two log generations recorded 23 local denied A queries, 124 rules, 0 exceptions, and healthy IPv4/IPv6 listener startup. Neither included `shutdown: complete`; this is a **user-observed functional result**, not proof of an OS shutdown callback, repeated power-cycle resilience or rest/resume. All other firmware and the secondary console build are **NOT USER-VALIDATED**. See [test record](TEST_PLAN.md#hardware-test-record--19-november-2026).
+**One user test passed:** the independent release payload started, enforced protected A-query filtering and the tester reported that the earlier shutdown/power-on problem did not recur. Two log generations recorded 23 local denied A queries, 124 rules, 0 exceptions, and healthy IPv4/IPv6 listener startup. Neither included `shutdown: complete`; this is a **user-observed functional result**, not proof of an OS shutdown callback, repeated power-cycle resilience or rest/resume. All other firmware and the secondary console build are **NOT USER-VALIDATED**. See [test record](TEST_PLAN.md#hardware-test-record--19-november-2026).
 
 ## Evidence, not yet a confirmed fix
 

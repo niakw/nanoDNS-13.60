@@ -88,6 +88,18 @@ class DocumentationContracts(unittest.TestCase):
    self.assertIn("Quad9",text)
    self.assertIn("shutdown: complete",text)
 
+ def test_standard_release_documentation(self):
+  notes=(ROOT/"release/RELEASE_NOTES.md").read_text(encoding="utf-8")
+  en=(ROOT/"README.md").read_text(encoding="utf-8")
+  fr=(ROOT/"README.fr.md").read_text(encoding="utf-8")
+  wf=(ROOT/".github/workflows/package-install-zip.yml").read_text(encoding="utf-8")
+  for key in ("Standard GitHub Release","NOT USER-VALIDATED","13.60"):
+   self.assertIn(key,notes)
+  self.assertIn("standard GitHub Release",en)
+  self.assertIn("Release GitHub standard",fr)
+  self.assertIn("--prerelease=false --latest",wf)
+  self.assertIn("v0.4-13.60.1-beta.1",notes)
+
  def test_no_visible_commercial_platform_names(self):
   for file in ROOT.rglob("*.md"):
    s=file.read_text(encoding="utf-8")

@@ -2,7 +2,7 @@
 
 **Langues :** [English (default)](TEST_PLAN.md) | Français
 
-**Statut : préversion ; premier test utilisateur positif sur firmware 13.60, autres vérifications en attente.** Un build seul ne prouve ni une extinction correcte, ni un réveil à la manette, ni une reprise de veille fiable.
+**Statut : Release GitHub standard ; premier test utilisateur positif sur firmware 13.60, autres vérifications en attente.** Un build seul ne prouve ni une extinction correcte, ni un réveil à la manette, ni une reprise de veille fiable.
 
 ## Compte rendu de test sur console — 19 novembre 2026
 
@@ -64,7 +64,7 @@ Choisir les domaines bloqués **directement dans le fichier INI**, sans lancer v
 6. Surveiller gel, messages de réparation du stockage, avertissements système et absence de trace de fermeture.
 7. En cas de défaut, revenir à l'ELF et à l'INI précédents.
 
-## 5. Critère de publication
+## 5. Critères de qualification matérielle complémentaire
 
 **Obligatoire :** builds du dernier commit et CI sécurité verts, blocage démontré des requêtes connues, résolution des noms autorisés et extinction/veille/réveil reproductibles sur matériel.
 

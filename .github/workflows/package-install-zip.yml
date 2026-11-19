@@ -1,4 +1,4 @@
-name: Package ready-to-place firmware 13.60 ZIP
+name: Package ZIP and synchronize standard 13.60 release
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tests -v
           test -s release/RELEASE_NOTES.md
-      - name: Download the immutable pre-release assets
+      - name: Download the existing release assets without modifying them
         shell: bash
         run: |
           set -euo pipefail
@@ -57,7 +57,7 @@ jobs:
           cmp release-assets/nanodns.ini <(unzip -p "$BUNDLE" data/nanodns/nanodns.ini)
           sha256sum "$BUNDLE" > "$BUNDLE.sha256"
           cat "$BUNDLE.sha256"
-      - name: Add installation ZIP to existing pre-release and refresh release notes
+      - name: Preserve release assets and promote existing release from prerelease
         shell: bash
         run: |
           set -euo pipefail
@@ -73,4 +73,4 @@ jobs:
           else
             gh release upload "$TAG" "$BUNDLE" "$BUNDLE.sha256" --repo "$GITHUB_REPOSITORY"
           fi
-          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file release/RELEASE_NOTES.md
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file release/RELEASE_NOTES.md --prerelease=false --latest --title "nanoDNS 13.60 · 0.4-13.60.1"

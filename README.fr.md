@@ -24,7 +24,7 @@
 
 Les deux journaux transmis pour 13.60 montrent **23 requêtes A bloquées**, **124 règles**, **0 exception**, les deux écoutes locales et la configuration Quad9. Cela **ne démontre pas** les résolutions autorisées via les DNS amont, les requêtes AAAA, l'absence globale de fuite, la veille/reprise, la stabilité prolongée ni un callback système d'extinction. L'arrêt et le rallumage corrects sont attestés par le retour utilisateur, pas par une trace `shutdown: complete` dans ces journaux.
 
-**Aucune validation sur 13.60 ne doit être étendue aux autres firmwares ou matériels sans tests utilisateurs réels.** La Release reste une préversion tant que le protocole complet n'est pas couvert. Voir le [plan de tests](docs/TEST_PLAN.fr.md).
+**Aucune validation sur 13.60 ne doit être étendue aux autres firmwares ou matériels sans tests utilisateurs réels.** Publication en **Release GitHub standard**, avec tests utilisateurs positifs sur 13.60 uniquement ; le reste de la matrice matérielle n'est pas encore couvert. Voir le [plan de tests](docs/TEST_PLAN.fr.md).
 
 ## Plus qu'un fichier de règles
 

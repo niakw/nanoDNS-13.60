@@ -21,7 +21,7 @@ Les **deux chemins définitifs** sur la console sont :
 
 **Décompresse le ZIP sur ton Mac puis transfère par FTP le dossier `data/` en le fusionnant avec le `/data/` de la console.** Il faut que les fichiers se retrouvent aux chemins ci-dessus. **Ne copie pas `data/` à l'intérieur de `/data/` : cela créerait `/data/data/`.** Crée les sous-dossiers manquants si nécessaire. Le ZIP n'est **pas** un installateur autonome.
 
-Le ZIP est assemblé depuis l'ELF et l'INI **déjà publiés pour cette préversion**, contrôlés avec `SHA256SUMS`. Le workflow vérifie aussi les fichiers internes du ZIP avant publication.
+Le ZIP est assemblé depuis l'ELF et l'INI **déjà publiés dans cette Release**, contrôlés avec `SHA256SUMS`. Le workflow vérifie aussi les fichiers internes du ZIP avant publication.
 
 ## Migration depuis le nanoDNS 0.4 officiel de Drakmor
 
