@@ -69,8 +69,10 @@ class ConfigTests(unittest.TestCase):
     def test_loopback_only(self):
         self.assertIn("bind=127.0.0.1", self.parts["general"])
         self.assertIn("bind6=::1", self.parts["general"])
-        self.assertIn("server=1.1.1.1", self.parts["upstream"])
-        self.assertIn("server=9.9.9.9", self.parts["upstream"])
+        self.assertEqual(
+            [line for line in self.parts["upstream"] if line.startswith("server=")],
+            ["server=9.9.9.9", "server=149.112.112.112"],
+        )
 
     def test_sony_representatives(self):
         for name in (
