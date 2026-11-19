@@ -1,0 +1,27 @@
+name: Policy security checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Validate bundled policy and source parity
+        run: python3 -m unittest discover -s tests -v
+      - name: Check policy documentation links
+        shell: bash
+        run: |
+          test -f README.md
+          test -f SECURITY.md
+          test -f docs/PS5_13_60_LIFECYCLE.md
+          test -f docs/DNS_POLICY.md
+          test -f docs/TEST_PLAN.md
