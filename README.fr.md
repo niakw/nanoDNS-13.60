@@ -1,52 +1,68 @@
-# nanoDNS 13.60 — fork de fiabilisation et sécurité DNS
+<div align="center">
 
-**Langues :** [English (default)](README.md) | Français
+# nanoDNS 13.60 — Runtime renforcé
 
-Ce dépôt adapte [nanoDNS de Drakmor](https://github.com/drakmor/nanoDNS) à une utilisation contrôlée sur **PS5 firmware 13.60**, avec une liste obligatoire de **124 règles DNS** issue de [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist).
+### Des règles DNS obligatoires, un arrêt plus propre et un payload vérifiable.
 
-**Statut :** compilation PS5/PS4 et contrôles automatisés nécessaires, mais un build vert ne prouve pas la stabilité de l’extinction, du mode repos ou du réveil avec la DualSense. Ne remplace pas ton payload officiel tant que le [protocole console](docs/TEST_PLAN.fr.md) n’est pas validé.
+**124 motifs protégés intégrés · Quad9 sécurisé · Tests natifs · Cycle de vie fiabilisé**
 
-## Améliorations apportées
+**Langues :** [English (default)](README.md) · Français
 
-- Suppression du scan des processus fondé sur des offsets internes et de leur terminaison brutale par `SIGKILL`.
-- Conservation du nom `nanodns.elf` afin de rester compatible avec Payload Manager.
-- Sortie plus propre sur `SIGINT` / `SIGTERM`, nettoyage des sockets et des ressources SceNet, avec étapes journalisées.
-- Un seul propriétaire du port DNS UDP 53 ; refus de démarrer si l'écoute IPv4 nécessaire échoue.
-- Délais monotones lorsqu'ils sont disponibles et limites de traitement des paquets obsolètes.
-- Configuration initiale, exemple et `nanodns.ini` alignés sur la liste de 124 règles sans exception.
-- **Règles de blocage intégrées au binaire** et appliquées avant toute exception utilisateur, notamment pour les domaines Sony/PlayStation.
-- Rejet des questions DNS inhabituelles non contrôlées et validation des réponses amont, y compris certains alias de domaines interdits.
-- Tests Python de cohérence et tests natifs des masques DNS, avec compilation PS4/PS5 par GitHub Actions.
-- Sauvegarde du journal précédent et plafonnement de la taille des logs.
+[**Installation française**](docs/INSTALL.fr.md) · [**Politique DNS**](docs/DNS_POLICY.fr.md) · [**Audit runtime**](docs/PS5_13_60_LIFECYCLE.fr.md) · [**Tests**](docs/TEST_PLAN.fr.md)
 
-## DNS amont Quad9 uniquement
+</div>
 
-Le profil livré, les valeurs générées et les valeurs de secours intégrées utilisent **`9.9.9.9` puis `149.112.112.112`**, deux adresses du [service sécurisé Quad9](https://quad9.net/fr/service/service-addresses-and-features/). Aucun relais Cloudflare dans les valeurs par défaut ; le filtrage Quad9 complète la blocklist locale sans la remplacer.
+---
 
-**Attention :** le payload ne remplace pas un `nanodns.ini` déjà présent sur la console. Il faut donc copier le nouveau profil pour activer ces DNS amont. Le trafic DNS amont de nanoDNS utilise de l'UDP non chiffré.
+## Plus qu'un fichier de règles
 
-## Installation
+Un fichier de blocklist peut être modifié ou contourné par une exception. Un payload mal géré peut également perturber l'arrêt ou le chargement en double.
 
-Lire le [guide d'installation sécurisé en français](docs/INSTALL.fr.md). Isoler d'abord l'accès Internet **au niveau du routeur**, conserver la possibilité de charger le jailbreak hors ligne, sauvegarder l'ELF et la configuration, puis copier [`nanodns.ini`](nanodns.ini) dans `/data/nanodns/nanodns.ini`.
+**Ce fork de [nanoDNS par Drakmor](https://github.com/drakmor/nanoDNS)** intègre les **124 règles** de [niakw Console Blocklist](https://github.com/niakw/nanodns-console-blocklist) **dans le programme lui-même**. Elles sont vérifiées avant les exceptions utilisateur. Les noms autorisés continuent de passer par **Quad9 sécurisé**.
 
-Configurer **les deux DNS** de la PS5 sur `127.0.0.1` (pas de DNS public secondaire), et démarrer une seule instance via Payload Manager. Vérifier les requêtes bloquées dans le journal de la session, les résolutions autorisées et le comportement d'arrêt/réveil.
+L'objectif est une protection DNS mieux définie et un fonctionnement plus stable, sans supprimer inutilement l'accès au Web.
 
-Le nouveau binaire **ne remplace jamais automatiquement un `nanodns.ini` existant**. Une ancienne configuration ne peut cependant pas contourner les 124 règles obligatoires compilées.
+## Ce qui change réellement
 
-## Documentation française
+| Fonction | nanoDNS original | Blocklist seule | **Notre fork renforcé** |
+| --- | --- | --- | --- |
+| Règles livrées par défaut | **8** | **124** | **124 obligatoires compilées** |
+| Exceptions par défaut | **6** | **0** | Ne peuvent pas neutraliser les motifs obligatoires |
+| DNS amont | 3 fournisseurs | Quad9 sécurisé | **Quad9 sécurisé uniquement** |
+| Questions DNS non standards | Comportement d'origine | Hérité | Refus sans retransmission non contrôlée |
+| Réponses des résolveurs | Contrôles d'origine | Hérité | Vérifications supplémentaires des noms et alias |
+| Moteur des masques | Récursif | Hérité | Itératif avec tests natifs |
+| Lancement en double | Arrêt brutal de l'ancienne instance | Hérité | Écoute exclusive, sans arrêt brutal |
+| Logs / extinction | Journal précédent écrasé | Hérité | Conservation, limite de taille et traces d'arrêt |
+| Garantie d'absence totale de fuite IP | **Non** | **Non** | **Non** |
+| Extinction et réveil validés sur console | Non établi | Sans objet | **À confirmer sur matériel** |
 
-- [Installation](docs/INSTALL.fr.md)
-- [Politique DNS et règles](docs/DNS_POLICY.fr.md)
-- [Audit du cycle de vie PS5 13.60](docs/PS5_13_60_LIFECYCLE.fr.md)
-- [Tests de validation et critères de publication](docs/TEST_PLAN.fr.md)
-- [Sécurité et limites](SECURITY.fr.md)
-- [Crédits et provenance](docs/CREDITS.fr.md)
-- [Historique des modifications](CHANGELOG.fr.md)
+Ces chiffres concernent **les réglages initiaux** de la version d'origine, qui sait également charger une blocklist personnalisée.
 
-## Limites essentielles
+## Fonctionnement et Quad9
 
-**nanoDNS n'est pas un pare-feu.** Il ne bloque ni les connexions directes aux IP, ni les DNS alternatifs ou chiffrés, ni les communications avant son lancement, ni les noms encore inconnus de la liste. Pour interdire strictement les connexions WAN, appliquer le filtrage sur la box/routeur, IPv4 **et** IPv6.
+Les 124 motifs obligatoires sont évalués avant toute exception. Pour les noms interdits, les requêtes A reçoivent `0.0.0.0` et les AAAA aucune adresse. Les requêtes autorisées sont envoyées à **`9.9.9.9` puis `149.112.112.112`**, deux adresses du **même service sécurisé Quad9**. Le transfert amont du payload utilise toujours de l'UDP non chiffré.
 
-Le réveil via la touche PS de la DualSense est géré lorsque la console est éteinte : un payload qui tourne après le démarrage ne peut pas le forcer directement. Corriger une mauvaise extinction pourrait aider, mais cela reste à vérifier sur console.
+## Fiabilité et installation
 
-**Crédits :** code original de [Drakmor](https://github.com/drakmor/nanoDNS), règles de [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist), intégration indépendante de [niakw](https://github.com/niakw). Licence [GPL-3.0](LICENSE) conservée. Aucun lien officiel avec Sony ou Drakmor.
+Le fork supprime les offsets internes fragiles et les `SIGKILL` destinés à remplacer une ancienne instance, impose une écoute UDP exclusive, nettoie les ressources réseau lors d'un arrêt signalé et conserve le journal précédent. Il ajoute également des tests de cohérence de configuration et des tests natifs.
+
+Avant installation, **isoler le WAN au niveau du routeur, IPv4 et IPv6**, sauvegarder l'ELF et la configuration, copier le [`nanodns.ini`](nanodns.ini) et régler **les deux DNS console sur `127.0.0.1`**. Le payload ne remplace pas automatiquement un INI existant.
+
+Lire le [guide français](docs/INSTALL.fr.md) ou le [guide principal anglais](docs/INSTALL.md). Appliquer ensuite la [matrice de validation](docs/TEST_PLAN.fr.md).
+
+## Peut-on supprimer le fork ?
+
+**Pas avant validation sur matériel.** Un build vert ne prouve pas le bon arrêt, le réveil à la manette ou l'absence de réparation du stockage. Même après ces essais, revenir au binaire original fait perdre les **règles compilées obligatoires** et les corrections du runtime. Une archive conservée est préférable à une suppression définitive.
+
+## Limites
+
+Aucun DNS local ne peut bloquer toutes les IP directes, les DNS alternatifs ou chiffrés, les caches et les communications avant chargement. Une interdiction stricte du WAN exige un pare-feu externe. Voir [sécurité](SECURITY.fr.md).
+
+## Crédits
+
+Code original : [Drakmor](https://github.com/drakmor/nanoDNS). Règles : [niakw Console Blocklist](https://github.com/niakw/nanodns-console-blocklist). Intégration : [niakw](https://github.com/niakw/nanoDNS-13.60). Licence [GPL-3.0](LICENSE), projet communautaire indépendant.
+
+---
+
+**Des protections mesurables. Des limites documentées.**

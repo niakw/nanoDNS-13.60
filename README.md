@@ -1,75 +1,103 @@
-# nanoDNS 13.60 — security & lifecycle fork
+<div align="center">
 
+# nanoDNS 13.60 — Hardened Runtime
 
-**Language:** English (default) | [Français](README.fr.md)
-A carefully scoped PS5 firmware **13.60** fork of [Drakmor's nanoDNS](https://github.com/drakmor/nanoDNS), with a **mandatory 124-rule DNS denylist** sourced from [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist).
+### Stronger DNS enforcement. Cleaner shutdown. One auditable payload.
 
-**Status:** source changes and automated verification are in progress. A green SDK build does **not** establish that console shutdown, rest-mode resume or controller wake are fixed. Do not replace your known-working payload until you have checked the build and followed the console validation plan.
+**124 mandatory protected patterns · Quad9 Secure DNS · Native checks · Safer process lifecycle**
 
-## What changed
+[![Protected masks](https://img.shields.io/badge/Mandatory_rules-124-394965)](nanodns.ini)
+[![Resolver](https://img.shields.io/badge/DNS-Quad9_secure-456b90)](docs/DNS_POLICY.md)
+[![License](https://img.shields.io/badge/License-GPL--3.0-555)](LICENSE)
 
-- No more process scanning with hardcoded FreeBSD kernel-info offsets or forcibly killing old nanoDNS instances with `SIGKILL`.
-- Preserves the original `nanodns.elf` process label expected by external payload managers.
-- Stops work promptly when `SIGINT` or `SIGTERM` is received and releases sockets / SceNet resources with shutdown milestones.
-- Exclusive UDP port-53 ownership; if IPv4 bind fails, the new instance exits instead of silently running IPv6-only beside another resolver.
-- Monotonic deadlines when available and bounded draining of stale upstream packets.
-- Ships `nanodns.ini`, `nanodns.ini.example` and an embedded initial configuration derived from the multi-console policy.
-- Compiles **all 124 protected masks into the payload**: a user-supplied exception or custom override cannot exempt those masks. Blocked A queries receive `0.0.0.0`; blocked AAAA/non-A queries receive NODATA.
-- Refuses unsupported/multiple DNS questions rather than forwarding them uninspected.
-- Checks upstream DNS replies (transaction ID, name, type, class and response flags) and refuses answers with protected domain aliases.
-- Includes offline policy tests and PS4/PS5 SDK build workflows.
+**English (default)** · [Français](README.fr.md)
 
-The policy is intentionally **selective**. Names not covered by its masks can still resolve through upstream DNS. Broad matches such as `*sony*`, `*nintendo*` and the shared CDN alias `a192.d.akamai.net` can block otherwise legitimate requests.
+[**English installation**](docs/INSTALL.md) · [**Policy architecture**](docs/DNS_POLICY.md) · [**Runtime audit**](docs/PS5_13_60_LIFECYCLE.md) · [**Validation**](docs/TEST_PLAN.md)
 
-## Quad9-only upstream resolution
+</div>
 
-The bundled INI, generated defaults and internal fallback use **`9.9.9.9` followed by `149.112.112.112`**, both from [Quad9's security-filtering service](https://quad9.net/service/service-addresses-and-features/). Cloudflare and other providers are **not** configured as default fallbacks. Quad9 filters malicious domains, but does not replace nanoDNS's console blocklist.
+---
 
-**Important:** an existing on-console `nanodns.ini` is never automatically overwritten, so manually install the updated INI if you want the Quad9-only upstream configuration. nanoDNS's forwarding to the upstream resolvers uses unencrypted UDP DNS.
+## Go beyond a blocklist file
 
-## Install on PS5 firmware 13.60
+A DNS denylist can be edited, replaced or bypassed through local exceptions. A runtime can also fail during duplicate launch or system shutdown.
 
-1. Read [safe installation (French)](docs/INSTALL.fr.md), [DNS rules](docs/DNS_POLICY.md) and [threat model](SECURITY.md).
-2. Keep a router-level WAN block for the console during initial setup; this payload cannot filter pre-jailbreak traffic.
-3. Back up `/data/nanodns/nanodns.ini` and existing logs before modifying anything.
-4. Copy this repo's [`nanodns.ini`](nanodns.ini) to `/data/nanodns/nanodns.ini`. Existing on-console configs are deliberately **never overwritten** by payload startup.
-5. Set **both** PS5 DNS slots to `127.0.0.1`; do not assign an external secondary DNS. Run the offline WebKit loader and Payload Manager, then launch only one `nanodns.elf`.
-6. Verify `124 rule(s), 0 exception(s)` in the fresh log, `listening on 127.0.0.1:53`, blocked A/AAAA behavior, and normal permitted DNS resolutions.
-7. Test clean shutdown, cold boot from the DualSense, rest/resume, relaunch and duplicate-load handling as described in [console test plan](docs/TEST_PLAN.md).
+**nanoDNS 13.60 builds on [Drakmor's original nanoDNS](https://github.com/drakmor/nanoDNS)** and integrates the independent [124-rule Console Blocklist](https://github.com/niakw/nanodns-console-blocklist) **directly into the binary**. Known protected names are evaluated **before** user-defined exceptions, while permitted DNS lookups still use **Quad9 secure upstream resolvers**.
 
-**Important:** Installing a new ELF does not replace the on-console `nanodns.ini`. Back up and explicitly deploy the policy file. For an existing conflicting user INI, the compiled mandatory 124 rules still apply; the startup rule count may differ from 124.
+The goal is stronger **DNS-layer policy enforcement and process reliability** without unnecessarily breaking unrelated Internet access.
 
-## Build and checks
+## Before and after: clear, testable improvements
 
-```sh
-python3 -m unittest discover -s tests -v
-export PS5_PAYLOAD_SDK=/path/to/ps5-payload-sdk
-make clean all
+| Capability | Original nanoDNS v0.4 | Standalone blocklist | **Hardened runtime fork** |
+| --- | --- | --- | --- |
+| Shipped default deny rules | **8** | **124** in INI | **124 mandatory** masks in binary |
+| Shipped default exceptions | **6** | **0** | No exception can override a mandatory protected name |
+| Upstream DNS | Three mixed resolvers | Quad9 secure pair | **Quad9 secure pair** |
+| Special DNS questions | Original forwarding behavior | Original behavior | Reject unsupported or multiple questions |
+| Upstream reply checks | Basic transaction checking | Original behavior | Validate question identity and protected aliases |
+| Wildcard matching | Recursive | Depends on payload | **Iterative, native regression-tested** |
+| Duplicate payload start | Can force-kill old instance | Original behavior | **No SIGKILL; exclusive UDP bind** |
+| Logs and shutdown | Current log overwritten | Original behavior | Previous log retained, size bounded, shutdown milestones |
+| Entire Internet / direct-IP blocking | **No** | **No** | **No — external firewall needed** |
+| Firmware 13.60 shutdown/wake proven | Not established | Not applicable | **Hardware verification still required** |
+
+The original software supports custom rules; the 8/6 values refer to its **unchanged defaults**. An INI alone cannot enforce mandatory precedence or modify the payload's process lifecycle.
+
+## How mandatory protection works
+
+```text
+DNS query received by nanoDNS
+              |
+              v
+  Compiled mandatory 124 masks
+         /          \
+    Protected     Not protected
+        |              |
+   Local deny      Additional INI rules /
+ A: 0.0.0.0        user exceptions
+ AAAA: no answer        |
+                         v
+                 Quad9 Secure DNS
+                   9.9.9.9
+                149.112.112.112
 ```
 
-GitHub Actions uploads `nanodns.elf` on the PS5 build workflow. It also retains the upstream PS4 build for regression checks. Never interpret a CI artifact as proven safe on a physical console.
+No external resolver operator is configured as fallback. Both Quad9 IPs use the **same threat-blocking service**; the payload's upstream transport remains **unencrypted UDP**. [Official Quad9 service details](https://docs.quad9.net/services/).
 
-## Documentation
+## Built for stability, not risky system patches
 
-- [DNS policy, precedence, configuration](docs/DNS_POLICY.md)
-- [PS5 13.60 lifecycle and shutdown audit](docs/PS5_13_60_LIFECYCLE.md)
-- [Test matrix and release gate](docs/TEST_PLAN.md)
-- [Installation sécurisée](docs/INSTALL.fr.md)
-- [Security boundaries and responsible disclosure](SECURITY.md)
-- [Credits and provenance](docs/CREDITS.md)
-- [Changelog](CHANGELOG.md)
+- Removed process enumeration using fixed internal-structure offsets and forced termination of existing instances.
+- Preserved the existing process label to maintain compatibility with payload managers.
+- Requires exclusive ownership of the IPv4 DNS listener; a second launch fails rather than stealing queries.
+- Responds to supported termination signals and closes sockets and networking resources in documented stages.
+- Uses bounded upstream operations and monotonic timekeeping when available.
+- Retains the previous DNS log and limits log size.
+- Adds static policy parity checks, native wildcard differential tests and SDK build workflows.
 
-## Scope and limits
+**No verified system shutdown callback has been established.** These defensive changes are not proof of a hardware shutdown or controller-wake fix.
 
-This payload **is not a firewall**. It cannot block cached IPs, direct-IP connections, alternate DNS or DoH/DoT clients, DNS over TCP, or outbound traffic before the payload starts. Its protection is limited to requests received by its UDP DNS sockets and the domains it recognizes. If *no forbidden network traffic may leave the console*, enforce that policy **at the router/firewall**, including IPv6.
+## Installation: English first, French second
 
-The controller PS-button wake function occurs while the PS5 is powered off and cannot be implemented by a payload running only after boot. Fixing a faulty shutdown may help indirectly but cannot be asserted without console reproduction.
+1. Keep the console isolated from unrestricted WAN access using an **external router/firewall rule**, including IPv6.
+2. Back up your existing ELF, `/data/nanodns/nanodns.ini`, and logs.
+3. Copy the repository's [`nanodns.ini`](nanodns.ini) to that exact console path. Existing files are **not overwritten automatically**.
+4. Configure both console DNS fields to `127.0.0.1` and load **one instance** through your payload manager.
+5. Check current-session logs, blocked and permitted queries, clean shutdown, cold boot, controller wake, rest mode and resume.
 
-## Credits, licensing, affiliation
+**[Complete English installation](docs/INSTALL.md)** · [Guide français](docs/INSTALL.fr.md) · [DNS protection semantics](docs/DNS_POLICY.md) · [Hardware validation plan](docs/TEST_PLAN.md)
 
-- **Original nanoDNS payload and code:** [Drakmor](https://github.com/drakmor/nanoDNS).
-- **124-rule policy and independent security research:** [niakw/nanodns-console-blocklist](https://github.com/niakw/nanodns-console-blocklist).
-- Additional public domain research cited by that policy: [source bibliography](https://github.com/niakw/nanodns-console-blocklist/blob/main/docs/SOURCES.md).
-- Maintainer of this 13.60 integration: [niakw](https://github.com/niakw).
+## What is required before retiring this fork?
 
-Derived from Drakmor's GPL-3.0 code; the original [LICENSE](LICENSE) is retained. Independent community fork, not an official Sony, Microsoft, Nintendo or Drakmor release.
+A green build and static tests are **necessary but insufficient**. Real firmware 13.60 hardware must pass repeatable DNS, shutdown, rest/resume and controller-wake checks without crashes or storage repair. Even then, deleting this repository and returning to stock nanoDNS would **remove the compiled mandatory rule enforcement and lifecycle fixes**. Prefer archiving the fork rather than discarding its audit history.
+
+## Security limits
+
+This is **not a firewall**. Direct IP connections, alternative/encrypted DNS, cached addresses, TCP DNS, pre-payload traffic and unknown hostnames remain possible. Use an independent WAN-deny policy for strict network isolation. Wide wildcard patterns and shared delivery infrastructure can also create false positives. See [security](SECURITY.md) and [test plan](docs/TEST_PLAN.md).
+
+## Credits and license
+
+**Original nanoDNS source:** [Drakmor](https://github.com/drakmor/nanoDNS). **Rules and research:** [niakw / Console Blocklist](https://github.com/niakw/nanodns-console-blocklist). **Firmware-specific integration:** [niakw](https://github.com/niakw/nanoDNS-13.60). Community sources are credited in the [provenance document](docs/CREDITS.md). GPL-3.0 preserved. Independent project, not an official device-manufacturer release.
+
+---
+
+**Secure what DNS can protect. Document what it cannot.**
