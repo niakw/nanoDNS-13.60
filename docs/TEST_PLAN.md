@@ -11,9 +11,9 @@
 - The daemon loaded **124 rules**, **0 exceptions**, **2 configured upstreams** (`9.9.9.9` and `149.112.112.112`), timeout **1500 ms**.
 - It opened both listeners: `127.0.0.1:53` and `[::1]:53`.
 - **5/5 observed A queries** were answered locally with `0.0.0.0` under `mandatory-console-blocklist`. The four distinct names were `ps5.np.playstation.net` (twice), `telemetry-console.api.playstation.com`, `smetrics.aem.playstation.com` and `envelope2.np.dl.playstation.net`.
-- No error appears in the provided excerpt. It does **not** contain a shutdown log or a separate user power-cycle result. Configured Quad9 addresses do **not** establish successful allowed upstream resolution; AAAA and missing-INI generation were not exercised by this log.
+- No error appears in the provided excerpt. The supplied log does **not** contain a shutdown marker; the successful power-off/power-on outcome was subsequently reported separately by the user. Configured Quad9 addresses do **not** establish successful allowed upstream resolution; AAAA and missing-INI generation were not exercised by this log.
 
-**Further tests pending for 0.4-13.60.2:** shutdown/power-on, controller wake, rest/resume, AAAA, permitted Quad9 lookups, repeatability and long-term stability. The successful shutdown/power-on report below belongs to **0.4-13.60.1 only**. Other firmware and the secondary console build remain **NOT USER-VALIDATED**.
+**Follow-up user validation on 19 November 2026:** the tester separately confirmed that **normal shutdown and subsequent power-on succeeded on 0.4-13.60.2 without the previously reported issue**. This is functional user evidence, not a shutdown event visible in the DNS log. **Further tests remain open:** explicit controller-wake path, rest/resume, AAAA, permitted Quad9 lookups, repeat power cycles and long-term stability. The prior 0.4-13.60.1 version also has a separate successful shutdown report. Other firmware and the secondary console build remain **NOT USER-VALIDATED**.
 
 ## Hardware test record — 19 November 2026 (0.4-13.60.1 only)
 

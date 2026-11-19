@@ -10,7 +10,7 @@
 - Correction de la configuration Dependabot pour le suivi hebdomadaire des GitHub Actions.
 - Guides anglais/français d'accessibilité, de contribution, de conduite et d'issues adaptés au projet.
 
-**Limite de validation :** la Release 0.4-13.60.2 contient de **nouveaux binaires** avec le correctif de sécurité et les PR CI fusionnées, et dispose d'un **test utilisateur positif sur firmware 13.60 pour le démarrage et 5/5 blocages DNS A**, avec 124 règles et 0 exception. Extinction/rallumage, veille, AAAA et résolution autorisée restent à valider pour 0.4-13.60.2. L'essai d'extinction réussi concernait le binaire 0.4-13.60.1. Les autres firmwares et le binaire secondaire restent non validés.
+**Limite de validation :** la Release 0.4-13.60.2 contient de **nouveaux binaires** avec le correctif de sécurité et les PR CI fusionnées, et dispose d'un **test utilisateur positif sur firmware 13.60 pour le démarrage et 5/5 blocages DNS A**, avec 124 règles et 0 exception. Le testeur a confirmé ensuite **l'extinction et le rallumage sans anomalie avec 0.4-13.60.2**. Ce résultat est rapporté par l'utilisateur, sans marqueur d'arrêt dans les journaux. Veille/reprise, AAAA, résolutions autorisées, cycles répétés et endurance restent à vérifier. Le binaire 0.4-13.60.1 disposait également d'un essai d'extinction positif distinct. Les autres firmwares et le binaire secondaire restent non validés.
 
 ## 0.4-13.60.1 — Release GitHub standard ; premier test utilisateur positif sur 13.60 (19 novembre 2026)
 

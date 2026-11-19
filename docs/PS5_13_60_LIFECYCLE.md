@@ -4,7 +4,7 @@
 **Language:** English (default) | [Français](PS5_13_60_LIFECYCLE.fr.md)
 ## Release version boundary
 
-**0.4-13.60.2 USER-TESTED on firmware 13.60 for startup and local A DNS filtering (5/5 observed queries blocked).** No shutdown/power-on or rest/resume result is documented for this new ELF; the earlier successful shutdown trial belongs only to **0.4-13.60.1**. All other firmware remain not user-validated.
+**0.4-13.60.2 USER-TESTED on firmware 13.60 for startup and local A DNS filtering (5/5 observed queries blocked).** The user subsequently confirmed successful shutdown/power-on with this new ELF, with no recurrence of the original problem. This observation is not accompanied by a shutdown log marker. Rest/resume, explicit controller wake and repeated cycles still need verification; **0.4-13.60.1** has its own earlier positive shutdown trial. All other firmware remain not user-validated.
 
 ## Firmware 13.60 user verification (19 November 2026, v0.4-13.60.1)
 

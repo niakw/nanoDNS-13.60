@@ -11,9 +11,9 @@
 - Chargement de **124 règles**, **0 exception**, **2 DNS amont configurés** (`9.9.9.9` et `149.112.112.112`), délai de **1 500 ms**.
 - Écoutes locales IPv4 `127.0.0.1:53` et IPv6 `[::1]:53` établies.
 - **5/5 requêtes A observées** bloquées localement avec `0.0.0.0` par `mandatory-console-blocklist` : `ps5.np.playstation.net` (deux fois), `telemetry-console.api.playstation.com`, `smetrics.aem.playstation.com` et `envelope2.np.dl.playstation.net`.
-- Aucune erreur visible dans cet extrait. Ni trace d'extinction ni retour utilisateur spécifique d'arrêt/rallumage sur ce nouveau binaire. Quad9 est **configuré**, mais la résolution autorisée effective n'est pas démontrée. Aucun test AAAA ni création d'INI absent dans ce journal.
+- Aucune erreur visible dans cet extrait. Le log ne présente pas de trace d'extinction ; le testeur a confirmé séparément l'arrêt et le rallumage sans anomalie. Quad9 est **configuré**, mais la résolution autorisée effective n'est pas démontrée. Aucun test AAAA ni création d'INI absent dans ce journal.
 
-**Encore à vérifier pour 0.4-13.60.2 :** extinction/rallumage, réveil manette, veille/reprise, AAAA, DNS autorisé vers Quad9, répétitions et stabilité prolongée. La réussite d'extinction précédente concerne **0.4-13.60.1 uniquement**. Autres firmwares et binaire secondaire : **NON VALIDÉS PAR TEST UTILISATEUR**.
+**Validation complémentaire du 19 novembre 2026 :** l'utilisateur confirme que **l'extinction normale et le rallumage de 0.4-13.60.2 ont également réussi**, sans réapparition de l'anomalie initiale. Le succès est rapporté par l'utilisateur et n'apparaît pas dans les logs DNS. **Encore à vérifier :** chemin spécifique de réveil à la manette, veille/reprise, AAAA, DNS autorisé via Quad9, cycles répétés et stabilité prolongée. La version 0.4-13.60.1 dispose aussi de son propre test d'extinction positif. Autres firmwares et binaire secondaire : **NON VALIDÉS PAR TEST UTILISATEUR**.
 
 ## Compte rendu de test sur console — 19 novembre 2026 (0.4-13.60.1 uniquement)
 

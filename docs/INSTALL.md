@@ -1,6 +1,6 @@
 # Safe installation — console firmware 13.60
 
-**Latest Release 0.4-13.60.2:** the ELF and ZIP include the atomic configuration-file security fix. **User-tested on firmware 13.60 for successful startup and 5/5 blocked A queries; shutdown/power-on, AAAA and allowed lookups remain untested on this binary**. The previous 0.4-13.60.1 binary received a successful firmware 13.60 user test; the earlier power-off result must not be attributed to this update.
+**Latest Release 0.4-13.60.2:** the ELF and ZIP include the atomic configuration-file security fix. **User-tested on firmware 13.60: successful startup, 5/5 blocked A queries and a separately user-confirmed shutdown/power-on trial without the original issue.** AAAA, permitted Quad9 resolution, rest/resume and extended endurance remain unverified. The previous 0.4-13.60.1 binary also passed its own firmware 13.60 user test.
 
 **Language:** English (default) | [Français](INSTALL.fr.md)
 

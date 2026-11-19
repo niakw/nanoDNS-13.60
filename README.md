@@ -20,17 +20,17 @@
 
 ## Release 0.4-13.60.2 — security maintenance
 
-**Latest ELF/ZIP: `0.4-13.60.2`; USER-TESTED on firmware 13.60 for startup, configuration loading and blocked A queries.** The user's log confirms 5/5 observed A queries blocked with `0.0.0.0`, 124 rules, zero exceptions and both loopback listeners. Shutdown/power-on, rest/resume, permitted Quad9 lookups and AAAA remain untested on this binary. A separate **0.4-13.60.1** user test ([previous release](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)) included a successful shutdown/power-on trial. No other firmware is user-validated.
+**Latest ELF/ZIP: `0.4-13.60.2`; USER-TESTED on firmware 13.60 for startup, configuration loading and blocked A queries.** The user's log confirms 5/5 observed A queries blocked with `0.0.0.0`, 124 rules, zero exceptions and both loopback listeners. **The tester also confirmed a successful normal shutdown and power-on with 0.4-13.60.2**, without recurrence of the original issue. This outcome is user-reported; the DNS log itself has no terminal shutdown marker. Rest/resume, permitted Quad9 lookups, AAAA, repeated cycles and endurance remain unverified. The earlier **0.4-13.60.1** release ([previous release](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)) separately passed a shutdown/power-on trial. No other firmware is user-validated.
 
 ## Hardware validation status — 19 November 2026
 
 | Target | Real-user hardware status | Scope |
 | --- | --- | --- |
-| Current-generation console, firmware **13.60** | **0.4-13.60.1 USER-TESTED; 0.4-13.60.2 USER-TESTED for startup and A-query blocking** | Prior binary started, filtered A queries, and shut down/restarted without the reported issue. The new ELF passed 5/5 observed blocked A queries on firmware 13.60; its shutdown/power-on remains untested |
+| Current-generation console, firmware **13.60** | **0.4-13.60.1 and 0.4-13.60.2 USER-TESTED; current version startup, DNS and shutdown/power-on passed** | Prior binary started, filtered A queries, and shut down/restarted without the reported issue. The new ELF passed 5/5 observed blocked A queries on firmware 13.60; user confirms its shutdown/power-on also passed |
 | Current-generation console, **other firmware** | **NOT USER-VALIDATED** | SDK compilation and automated tests are not hardware validation |
 | Secondary/older-generation console build, **all firmware** | **NOT USER-VALIDATED** | Successful SDK compilation only; no real-user hardware report |
 
-The two sanitized runtime logs from the **0.4-13.60.1** test showed **23 blocked A queries**, **124 configured rules**, **0 exceptions**, both loopback listeners, and the configured Quad9 pair. This is **not** proof of permitted upstream lookups, AAAA filtering, system-wide absence of DNS leaks, rest/resume, long-term stability, or an OS-delivered shutdown callback. The shutdown/power-on success is based on the user report; no `shutdown: complete` marker was present in the supplied logs.
+The two sanitized runtime logs from the **0.4-13.60.1** test showed **23 blocked A queries**, **124 configured rules**, **0 exceptions**, both loopback listeners, and the configured Quad9 pair. This is **not** proof of permitted upstream lookups, AAAA filtering, system-wide absence of DNS leaks, rest/resume, long-term stability, or an OS-delivered shutdown callback. The shutdown/power-on successes for both versions are based on the user's reports, not an observed `shutdown: complete` marker in the supplied logs.
 
 **Do not extend the 13.60 validation to any other firmware or hardware without independent user tests.** Published as a **standard GitHub Release** for the user-tested 13.60 firmware; this does not imply the remaining hardware validation matrix is complete. See [validation matrix](docs/TEST_PLAN.md).
 

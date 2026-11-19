@@ -10,7 +10,7 @@
 - Replace the invalid Dependabot placeholder with weekly GitHub Actions dependency checks.
 - Add complete English and French contribution, accessibility, code-of-conduct and issue-reporting guides, with real project paths and privacy reminders.
 
-**Validation boundary:** this 0.4-13.60.2 Release contains **newly built binaries** with the security changes and merged CI PRs, and **passed a firmware 13.60 user test for startup and 5/5 mandatory blocked A DNS queries**, with 124 rules, 0 exceptions and IPv4/IPv6 listeners. Shutdown/power-on, rest/resume, AAAA and permitted Quad9 resolution remain unverified on 0.4-13.60.2. The previous 0.4-13.60.1 release passed a separate console shutdown/power-on trial. Other firmware and the secondary console build remain not user-validated.
+**Validation boundary:** this 0.4-13.60.2 Release contains **newly built binaries** with the security changes and merged CI PRs, and **passed a firmware 13.60 user test for startup and 5/5 mandatory blocked A DNS queries**, with 124 rules, 0 exceptions and IPv4/IPv6 listeners. The same user subsequently reported a **successful normal shutdown/power-on trial on 0.4-13.60.2**, without the original issue. This lifecycle result is user-reported rather than logged by a terminal shutdown marker. Rest/resume, AAAA, permitted Quad9 resolution, repeated cycles and endurance remain unverified. The previous 0.4-13.60.1 release passed its own separate console shutdown/power-on trial. Other firmware and the secondary console build remain not user-validated.
 
 ## 0.4-13.60.1 — standard GitHub Release; 13.60 basic user test passed (2026-11-19)
 
