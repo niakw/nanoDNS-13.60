@@ -66,7 +66,7 @@ jobs:
             echo "Existing ZIP detected: verify content against the immutable release artifacts, without overwriting."
             mkdir -p installed-release
             gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir installed-release --pattern "$BUNDLE" --pattern "$BUNDLE.sha256"
-            test "$(unzip -Z -1 "installed-release/$BUNDLE" | LC_ALL=C sort)" = "$(printf '%s\\n' 'data/nanodns/nanodns.ini' 'data/pldmgr/payloads/local/nanodns/nanodns.elf' | LC_ALL=C sort)"
+            test "$(unzip -Z -1 "installed-release/$BUNDLE" | LC_ALL=C sort)" = "$(printf '%s\n' 'data/nanodns/nanodns.ini' 'data/pldmgr/payloads/local/nanodns/nanodns.elf' | LC_ALL=C sort)"
             cmp release-assets/nanodns.elf <(unzip -p "installed-release/$BUNDLE" data/pldmgr/payloads/local/nanodns/nanodns.elf)
             cmp release-assets/nanodns.ini <(unzip -p "installed-release/$BUNDLE" data/nanodns/nanodns.ini)
             (cd installed-release && sha256sum --check "$BUNDLE.sha256")
