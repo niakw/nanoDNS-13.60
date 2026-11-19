@@ -37,6 +37,19 @@ class DocumentationContracts(unittest.TestCase):
   self.assertIn("hardware",en.lower())
   self.assertIn("not",en.lower())
 
+ def test_upgrade_from_original_is_explicit(self):
+  en=(ROOT/"docs/INSTALL.md").read_text(encoding="utf-8")
+  fr=(ROOT/"docs/INSTALL.fr.md").read_text(encoding="utf-8")
+  for s in (en,fr):
+   for token in ("Payload Manager","nanodns.elf","/data/nanodns/nanodns.ini","127.0.0.1","9.9.9.9","149.112.112.112"):
+    self.assertIn(token,s)
+  for token in ("Drakmor","original","autoload","Rollback"):
+   self.assertIn(token,en)
+  for token in ("Drakmor","officiel","autoload","Retour arrière"):
+   self.assertIn(token,fr)
+  self.assertIn("Upgrade from Drakmor",en)
+  self.assertIn("Migration depuis le nanoDNS",fr)
+
  def test_no_visible_commercial_platform_names(self):
   for file in ROOT.rglob("*.md"):
    s=file.read_text(encoding="utf-8")

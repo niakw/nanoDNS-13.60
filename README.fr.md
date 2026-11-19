@@ -43,6 +43,12 @@ Ces chiffres concernent **les réglages initiaux** de la version d'origine, qui 
 
 Les 124 motifs obligatoires sont évalués avant toute exception. Pour les noms interdits, les requêtes A reçoivent `0.0.0.0` et les AAAA aucune adresse. Les requêtes autorisées sont envoyées à **`9.9.9.9` puis `149.112.112.112`**, deux adresses du **même service sécurisé Quad9**. Le transfert amont du payload utilise toujours de l'UDP non chiffré.
 
+## Tu utilises déjà le nanoDNS 0.4 officiel ?
+
+**N'utilise pas Update sur l'ancienne entrée du catalogue.** Notre dépôt indépendant exige une **migration manuelle** : sauvegarde l'ELF et l'INI, désactive l'autoload d'origine, redémarre proprement, importe notre `nanodns.elf` comme **payload local**, remplace **séparément** `/data/nanodns/nanodns.ini` par FTP et n'active que la nouvelle entrée. Les deux DNS de la console restent `127.0.0.1`.
+
+[**Guide complet de migration depuis la version officielle**](docs/INSTALL.fr.md#migration-depuis-le-nanodns-04-officiel-de-drakmor) · [English upgrade guide](docs/INSTALL.md#upgrade-from-drakmors-original-nanodns-04) · [Fichiers de la préversion](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)
+
 ## Fiabilité et installation
 
 Le fork supprime les offsets internes fragiles et les `SIGKILL` destinés à remplacer une ancienne instance, impose une écoute UDP exclusive, nettoie les ressources réseau lors d'un arrêt signalé et conserve le journal précédent. Il ajoute également des tests de cohérence de configuration et des tests natifs.

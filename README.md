@@ -76,6 +76,12 @@ No external resolver operator is configured as fallback. Both Quad9 IPs use the 
 
 **No verified system shutdown callback has been established.** These defensive changes are not proof of a hardware shutdown or controller-wake fix.
 
+## Already using Drakmor's nanoDNS 0.4?
+
+**Do not click Update on the original catalog entry.** Our independent release must be installed **manually**: back up the old ELF and INI; disable original nanoDNS autoload; reboot cleanly; import the new `nanodns.elf` as a **local** Payload Manager entry; replace `/data/nanodns/nanodns.ini` **separately via FTP**; enable only the new local entry. Both console DNS fields stay `127.0.0.1`.
+
+[**Full original-to-13.60 upgrade guide (English)**](docs/INSTALL.md#upgrade-from-drakmors-original-nanodns-04) · [Guide de migration français](docs/INSTALL.fr.md#migration-depuis-le-nanodns-04-officiel-de-drakmor) · [Pre-release files](https://github.com/niakw/nanoDNS-13.60/releases/tag/v0.4-13.60.1-beta.1)
+
 ## Installation: English first, French second
 
 1. Keep the console isolated from unrestricted WAN access using an **external router/firewall rule**, including IPv6.
